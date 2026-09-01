@@ -19,6 +19,9 @@ import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/addresses/presentation/saved_addresses/view/saved_addresses_view.dart';
+import '../../features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
 import '../../features/addresses/presentation/view_model/add_address_view_model.dart';
 import '../../features/home/shared/product_details/presentation/view/products_details_screen.dart';
 
@@ -45,6 +48,7 @@ abstract final class AppRoutes {
   static const bestSeller = '/best-seller';
   static const occasions = '/occasions';
   static const addAddress = '/add-address';
+  static const savedAddresses = '/saved-addresses';
 }
 
 abstract final class AppRouter {
@@ -238,6 +242,20 @@ abstract final class AppRouter {
           return BlocProvider<AddAddressViewModel>(
             create: (context) => getIt<AddAddressViewModel>(),
             child: const AddAddressView(),
+          );
+        },
+      ),
+
+      // --------------------------------------------------
+      // Saved Addresses Screen
+      // --------------------------------------------------
+      GoRoute(
+        path: AppRoutes.savedAddresses,
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) {
+          return BlocProvider<SavedAddressesViewModel>(
+            create: (context) => getIt<SavedAddressesViewModel>(),
+            child: const SavedAddressesView(),
           );
         },
       ),

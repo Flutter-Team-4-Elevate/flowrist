@@ -137,5 +137,7 @@
   "newest": "New",
   "oldest": "Old",
   "filter": "Filter",
-  "clear": "Clear" 
+  "clear": "Clear",
+  "selectCityAndArea": "Please select city and area",
+  "savedAddress": "Saved address"
 }
