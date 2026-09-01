@@ -8,4 +8,6 @@ abstract interface class AddAddressRemoteDataSource {
   Future<GetCitiesResponseModel> getCities(int governorateId);
 
   Future<void> saveAddress(AddAddressRequestModel request);
+
+  Future<void> updateAddress(String addressId, AddAddressRequestModel request);
 }

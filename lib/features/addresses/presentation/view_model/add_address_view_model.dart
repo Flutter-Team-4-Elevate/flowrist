@@ -15,8 +15,10 @@ import 'package:flowrist/features/addresses/domain/use_cases/open_app_settings_u
 import 'package:flowrist/features/addresses/domain/use_cases/request_location_permission_use_case.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/request_location_service_use_case.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/save_address_use_case.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_case.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -37,6 +39,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
   final GetGovernoratesUseCase _getGovernoratesUseCase;
   final GetCitiesUseCase _getCitiesUseCase;
   final SaveAddressUseCase _saveAddressUseCase;
+  final UpdateAddressUseCase _updateAddressUseCase;
   final AppConfig _appConfig;
 
   AddAddressViewModel(
@@ -50,6 +53,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     this._getGovernoratesUseCase,
     this._getCitiesUseCase,
     this._saveAddressUseCase,
+      this._updateAddressUseCase,
     this._appConfig,
   ) : super(AddAddressState.initial()) {
     _checkMapConfig();
@@ -93,7 +97,40 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
         _selectCity(event.city);
       case SaveAddressEvent():
         _saveAddress(event.request);
+      case UpdateAddressEvent():
+        _updateAddress(event.addressId, event.request);
+      case InitializeForEditEvent():
+        _initializeForEdit(event.address);
     }
+  }
+
+  void _updateAddress(String addressId,
+      AddAddressRequestModel request,) async {
+    emit(state.copyWith(saveAddressState: BaseState.loading()));
+    final response = await _updateAddressUseCase(addressId, request);
+    switch (response) {
+      case SuccessResponse<void>():
+        emit(state.copyWith(saveAddressState: BaseState.success(true)));
+
+      case ErrorResponse<void>():
+        emit(
+          state.copyWith(
+            saveAddressState: BaseState.error(response.errorMessage),
+          ),
+        );
+    }
+  }
+
+  void _initializeForEdit(AddressEntity address) {
+    emit(
+      state.copyWith(
+        selectedLocation: CoordinatesEntity(
+          latitude: address.lat,
+          longitude: address.lng,
+        ),
+        userLocation: BaseState.success(address.addressLine),
+      ),
+    );
   }
 
   void _saveAddress(AddAddressRequestModel request) async {

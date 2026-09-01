@@ -7,6 +7,7 @@ import 'package:flowrist/features/addresses/presentation/saved_addresses/view/wi
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_event.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_state.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/shared/addresses/presentation/widgets/address_bottom_sheet/empty_address_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +29,13 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
   Future<void> _navigateToAddAddress() async {
     final result = await context.push(AppRoutes.addAddress);
+    if ((result == true || mounted) && mounted) {
+      context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
+    }
+  }
+
+  Future<void> _navigateToEditAddress(AddressEntity address) async {
+    final result = await context.push(AppRoutes.addAddress, extra: address);
     if ((result == true || mounted) && mounted) {
       context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
     }
@@ -194,9 +202,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                             isDeleting: state.deletingAddressId == address.id,
                             onDelete: () =>
                                 _showDeleteConfirmationDialog(address.id),
-                            onEdit: () {
-                              // TODO: Implement edit address
-                            },
+                            onEdit: () => _navigateToEditAddress(address),
                           ),
                         ),
                   ),

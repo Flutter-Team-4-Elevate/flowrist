@@ -24,6 +24,7 @@ import '../../features/addresses/presentation/saved_addresses/view/saved_address
 import '../../features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
 import '../../features/addresses/presentation/view_model/add_address_view_model.dart';
 import '../../features/home/shared/product_details/presentation/view/products_details_screen.dart';
+import '../../shared/addresses/domain/entities/address_entity.dart';
 
 abstract final class AppRoutes {
   static const splash = '/';
@@ -239,9 +240,12 @@ abstract final class AppRouter {
         path: AppRoutes.addAddress,
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
+          final addressToEdit = state.extra is AddressEntity
+              ? state.extra as AddressEntity
+              : null;
           return BlocProvider<AddAddressViewModel>(
             create: (context) => getIt<AddAddressViewModel>(),
-            child: const AddAddressView(),
+            child: AddAddressView(addressToEdit: addressToEdit),
           );
         },
       ),
