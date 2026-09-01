@@ -9,4 +9,6 @@ abstract interface class AddressesRemoteDataSource {
   Future<BaseResponse<DefaultAddressResponseModel>> setDefaultAddress(
     String addressId,
   );
+
+  Future<BaseResponse<String>> deleteAddress(String addressId,);
 }

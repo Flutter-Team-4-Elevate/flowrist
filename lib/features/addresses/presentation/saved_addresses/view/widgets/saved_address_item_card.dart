@@ -1,5 +1,6 @@
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/core/constants/flowery_icons.dart';
 import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -7,12 +8,14 @@ class SavedAddressItemCard extends StatelessWidget {
   final AddressEntity address;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool isDeleting;
 
   const SavedAddressItemCard({
     super.key,
     required this.address,
     this.onEdit,
     this.onDelete,
+    this.isDeleting = false,
   });
 
   String _formatSubtitle() {
@@ -76,13 +79,30 @@ class SavedAddressItemCard extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: onDelete,
-                icon: Icon(Icons.delete, color: AppColors.red60, size: 20),
-                constraints: const BoxConstraints(),
-                padding: const EdgeInsets.all(6),
-                visualDensity: VisualDensity.compact,
-              ),
+              if (isDeleting)
+                const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: Padding(
+                    padding: EdgeInsets.all(2.0),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.red,
+                    ),
+                  ),
+                )
+              else
+                IconButton(
+                  onPressed: onDelete,
+                  icon: const Icon(
+                    FloweryIcons.delete,
+                    color: AppColors.red,
+                    size: 20,
+                  ),
+                  constraints: const BoxConstraints(),
+                  padding: const EdgeInsets.all(6),
+                  visualDensity: VisualDensity.compact,
+                ),
               const SizedBox(width: 4),
               IconButton(
                 onPressed: onEdit,

@@ -33,71 +33,147 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
     }
   }
 
+  void _showDeleteConfirmationDialog(String addressId) {
+    showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Address'),
+          content: const Text(
+            'Are you sure you want to delete this address?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: AppColors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed == true && mounted) {
+        context
+            .read<SavedAddressesViewModel>()
+            .doEvent(DeleteAddressEvent(addressId));
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: AppBar(
+    return BlocListener<SavedAddressesViewModel, SavedAddressesState>(
+      listenWhen: (previous, current) =>
+      previous.deleteAddressState != current.deleteAddressState,
+      listener: (context, state) {
+        final deleteState = state.deleteAddressState;
+        if (deleteState.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(deleteState.errorMessage!),
+              backgroundColor: AppColors.red,
+            ),
+          );
+        } else if (deleteState.data != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(deleteState.data!),
+              backgroundColor: AppColors.green,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
         backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted && context.canPop()) {
-              context.pop();
-            }
-          },
-          icon: const Icon(
-            Icons.arrow_back_ios_new_outlined,
-            color: AppColors.blackBase,
+        appBar: AppBar(
+          backgroundColor: AppColors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            onPressed: () {
+              if (mounted && context.canPop()) {
+                context.pop();
+              }
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new_outlined,
+              color: AppColors.blackBase,
+            ),
           ),
+          titleSpacing: 0,
+          title: Text(localizations.savedAddress, style: AppStyles.bold20Inter),
         ),
-        titleSpacing: 0,
-        title: Text(localizations.savedAddress, style: AppStyles.bold20Inter),
-      ),
-      body: BlocBuilder<SavedAddressesViewModel, SavedAddressesState>(
-        builder: (context, state) {
-          final addressesState = state.addressesState;
+        body: BlocBuilder<SavedAddressesViewModel, SavedAddressesState>(
+          builder: (context, state) {
+            final addressesState = state.addressesState;
 
-          if (addressesState.isLoading && addressesState.data == null) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.purpleBase),
-            );
-          }
+            if (addressesState.isLoading && addressesState.data == null) {
+              return const Center(
+                child: CircularProgressIndicator(color: AppColors.purpleBase),
+              );
+            }
 
-          if (addressesState.errorMessage != null &&
-              (addressesState.data == null || addressesState.data!.isEmpty)) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            if (addressesState.errorMessage != null &&
+                (addressesState.data == null || addressesState.data!.isEmpty)) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        addressesState.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: AppStyles.regular14Inter,
+                      ),
+                      const SizedBox(height: 16),
+                      AppButton(
+                        text: localizations.retry,
+                        onPressed: () {
+                          context.read<SavedAddressesViewModel>().doEvent(
+                            GetSavedAddressesEvent(),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            final addresses = addressesState.data ?? const [];
+
+            if (addresses.isEmpty) {
+              return RefreshIndicator(
+                color: AppColors.purpleBase,
+                onRefresh: () async {
+                  context.read<SavedAddressesViewModel>().doEvent(
+                    GetSavedAddressesEvent(),
+                  );
+                },
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
                   children: [
-                    Text(
-                      addressesState.errorMessage!,
-                      textAlign: TextAlign.center,
-                      style: AppStyles.regular14Inter,
-                    ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 60),
+                    const EmptyAddressView(),
+                    const SizedBox(height: 32),
                     AppButton(
-                      text: localizations.retry,
-                      onPressed: () {
-                        context.read<SavedAddressesViewModel>().doEvent(
-                          GetSavedAddressesEvent(),
-                        );
-                      },
+                      text: localizations.addNewaddress,
+                      onPressed: _navigateToAddAddress,
                     ),
                   ],
                 ),
-              ),
-            );
-          }
+              );
+            }
 
-          final addresses = addressesState.data ?? const [];
-
-          if (addresses.isEmpty) {
             return RefreshIndicator(
               color: AppColors.purpleBase,
               onRefresh: () async {
@@ -106,11 +182,25 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                 );
               },
               child: ListView(
-                padding: const EdgeInsets.all(16),
+                padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 children: [
-                  const SizedBox(height: 60),
-                  const EmptyAddressView(),
-                  const SizedBox(height: 32),
+                  ...addresses.map(
+                        (address) =>
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: SavedAddressItemCard(
+                            address: address,
+                            isDeleting: state.deletingAddressId == address.id,
+                            onDelete: () =>
+                                _showDeleteConfirmationDialog(address.id),
+                            onEdit: () {
+                              // TODO: Implement edit address
+                            },
+                          ),
+                        ),
+                  ),
+                  const SizedBox(height: 8),
                   AppButton(
                     text: localizations.addNewaddress,
                     onPressed: _navigateToAddAddress,
@@ -118,41 +208,8 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                 ],
               ),
             );
-          }
-
-          return RefreshIndicator(
-            color: AppColors.purpleBase,
-            onRefresh: () async {
-              context.read<SavedAddressesViewModel>().doEvent(
-                GetSavedAddressesEvent(),
-              );
-            },
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              children: [
-                ...addresses.map(
-                  (address) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: SavedAddressItemCard(
-                      address: address,
-                      onDelete: () {
-                        // TODO: Implement delete address
-                      },
-                      onEdit: () {
-                        // TODO: Implement edit address
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                AppButton(
-                  text: localizations.addNewaddress,
-                  onPressed: _navigateToAddAddress,
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

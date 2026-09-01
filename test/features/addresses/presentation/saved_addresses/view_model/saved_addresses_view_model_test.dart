@@ -5,6 +5,7 @@ import 'package:flowrist/features/addresses/presentation/saved_addresses/view_mo
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_state.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
 import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/shared/addresses/domain/use_cases/delete_address_use_case.dart';
 import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -12,18 +13,26 @@ import 'package:mockito/mockito.dart';
 
 import 'saved_addresses_view_model_test.mocks.dart';
 
-@GenerateMocks([GetAllUserAddressesUseCase])
+@GenerateMocks([GetAllUserAddressesUseCase, DeleteAddressUseCase])
 void main() {
   provideDummy<BaseResponse<List<AddressEntity>>>(
     SuccessResponse<List<AddressEntity>>([]),
   );
+  provideDummy<BaseResponse<String>>(
+    SuccessResponse<String>('Address deleted successfully.'),
+  );
 
   late MockGetAllUserAddressesUseCase mockGetAllUserAddressesUseCase;
+  late MockDeleteAddressUseCase mockDeleteAddressUseCase;
   late SavedAddressesViewModel viewModel;
 
   setUp(() {
     mockGetAllUserAddressesUseCase = MockGetAllUserAddressesUseCase();
-    viewModel = SavedAddressesViewModel(mockGetAllUserAddressesUseCase);
+    mockDeleteAddressUseCase = MockDeleteAddressUseCase();
+    viewModel = SavedAddressesViewModel(
+      mockGetAllUserAddressesUseCase,
+      mockDeleteAddressUseCase,
+    );
   });
 
   const tAddress1 = AddressEntity(
@@ -60,6 +69,9 @@ void main() {
       expect(viewModel.state.addressesState.isLoading, isFalse);
       expect(viewModel.state.addressesState.data, isNull);
       expect(viewModel.state.addressesState.errorMessage, isNull);
+      expect(viewModel.state.deleteAddressState.isLoading, isFalse);
+      expect(viewModel.state.deleteAddressState.data, isNull);
+      expect(viewModel.state.deletingAddressId, isNull);
     });
 
     group('GetSavedAddressesEvent', () {
@@ -195,6 +207,116 @@ void main() {
         ],
         verify: (_) {
           verify(mockGetAllUserAddressesUseCase()).called(1);
+        },
+      );
+    });
+
+    group('DeleteAddressEvent', () {
+      blocTest<SavedAddressesViewModel, SavedAddressesState>(
+        'emits loading delete state then removes address and emits success on SuccessResponse',
+        seed: () => SavedAddressesState.initial().copyWith(
+          addressesState: BaseState.success(tAddressesList),
+        ),
+        build: () {
+          when(mockDeleteAddressUseCase('1')).thenAnswer(
+            (_) async =>
+                SuccessResponse<String>('Address deleted successfully.'),
+          );
+          return viewModel;
+        },
+        act: (cubit) => cubit.doEvent(DeleteAddressEvent('1')),
+        expect: () => [
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', '1')
+              .having(
+                (s) => s.deleteAddressState.isLoading,
+                'deleteAddressState.isLoading',
+                isTrue,
+              ),
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', isNull)
+              .having(
+                (s) => s.deleteAddressState.data,
+                'deleteAddressState.data',
+                'Address deleted successfully.',
+              )
+              .having((s) => s.addressesState.data, 'addressesState.data', [
+                tAddress2,
+              ]),
+        ],
+        verify: (_) {
+          verify(mockDeleteAddressUseCase('1')).called(1);
+        },
+      );
+
+      blocTest<SavedAddressesViewModel, SavedAddressesState>(
+        'emits loading delete state then emits error on ErrorResponse',
+        seed: () => SavedAddressesState.initial().copyWith(
+          addressesState: BaseState.success(tAddressesList),
+        ),
+        build: () {
+          when(mockDeleteAddressUseCase('1')).thenAnswer(
+            (_) async => ErrorResponse<String>('Address not found.'),
+          );
+          return viewModel;
+        },
+        act: (cubit) => cubit.doEvent(DeleteAddressEvent('1')),
+        expect: () => [
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', '1')
+              .having(
+                (s) => s.deleteAddressState.isLoading,
+                'deleteAddressState.isLoading',
+                isTrue,
+              ),
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', isNull)
+              .having(
+                (s) => s.deleteAddressState.errorMessage,
+                'deleteAddressState.errorMessage',
+                'Address not found.',
+              )
+              .having(
+                (s) => s.addressesState.data,
+                'addressesState.data',
+                tAddressesList,
+              ),
+        ],
+        verify: (_) {
+          verify(mockDeleteAddressUseCase('1')).called(1);
+        },
+      );
+
+      blocTest<SavedAddressesViewModel, SavedAddressesState>(
+        'emits loading delete state then emits error on thrown Exception',
+        seed: () => SavedAddressesState.initial().copyWith(
+          addressesState: BaseState.success(tAddressesList),
+        ),
+        build: () {
+          when(
+            mockDeleteAddressUseCase('1'),
+          ).thenThrow(Exception('Server unreachable'));
+          return viewModel;
+        },
+        act: (cubit) => cubit.doEvent(DeleteAddressEvent('1')),
+        expect: () => [
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', '1')
+              .having(
+                (s) => s.deleteAddressState.isLoading,
+                'deleteAddressState.isLoading',
+                isTrue,
+              ),
+          isA<SavedAddressesState>()
+              .having((s) => s.deletingAddressId, 'deletingAddressId', isNull)
+              .having(
+                (s) => s.deleteAddressState.errorMessage,
+                'deleteAddressState.errorMessage',
+                contains('Server unreachable'),
+              ),
+        ],
+        verify: (_) {
+          verify(mockDeleteAddressUseCase('1')).called(1);
         },
       );
     });

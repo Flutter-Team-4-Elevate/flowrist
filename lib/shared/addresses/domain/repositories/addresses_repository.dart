@@ -8,4 +8,6 @@ abstract interface class AddressesRepository {
   Future<BaseResponse<DefaultAddressEntity>> setDefaultAddress(
     String addressId,
   );
+
+  Future<BaseResponse<String>> deleteAddress(String addressId,);
 }
