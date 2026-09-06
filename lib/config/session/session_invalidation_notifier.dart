@@ -5,8 +5,7 @@ abstract class SessionInvalidationNotifier extends ChangeNotifier {
   void notifySessionExpired();
 }
 
-@lazySingleton
-@Injectable(as: SessionInvalidationNotifier)
+@LazySingleton(as: SessionInvalidationNotifier)
 class SessionInvalidationNotifierImpl extends ChangeNotifier
     implements SessionInvalidationNotifier {
   @override
