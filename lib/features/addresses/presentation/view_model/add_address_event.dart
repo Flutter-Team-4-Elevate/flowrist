@@ -1,4 +1,5 @@
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 
 import '../../../../shared/domain/entities/city_entity.dart';
 import '../../../../shared/domain/entities/governorate_entity.dart';
@@ -48,4 +49,20 @@ class SaveAddressEvent extends AddAddressEvent {
   final AddAddressRequestModel request;
 
   SaveAddressEvent(this.request);
+}
+
+class UpdateAddressEvent extends AddAddressEvent {
+  final String addressId;
+  final AddAddressRequestModel request;
+
+  UpdateAddressEvent({
+    required this.addressId,
+    required this.request,
+  });
+}
+
+class InitializeForEditEvent extends AddAddressEvent {
+  final AddressEntity address;
+
+  InitializeForEditEvent(this.address);
 }

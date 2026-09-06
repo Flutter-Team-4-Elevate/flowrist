@@ -41,4 +41,19 @@ class AddressRemoteDataSourceImpl implements AddressesRemoteDataSource {
       return ApiErrorHandler.handleException(e);
     }
   }
+
+  @override
+  Future<BaseResponse<String>> deleteAddress(String addressId,) async {
+    try {
+      final response = await _apiClient.deleteAddress(addressId);
+
+      if (response.status) {
+        return SuccessResponse<String>(response.message);
+      }
+
+      return ErrorResponse<String>(response.message);
+    } on DioException catch (e) {
+      return ApiErrorHandler.handleException(e);
+    }
+  }
 }

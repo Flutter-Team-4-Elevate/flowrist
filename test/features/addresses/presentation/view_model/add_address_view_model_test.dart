@@ -17,9 +17,11 @@ import 'package:flowrist/features/addresses/domain/use_cases/open_app_settings_u
 import 'package:flowrist/features/addresses/domain/use_cases/request_location_permission_use_case.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/request_location_service_use_case.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/save_address_use_case.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_case.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/shared/domain/entities/city_entity.dart';
 import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,6 +39,7 @@ import 'package:mockito/mockito.dart';
   GetGovernoratesUseCase,
   GetCitiesUseCase,
   SaveAddressUseCase,
+  UpdateAddressUseCase,
   AppConfig,
 ])
 import 'add_address_view_model_test.mocks.dart';
@@ -67,6 +70,7 @@ void main() {
   late MockGetGovernoratesUseCase mockGetGovernorates;
   late MockGetCitiesUseCase mockGetCities;
   late MockSaveAddressUseCase mockSaveAddress;
+  late MockUpdateAddressUseCase mockUpdateAddress;
   late MockAppConfig mockAppConfig;
 
   setUp(() {
@@ -80,6 +84,7 @@ void main() {
     mockGetGovernorates = MockGetGovernoratesUseCase();
     mockGetCities = MockGetCitiesUseCase();
     mockSaveAddress = MockSaveAddressUseCase();
+    mockUpdateAddress = MockUpdateAddressUseCase();
     mockAppConfig = MockAppConfig();
 
     when(mockAppConfig.mapTilerApiKey).thenReturn('test_key');
@@ -98,6 +103,7 @@ void main() {
       mockGetGovernorates,
       mockGetCities,
       mockSaveAddress,
+      mockUpdateAddress,
       mockAppConfig,
     );
   }
@@ -963,6 +969,118 @@ void main() {
       verify: (_) {
         verifyZeroInteractions(mockGetCities);
       },
+    );
+  });
+
+  group('UpdateAddressEvent Event', () {
+    const tAddressId = 'addr_123';
+    final tUpdateReq = AddAddressRequestModel(
+      recipientName: 'Ahmed',
+      recipientPhone: '01010679792',
+      addressLine: '123 Main St',
+      governorateId: 1,
+      cityId: 1,
+      area: 'Maadi',
+      lat: 30.0444,
+      lng: 31.2357,
+      label: 'home',
+    );
+
+    blocTest<AddAddressViewModel, AddAddressState>(
+      'emits loading then success true when update is successful',
+      build: () {
+        when(mockUpdateAddress(tAddressId, tUpdateReq)).thenAnswer(
+              (_) async => SuccessResponse<void>(null),
+        );
+        return buildViewModel();
+      },
+      act: (cubit) =>
+          cubit.doEvent(
+            UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
+          ),
+      expect: () =>
+      [
+        isA<AddAddressState>().having(
+              (s) => s.saveAddressState.isLoading,
+          'saveAddressState.isLoading',
+          isTrue,
+        ),
+        isA<AddAddressState>().having(
+              (s) => s.saveAddressState.data,
+          'saveAddressState.data',
+          isTrue,
+        ),
+      ],
+      verify: (_) {
+        verify(mockUpdateAddress(tAddressId, tUpdateReq)).called(1);
+      },
+    );
+
+    blocTest<AddAddressViewModel, AddAddressState>(
+      'emits loading then error when update fails',
+      build: () {
+        when(mockUpdateAddress(tAddressId, tUpdateReq)).thenAnswer(
+              (_) async => ErrorResponse<void>('Cannot update address'),
+        );
+        return buildViewModel();
+      },
+      act: (cubit) =>
+          cubit.doEvent(
+            UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
+          ),
+      expect: () =>
+      [
+        isA<AddAddressState>().having(
+              (s) => s.saveAddressState.isLoading,
+          'saveAddressState.isLoading',
+          isTrue,
+        ),
+        isA<AddAddressState>().having(
+              (s) => s.saveAddressState.errorMessage,
+          'saveAddressState.errorMessage',
+          'Cannot update address',
+        ),
+      ],
+    );
+  });
+
+  group('InitializeForEditEvent Event', () {
+    const tAddressEntity = AddressEntity(
+      id: 'addr_123',
+      recipientName: 'Ahmed',
+      recipientPhone: '01010679792',
+      addressLine: '123 Main St',
+      city: 'Cairo',
+      area: 'Maadi',
+      lat: 30.0444,
+      lng: 31.2357,
+      isDefault: false,
+      isServiceable: true,
+    );
+
+    blocTest<AddAddressViewModel, AddAddressState>(
+      'updates selectedLocation and userLocation from AddressEntity',
+      build: () => buildViewModel(),
+      act: (cubit) => cubit.doEvent(InitializeForEditEvent(tAddressEntity)),
+      expect: () =>
+      [
+        isA<AddAddressState>()
+            .having(
+              (s) => s.selectedLocation?.latitude,
+          'selectedLocation.latitude',
+          30.0444,
+        )
+            .having(
+              (s) => s.selectedLocation?.longitude,
+          'selectedLocation.longitude',
+          31.2357,
+        )
+            .having(
+              (s) => s.userLocation?.data,
+          'userLocation.data',
+          '123 Main St',
+        ),
+      ],
     );
   });
 }
