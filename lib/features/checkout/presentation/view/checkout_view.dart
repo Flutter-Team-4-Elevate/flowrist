@@ -60,7 +60,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                 icon: const Icon(Icons.arrow_back_ios),
               ),
             ),
-        
+
             SliverToBoxAdapter(
               child: Column(
                 children: [
@@ -70,49 +70,46 @@ class _CheckoutViewState extends State<CheckoutView> {
                           current.deliveryFeeState.errorMessage;
                     },
                     listener: (context, state) {
-                      final errorMessage =
-                          state.deliveryFeeState.errorMessage;
-        
+                      final errorMessage = state.deliveryFeeState.errorMessage;
+
                       if (errorMessage != null) {
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(content: Text(errorMessage)),
-                          );
+                          ..showSnackBar(SnackBar(content: Text(errorMessage)));
                       }
                     },
                     builder: (context, state) {
                       final deliveryFeeState = state.deliveryFeeState;
                       final deliveryFee = deliveryFeeState.data;
-        
+
                       if (deliveryFeeState.isLoading) {
                         return const Padding(
                           padding: EdgeInsets.all(20),
                           child: Center(child: CircularProgressIndicator()),
                         );
                       }
-        
+
                       return DeliveryTime(
                         estimatedDeliveryAt: deliveryFee?.estimatedDeliveryAt,
                       );
                     },
                   ),
                   const SizedBox(height: 25),
-        
+
                   const _SectionDivider(),
-        
+
                   const SizedBox(height: 25),
                   const DeliveryAddress(),
                   const SizedBox(height: 25),
-        
+
                   const _SectionDivider(),
-        
+
                   const SizedBox(height: 25),
                   const PaymentMethod(),
                   const SizedBox(height: 25),
-        
+
                   const _SectionDivider(),
-        
+
                   const SizedBox(height: 25),
                   GiftMethods(
                     onChanged:
@@ -131,9 +128,9 @@ class _CheckoutViewState extends State<CheckoutView> {
                         },
                   ),
                   const SizedBox(height: 25),
-        
+
                   const _SectionDivider(),
-        
+
                   const SizedBox(height: 25),
                   TotalPrice(
                     subTotal: widget.subTotal,

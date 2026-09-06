@@ -14,18 +14,16 @@ class PaymentMethod extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    final paymentMethods = [Endpoints.cash, Endpoints.creditCard];
+    final paymentMethods = [
+      Endpoints.cash,
+      Endpoints.creditCard,
+    ];
 
     return BlocBuilder<CheckoutCubit, CheckoutState>(
-      buildWhen: (previous, current) {
-        return previous.selectedPaymentMethod !=
-                current.selectedPaymentMethod ||
-            previous.placeOrderState.isLoading !=
-                current.placeOrderState.isLoading;
-      },
+      buildWhen: (previous, current) =>
+          previous.selectedPaymentMethod !=
+          current.selectedPaymentMethod,
       builder: (context, state) {
-        final isLoading = state.placeOrderState.isLoading;
-
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -57,22 +55,18 @@ class PaymentMethod extends StatelessWidget {
 
                   return PaymentMethodItem(
                     title: title,
-                    isSelected: state.selectedPaymentMethod == paymentMethod,
-                    onTap: isLoading
-                        ? null
-                        : () {
-                            context.read<CheckoutCubit>().doEvent(
-                              SelectPaymentMethod(paymentMethod: paymentMethod),
-                            );
-                          },
+                    isSelected:
+                        state.selectedPaymentMethod == paymentMethod,
+                    onTap: () {
+                      context.read<CheckoutCubit>().doEvent(
+                        SelectPaymentMethod(
+                          paymentMethod: paymentMethod,
+                        ),
+                      );
+                    },
                   );
                 },
               ),
-
-              if (isLoading) ...[
-                const SizedBox(height: 20),
-                const Center(child: CircularProgressIndicator()),
-              ],
             ],
           ),
         );
