@@ -1039,7 +1039,7 @@ abstract class AppLocalizations {
   /// No description provided for @orderNumberPrefix.
   ///
   /// In en, this message translates to:
-  /// **'Order number#'**
+  /// **'Order number'**
   String get orderNumberPrefix;
 
   /// No description provided for @orderDetails.

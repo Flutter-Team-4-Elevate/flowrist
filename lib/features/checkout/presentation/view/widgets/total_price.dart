@@ -1,3 +1,4 @@
+
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
@@ -9,9 +10,11 @@ import 'package:flowrist/features/checkout/presentation/view_model/checkout_even
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+ 
 
 class TotalPrice extends StatelessWidget {
   const TotalPrice({
@@ -31,58 +34,107 @@ class TotalPrice extends StatelessWidget {
 
     return BlocConsumer<CheckoutCubit, CheckoutState>(
       listenWhen: (previous, current) {
-        return previous.placeOrderState.isLoading !=
-                current.placeOrderState.isLoading ||
-            previous.placeOrderState.data != current.placeOrderState.data ||
-            previous.placeOrderState.errorMessage !=
-                current.placeOrderState.errorMessage;
+        // Listen only when placing the order finishes.
+        //
+        // This works for both:
+        // - COD -> data == null
+        // - Card -> data contains CardOrderEntity
+        return previous.placeOrderState.isLoading &&
+            !current.placeOrderState.isLoading;
       },
       listener: (context, state) async {
         final placeOrderState = state.placeOrderState;
 
+        // ------------------------------------------------------------
+        // ERROR
+        // ------------------------------------------------------------
         if (placeOrderState.errorMessage != null) {
           if (!context.mounted) return;
 
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text(placeOrderState.errorMessage!)),
+              SnackBar(
+                content: Text(
+                  placeOrderState.errorMessage!,
+                ),
+              ),
             );
 
           return;
         }
 
+        // ------------------------------------------------------------
+        // STILL LOADING
+        // ------------------------------------------------------------
         if (placeOrderState.isLoading) {
           return;
         }
 
+        // ------------------------------------------------------------
+        // ORDER SUCCESS
+        // ------------------------------------------------------------
+        //
+        // Important:
+        // Your COD API returns:
+        //
+        // {
+        //   "status": true,
+        //   "code": 200,
+        //   "message": "Order placed successfully.",
+        //   "data": null
+        // }
+        //
+        // So data == null DOES NOT mean the order failed.
+        // It means the COD order was successfully created.
+        // ------------------------------------------------------------
+
         final order = placeOrderState.data;
 
+        // ------------------------------------------------------------
+        // COD
+        // ------------------------------------------------------------
+        //
+        // For COD, backend returns data: null.
+        // Refresh the cart and navigate to success screen.
+        // ------------------------------------------------------------
         if (order == null) {
-          // Clear cart locally
-          // context.read<CartCubit>().clearCartLocally();
+          context.read<CartCubit>().doEvent(
+                GetCartEvent(),
+              );
 
           if (!context.mounted) return;
 
-          // Go directly to second screen
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SuccessOrder()),
+            MaterialPageRoute(
+              builder: (_) => const SuccessOrder(),
+            ),
           );
 
           return;
         }
 
+        // ------------------------------------------------------------
+        // CARD PAYMENT
+        // ------------------------------------------------------------
+
         final sessionUrl = order.sessionUrl;
 
+        // If there is no payment URL, consider the order completed.
         if (sessionUrl.isEmpty) {
+          context.read<CartCubit>().doEvent(
+                GetCartEvent(),
+              );
+
           if (!context.mounted) return;
 
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Payment session URL is missing')),
-            );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const SuccessOrder(),
+            ),
+          );
 
           return;
         }
@@ -95,16 +147,16 @@ class TotalPrice extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text(localizations.invalidpaymentURL)),
+              SnackBar(
+                content: Text(
+                  localizations.invalidpaymentURL,
+                ),
+              ),
             );
 
           return;
         }
 
-        // Clear cart locally
-        context.read<CartCubit>().doEvent(GetCartEvent());
-
-        // Open Stripe
         final success = await launchUrl(
           uri,
           mode: LaunchMode.externalApplication,
@@ -116,14 +168,17 @@ class TotalPrice extends StatelessWidget {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
-              SnackBar(content: Text(localizations.couldnotopenpaymentpage)),
+              SnackBar(
+                content: Text(
+                  localizations.couldnotopenpaymentpage,
+                ),
+              ),
             );
-
-          return;
         }
       },
       builder: (context, state) {
-        final deliveryFee = state.deliveryFeeState.data?.deliveryFee ?? 0.0;
+        final deliveryFee =
+            state.deliveryFeeState.data?.deliveryFee ?? 0.0;
 
         final total = subTotal + deliveryFee;
 
@@ -133,23 +188,41 @@ class TotalPrice extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              // ------------------------------------------------------
+              // SUBTOTAL
+              // ------------------------------------------------------
+
               SubTotal(
                 title: localizations.subTotal,
-                price: '${localizations.egp}${subTotal.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${subTotal.toStringAsFixed(2)}',
               ),
 
               const SizedBox(height: 8),
 
+              // ------------------------------------------------------
+              // DELIVERY FEE
+              // ------------------------------------------------------
+
               SubTotal(
                 title: localizations.deliveryFee,
-                price: '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
               ),
 
-              const Divider(height: 30, thickness: 1),
+              const Divider(
+                height: 30,
+                thickness: 1,
+              ),
+
+              // ------------------------------------------------------
+              // TOTAL
+              // ------------------------------------------------------
 
               SubTotal(
                 title: localizations.total,
-                price: '${localizations.egp}${total.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${total.toStringAsFixed(2)}',
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -158,17 +231,27 @@ class TotalPrice extends StatelessWidget {
 
               const SizedBox(height: 40),
 
+              // ------------------------------------------------------
+              // PLACE ORDER BUTTON
+              // ------------------------------------------------------
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: isLoading ? null : () => _placeOrder(context),
+                  onPressed: isLoading
+                      ? null
+                      : () => _placeOrder(context),
                   child: isLoading
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
                         )
-                      : Text(localizations.placeOrder),
+                      : Text(
+                          localizations.placeOrder,
+                        ),
                 ),
               ),
             ],
@@ -178,32 +261,66 @@ class TotalPrice extends StatelessWidget {
     );
   }
 
+  // ==================================================================
+  // PLACE ORDER
+  // ==================================================================
+
   void _placeOrder(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
     final cubit = context.read<CheckoutCubit>();
+
     final state = cubit.state;
 
     final selectedPaymentMethod = state.selectedPaymentMethod;
 
+    // ------------------------------------------------------------
+    // PAYMENT METHOD VALIDATION
+    // ------------------------------------------------------------
+
     if (selectedPaymentMethod == null) {
-      _showMessage(context, localizations.pleaseselectapaymentmethod);
+      _showMessage(
+        context,
+        localizations.pleaseselectapaymentmethod,
+      );
+
       return;
     }
 
+    // ------------------------------------------------------------
+    // GIFT VALIDATION
+    // ------------------------------------------------------------
+
     if (state.isGift) {
       if (state.giftName.trim().isEmpty) {
-        _showMessage(context, localizations.pleaseenterrecipientname);
+        _showMessage(
+          context,
+          localizations.pleaseenterrecipientname,
+        );
+
         return;
       }
 
       if (state.giftPhone.trim().isEmpty) {
-        _showMessage(context, localizations.pleaseenterrecipientphone);
+        _showMessage(
+          context,
+          localizations.pleaseenterrecipientphone,
+        );
+
         return;
       }
     }
 
-    final isCard = selectedPaymentMethod == Endpoints.creditCard;
+    // ------------------------------------------------------------
+    // PAYMENT TYPE
+    // ------------------------------------------------------------
+
+    final isCard =
+        selectedPaymentMethod == Endpoints.creditCard;
+
+    // ------------------------------------------------------------
+    // ORDER REQUEST
+    // ------------------------------------------------------------
 
     final request = CardOrderRequestEntity(
       cartId: cartId,
@@ -215,16 +332,39 @@ class TotalPrice extends StatelessWidget {
               recipientPhone: state.giftPhone.trim(),
             )
           : null,
-      paymentMethod: isCard ? Endpoints.card : Endpoints.cod,
-      paymentGateway: isCard ? Endpoints.stripe : null,
+      paymentMethod: isCard
+          ? Endpoints.card
+          : Endpoints.cod,
+      paymentGateway: isCard
+          ? Endpoints.stripe
+          : null,
     );
 
-    cubit.doEvent(PlaceOrder(order: request));
+    // ------------------------------------------------------------
+    // PLACE ORDER EVENT
+    // ------------------------------------------------------------
+
+    cubit.doEvent(
+      PlaceOrder(
+        order: request,
+      ),
+    );
   }
 
-  void _showMessage(BuildContext context, String message) {
+  // ==================================================================
+  // SHOW MESSAGE
+  // ==================================================================
+
+  void _showMessage(
+    BuildContext context,
+    String message,
+  ) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
   }
 }
