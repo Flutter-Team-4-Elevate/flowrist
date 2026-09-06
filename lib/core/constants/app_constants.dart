@@ -39,4 +39,5 @@ abstract final class AppConstants {
   static const String currentDevice = 'This Device';
   static const String activeNow = 'Active Now';
   static const String jwtJtiClaim = 'jti';
+  static const String sessionIdParam = 'sessionId';
 }

@@ -21,6 +21,7 @@ class SessionsCubit extends Cubit<SessionsState> {
       case GetSessionsEvent():
         await _getSessions();
       case RevokeSessionEvent():
+        if (state.revokingSessionId != null) return;
         await _revokeSession(event.sessionId);
     }
   }

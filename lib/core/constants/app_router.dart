@@ -1,4 +1,6 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/session/session_invalidation_notifier.dart';
+import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
@@ -56,6 +58,23 @@ abstract final class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
+    refreshListenable: getIt<SessionInvalidationNotifier>(),
+    redirect: (context, state) async {
+      final sessionService = getIt<SessionService>();
+      final token = await sessionService.getToken();
+
+      final isAuthFlow =
+          state.matchedLocation == AppRoutes.login ||
+          state.matchedLocation == AppRoutes.signUp ||
+          state.matchedLocation == AppRoutes.splash ||
+          state.matchedLocation == AppRoutes.forgetPassword;
+
+      if (token.isEmpty && !isAuthFlow) {
+        return AppRoutes.login;
+      }
+
+      return null;
+    },
 
     routes: [
       // ==================================================
