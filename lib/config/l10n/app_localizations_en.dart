@@ -503,7 +503,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noOrdersFound => 'No orders found';
 
   @override
-  String get orderNumberPrefix => 'Order number#';
+  String get orderNumberPrefix => 'Order number:';
 
   @override
   String get orderDetails => 'Order Details';
@@ -519,4 +519,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get orderDate => 'Order date';
 }

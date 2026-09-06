@@ -114,7 +114,7 @@ class OrderCardWidget extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      height: 36,
+      height: 44,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.purpleBase,

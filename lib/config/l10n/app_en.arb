@@ -159,10 +159,11 @@
   "reorder": "Reorder",
   "deliveredOn": "Delivered on",
   "noOrdersFound": "No orders found",
-"orderNumberPrefix": "Order number#",
+  "orderNumberPrefix": "Order number:",
   "orderDetails": "Order Details",
   "status": "Status",
   "paymentMethod": "Payment Method",
   "paymentStatus": "Payment Status",
-  "somethingWentWrong": "Something went wrong"
+  "somethingWentWrong": "Something went wrong",
+  "orderDate": "Order date"
 }

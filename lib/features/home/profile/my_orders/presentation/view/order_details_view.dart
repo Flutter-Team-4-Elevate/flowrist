@@ -8,6 +8,7 @@ import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orde
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/orders_empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 class OrderDetailsView extends StatelessWidget {
   final String orderId;
@@ -35,6 +36,7 @@ class OrderDetailsView extends StatelessWidget {
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: Text(locale.orderDetails, style: AppStyles.medium18Inter),
+          titleSpacing: 0,
         ),
         body: BlocBuilder<OrdersCubit, OrdersState>(
           builder: (context, state) {
@@ -49,16 +51,22 @@ class OrderDetailsView extends StatelessWidget {
               return OrdersEmptyStateWidget(message: locale.noOrdersFound);
             }
 
-            return Padding(
+            final formattedDate = details.createdAt != null
+                ? DateFormat('d MMM yyyy, hh:mm a').format(details.createdAt!)
+                : null;
+
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${locale.orderNumberPrefix} ${details.orderNumber}',
+                    '${locale.orderNumberPrefix}\n${details.orderNumber}',
                     style: AppStyles.bold20Inter,
                   ),
                   const SizedBox(height: 16),
+                  if (formattedDate != null)
+                    _buildDetailRow(locale.orderDate, formattedDate),
                   _buildDetailRow(locale.status, details.status),
                   _buildDetailRow(locale.paymentMethod, details.paymentMethod),
                   _buildDetailRow(locale.paymentStatus, details.paymentStatus),
