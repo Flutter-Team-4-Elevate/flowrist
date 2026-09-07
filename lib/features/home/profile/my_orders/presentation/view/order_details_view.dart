@@ -1,6 +1,7 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
@@ -39,20 +40,50 @@ class OrderDetailsView extends StatelessWidget {
           titleSpacing: 0,
         ),
         body: BlocBuilder<OrdersCubit, OrdersState>(
+          buildWhen: (previous, current) =>
+              previous.orderDetails != current.orderDetails,
           builder: (context, state) {
-            if (state.isLoadingDetails) {
+            if (state.orderDetails.isLoading &&
+                state.orderDetails.data == null) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.purpleBase),
               );
             }
 
-            final details = state.selectedOrderDetails;
+            if (state.orderDetails.errorMessage != null &&
+                state.orderDetails.data == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.orderDetails.errorMessage!,
+                      style: AppStyles.regular14Inter,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.purpleBase,
+                      ),
+                      onPressed: () => context.read<OrdersCubit>().doEvent(
+                        LoadOrderDetailsEvent(orderId),
+                      ),
+                      child: Text(locale.retry, style: AppStyles.medium16Inter),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final details = state.orderDetails.data;
             if (details == null) {
               return OrdersEmptyStateWidget(message: locale.noOrdersFound);
             }
 
             final formattedDate = details.createdAt != null
-                ? DateFormat('d MMM yyyy, hh:mm a').format(details.createdAt!)
+                ? DateFormat(
+                    AppConstants.orderDateFormat,
+                  ).format(details.createdAt!)
                 : null;
 
             return SingleChildScrollView(

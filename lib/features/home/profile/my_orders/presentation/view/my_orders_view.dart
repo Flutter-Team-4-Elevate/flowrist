@@ -1,16 +1,16 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/features/home/profile/my_orders/presentation/view/order_details_view.dart';
-import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/order_card_widget.dart';
-import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/orders_empty_state_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_state.dart';
+import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/order_card_widget.dart';
+import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/orders_empty_state_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class MyOrdersView extends StatelessWidget {
   const MyOrdersView({super.key});
@@ -65,20 +65,23 @@ class _MyOrdersView extends StatelessWidget {
           ),
         ),
         body: BlocBuilder<OrdersCubit, OrdersState>(
+          buildWhen: (previous, current) => previous.orders != current.orders,
           builder: (context, state) {
-            if (state.status == OrdersStatus.loading) {
+            if (state.orders.isLoading && state.orders.data == null) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.purpleBase),
               );
             }
 
-            if (state.status == OrdersStatus.failure) {
+            if (state.orders.errorMessage != null &&
+                state.orders.data == null) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      state.errorMessage ?? locale.generalValidationError,
+                      state.orders.errorMessage ??
+                          locale.generalValidationError,
                       style: AppStyles.regular14Inter,
                     ),
                     const SizedBox(height: 8),
@@ -98,8 +101,8 @@ class _MyOrdersView extends StatelessWidget {
 
             return TabBarView(
               children: [
-                _buildOrdersList(context, state.activeOrders),
-                _buildOrdersList(context, state.completedOrders),
+                _OrdersListView(orders: state.activeOrders),
+                _OrdersListView(orders: state.completedOrders),
               ],
             );
           },
@@ -107,36 +110,85 @@ class _MyOrdersView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildOrdersList(BuildContext context, List<OrderEntity> orders) {
-    if (orders.isEmpty) {
+class _OrdersListView extends StatefulWidget {
+  final List<OrderEntity> orders;
+
+  const _OrdersListView({required this.orders});
+
+  @override
+  State<_OrdersListView> createState() => _OrdersListViewState();
+}
+
+class _OrdersListViewState extends State<_OrdersListView> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<OrdersCubit>().doEvent(const LoadMoreOrdersEvent());
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.orders.isEmpty) {
       return const OrdersEmptyStateWidget();
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
-      itemCount: orders.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final order = orders[index];
-        return OrderCardWidget(
-          order: order,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => OrderDetailsView(orderId: order.id),
-              ),
-            );
-          },
-          onActionPressed: () {
-            if (order.displayStatus == OrderDisplayStatus.active) {
-              // Action: Track Order
-            } else {
-              // Action: Reorder
-            }
-          },
-        );
+    return RefreshIndicator(
+      color: AppColors.purpleBase,
+      onRefresh: () async {
+        context.read<OrdersCubit>().doEvent(const LoadOrdersEvent());
       },
+      child: BlocBuilder<OrdersCubit, OrdersState>(
+        buildWhen: (previous, current) =>
+            previous.isLoadingMore != current.isLoadingMore ||
+            previous.orders.data != current.orders.data,
+        builder: (context, state) {
+          final showLoader = state.isLoadingMore;
+
+          return ListView.separated(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.all(16),
+            itemCount: widget.orders.length + (showLoader ? 1 : 0),
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              if (index >= widget.orders.length) {
+                return const Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: CircularProgressIndicator(
+                      color: AppColors.purpleBase,
+                    ),
+                  ),
+                );
+              }
+
+              final order = widget.orders[index];
+              return OrderCardWidget(
+                order: order,
+                onTap: () => context.push('/order-details/${order.id}'),
+                onActionPressed: () {},
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

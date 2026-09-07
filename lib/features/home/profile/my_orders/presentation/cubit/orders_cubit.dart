@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_order_details_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_orders_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
@@ -18,40 +19,114 @@ class OrdersCubit extends Cubit<OrdersState> {
     switch (event) {
       case LoadOrdersEvent():
         _loadOrders(event.page, event.pageSize);
+      case LoadMoreOrdersEvent():
+        _loadMoreOrders();
       case LoadOrderDetailsEvent():
         _loadOrderDetails(event.orderId);
     }
   }
 
   Future<void> _loadOrders(int page, int pageSize) async {
-    emit(state.copyWith(status: OrdersStatus.loading));
+    emit(
+      state.copyWith(
+        orders: state.orders.copyWith(isLoading: true, errorMessage: null),
+        currentPage: 1,
+        hasNextPage: true,
+      ),
+    );
+
     final response = await _getOrdersUseCase.call(
       page: page,
       pageSize: pageSize,
     );
+
     switch (response) {
       case SuccessResponse(data: final orders):
-        emit(state.copyWith(status: OrdersStatus.success, allOrders: orders));
+        final list = orders ?? [];
+        emit(
+          state.copyWith(
+            orders: state.orders.copyWith(
+              isLoading: false,
+              data: list,
+              errorMessage: null,
+            ),
+            currentPage: 1,
+            hasNextPage: list.length >= pageSize,
+          ),
+        );
       case ErrorResponse(errorMessage: final message):
         emit(
-          state.copyWith(status: OrdersStatus.failure, errorMessage: message),
+          state.copyWith(
+            orders: state.orders.copyWith(
+              isLoading: false,
+              errorMessage: message,
+            ),
+          ),
         );
     }
   }
 
+  Future<void> _loadMoreOrders() async {
+    if (state.isLoadingMore || !state.hasNextPage || state.orders.isLoading) {
+      return;
+    }
+
+    emit(state.copyWith(isLoadingMore: true));
+    final nextPage = state.currentPage + 1;
+
+    final response = await _getOrdersUseCase.call(page: nextPage, pageSize: 10);
+
+    switch (response) {
+      case SuccessResponse(data: final newOrders):
+        final newItems = newOrders ?? [];
+        final currentItems = List<OrderEntity>.from(state.orders.data ?? []);
+        currentItems.addAll(newItems);
+
+        emit(
+          state.copyWith(
+            isLoadingMore: false,
+            currentPage: nextPage,
+            hasNextPage: newItems.length >= 10,
+            orders: state.orders.copyWith(data: currentItems),
+          ),
+        );
+      case ErrorResponse():
+        emit(state.copyWith(isLoadingMore: false));
+    }
+  }
+
   Future<void> _loadOrderDetails(String orderId) async {
-    emit(state.copyWith(isLoadingDetails: true));
+    emit(
+      state.copyWith(
+        orderDetails: state.orderDetails.copyWith(
+          isLoading: true,
+          errorMessage: null,
+        ),
+      ),
+    );
+
     final response = await _getOrderDetailsUseCase.call(orderId: orderId);
+
     switch (response) {
       case SuccessResponse(data: final details):
         emit(
           state.copyWith(
-            isLoadingDetails: false,
-            selectedOrderDetails: details,
+            orderDetails: state.orderDetails.copyWith(
+              isLoading: false,
+              data: details,
+              errorMessage: null,
+            ),
           ),
         );
       case ErrorResponse(errorMessage: final message):
-        emit(state.copyWith(isLoadingDetails: false, errorMessage: message));
+        emit(
+          state.copyWith(
+            orderDetails: state.orderDetails.copyWith(
+              isLoading: false,
+              errorMessage: message,
+            ),
+          ),
+        );
     }
   }
 }

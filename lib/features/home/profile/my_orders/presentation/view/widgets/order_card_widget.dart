@@ -1,9 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/presentation/helper/date_time_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class OrderCardWidget extends StatelessWidget {
   final OrderEntity order;
@@ -46,6 +47,8 @@ class OrderCardWidget extends StatelessWidget {
 
   Widget _buildThumbnail(double screenWidth) {
     final imageSize = screenWidth * 0.22;
+    final imageUrl = order.firstItemThumbnailUrl;
+
     return Container(
       width: imageSize,
       height: imageSize,
@@ -54,13 +57,21 @@ class OrderCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       clipBehavior: Clip.antiAlias,
-      child:
-          order.firstItemThumbnailUrl != null &&
-              order.firstItemThumbnailUrl!.isNotEmpty
-          ? Image.network(
-              order.firstItemThumbnailUrl!,
+      child: imageUrl != null && imageUrl.isNotEmpty
+          ? CachedNetworkImage(
+              imageUrl: imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => _buildFallbackIcon(),
+              placeholder: (context, url) => const Center(
+                child: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.purpleBase,
+                  ),
+                ),
+              ),
+              errorWidget: (context, url, error) => _buildFallbackIcon(),
             )
           : _buildFallbackIcon(),
     );
@@ -74,9 +85,7 @@ class OrderCardWidget extends StatelessWidget {
 
   Widget _buildDetails(BuildContext context, bool isCompleted) {
     final locale = AppLocalizations.of(context)!;
-    final formattedDate = order.createdAt != null
-        ? DateFormat('d MMM yyyy').format(order.createdAt!)
-        : '';
+    final formattedDate = order.createdAt.toOrderCardDate();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

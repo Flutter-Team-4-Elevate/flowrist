@@ -165,5 +165,6 @@
   "paymentMethod": "Payment Method",
   "paymentStatus": "Payment Status",
   "somethingWentWrong": "Something went wrong",
-  "orderDate": "Order date"
+  "orderDate": "Order date",
+  "orderIdRequired": "Order ID is required"
 }

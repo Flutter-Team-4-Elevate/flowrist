@@ -522,4 +522,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderDate => 'Order date';
+
+  @override
+  String get orderIdRequired => 'Order ID is required';
 }

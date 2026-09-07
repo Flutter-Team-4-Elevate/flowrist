@@ -1077,6 +1077,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order date'**
   String get orderDate;
+
+  /// No description provided for @orderIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Order ID is required'**
+  String get orderIdRequired;
 }
 
 class _AppLocalizationsDelegate

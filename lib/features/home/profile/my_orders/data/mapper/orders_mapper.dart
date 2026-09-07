@@ -4,12 +4,24 @@ import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_d
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 
 abstract final class OrdersMapper {
+  static const Set<String> _completedStatuses = {
+    'delivered',
+    'completed',
+    'cancelled',
+    'canceled',
+    'refunded',
+    'returned',
+    'failed',
+  };
+
   static List<OrderEntity> toOrderEntityList(OrdersResponseDto dto) {
     final items = dto.data ?? [];
     return items.where((item) => item.id != null && item.id!.isNotEmpty).map((
       item,
     ) {
-      final isDelivered = (item.status ?? '').toLowerCase() == 'delivered';
+      final normalizedStatus = (item.status ?? '').trim().toLowerCase();
+      final isCompleted = _completedStatuses.contains(normalizedStatus);
+
       return OrderEntity(
         id: item.id!,
         orderNumber: item.orderNumber ?? '',
@@ -19,7 +31,7 @@ abstract final class OrdersMapper {
         itemCount: item.itemCount ?? 1,
         firstItemThumbnailUrl: item.firstItemThumbnailUrl,
         rawStatus: item.status ?? '',
-        displayStatus: isDelivered
+        displayStatus: isCompleted
             ? OrderDisplayStatus.completed
             : OrderDisplayStatus.active,
         total: (item.total ?? 0).toDouble(),
