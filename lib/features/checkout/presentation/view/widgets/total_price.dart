@@ -1,4 +1,3 @@
-
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
@@ -42,10 +41,7 @@ class TotalPrice extends StatelessWidget {
         if (placeOrderState.errorMessage != null) {
           if (!context.mounted) return;
 
-          _showMessage(
-            context,
-            placeOrderState.errorMessage!,
-          );
+          _showMessage(context, placeOrderState.errorMessage!);
 
           return;
         }
@@ -64,10 +60,7 @@ class TotalPrice extends StatelessWidget {
         if (sessionUrl.isEmpty) {
           if (!context.mounted) return;
 
-          _showMessage(
-            context,
-            localizations.invalidpaymentURL,
-          );
+          _showMessage(context, localizations.invalidpaymentURL);
 
           return;
         }
@@ -79,51 +72,31 @@ class TotalPrice extends StatelessWidget {
             (uri.scheme != 'http' && uri.scheme != 'https')) {
           if (!context.mounted) return;
 
-          _showMessage(
-            context,
-            localizations.invalidpaymentURL,
-          );
+          _showMessage(context, localizations.invalidpaymentURL);
 
           return;
         }
 
-        debugPrint(
-          'Opening Stripe payment URL: $sessionUrl',
-        );
-
-        final paymentResult =
-            await Navigator.of(context).push<bool>(
+        final paymentResult = await Navigator.of(context).push<bool>(
           MaterialPageRoute(
-            builder: (_) => PaymentWebView(
-              paymentUrl: sessionUrl,
-            ),
+            builder: (_) => PaymentWebView(paymentUrl: sessionUrl),
           ),
         );
 
         if (!context.mounted) return;
 
-        debugPrint(
-          'Payment WebView result: $paymentResult',
-        );
-
         if (paymentResult == true) {
-          debugPrint('CARD PAYMENT SUCCESS');
-
           await _handleOrderSuccess(context);
 
           return;
         }
-
-        debugPrint('CARD PAYMENT CANCELLED');
       },
       builder: (context, state) {
-        final deliveryFee =
-            state.deliveryFeeState.data?.deliveryFee ?? 0.0;
+        final deliveryFee = state.deliveryFeeState.data?.deliveryFee ?? 0.0;
 
         final total = subTotal + deliveryFee;
 
-        final isLoading =
-            state.placeOrderState.isLoading;
+        final isLoading = state.placeOrderState.isLoading;
 
         return Padding(
           padding: const EdgeInsets.all(16),
@@ -131,23 +104,17 @@ class TotalPrice extends StatelessWidget {
             children: [
               SubTotal(
                 title: localizations.subTotal,
-                price:
-                    '${localizations.egp}${subTotal.toStringAsFixed(2)}',
+                price: '${localizations.egp}${subTotal.toStringAsFixed(2)}',
               ),
               const SizedBox(height: 8),
               SubTotal(
                 title: localizations.deliveryFee,
-                price:
-                    '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
+                price: '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
               ),
-              const Divider(
-                height: 30,
-                thickness: 1,
-              ),
+              const Divider(height: 30, thickness: 1),
               SubTotal(
                 title: localizations.total,
-                price:
-                    '${localizations.egp}${total.toStringAsFixed(2)}',
+                price: '${localizations.egp}${total.toStringAsFixed(2)}',
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
@@ -159,20 +126,14 @@ class TotalPrice extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: isLoading
-                      ? null
-                      : () => _placeOrder(context),
+                  onPressed: isLoading ? null : () => _placeOrder(context),
                   child: isLoading
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : Text(
-                          localizations.placeOrder,
-                        ),
+                      : Text(localizations.placeOrder),
                 ),
               ),
             ],
@@ -182,29 +143,15 @@ class TotalPrice extends StatelessWidget {
     );
   }
 
-  Future<void> _handleOrderSuccess(
-    BuildContext context,
-  ) async {
-    debugPrint('ORDER SUCCESS');
-
+  Future<void> _handleOrderSuccess(BuildContext context) async {
     final cartCubit = context.read<CartCubit>();
 
     const maxAttempts = 5;
 
-    for (
-      int attempt = 1;
-      attempt <= maxAttempts;
-      attempt++
-    ) {
+    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
       if (!context.mounted) return;
 
-      debugPrint(
-        'Refreshing cart - attempt $attempt/$maxAttempts',
-      );
-
-      await cartCubit.doEvent(
-        GetCartEvent(),
-      );
+      await cartCubit.doEvent(GetCartEvent());
 
       if (!context.mounted) return;
 
@@ -213,48 +160,21 @@ class TotalPrice extends StatelessWidget {
       if (cart == null) {
         debugPrint('Cart data is null, retrying...');
       } else {
-        debugPrint(
-          'Cart items count: ${cart.items.length}',
-        );
-
-        debugPrint(
-          'Cart total quantity: ${cart.totalQuantity}',
-        );
-
-        debugPrint(
-          'Cart total: ${cart.total}',
-        );
-
         if (cart.items.isEmpty) {
-          debugPrint(
-            'CART CLEARED SUCCESSFULLY',
-          );
-
-          context.go(
-            AppRoutes.successOrder,
-          );
+          context.go(AppRoutes.successOrder);
 
           return;
         }
       }
 
       if (attempt < maxAttempts) {
-        await Future.delayed(
-          const Duration(milliseconds: 700),
-        );
+        await Future.delayed(const Duration(milliseconds: 700));
       }
     }
 
     if (!context.mounted) return;
 
-    debugPrint(
-      'Cart was not confirmed empty after '
-      '$maxAttempts attempts.',
-    );
-
-    context.go(
-      AppRoutes.successOrder,
-    );
+    context.go(AppRoutes.successOrder);
   }
 
   void _placeOrder(BuildContext context) {
@@ -264,40 +184,29 @@ class TotalPrice extends StatelessWidget {
 
     final state = cubit.state;
 
-    final selectedPaymentMethod =
-        state.selectedPaymentMethod;
+    final selectedPaymentMethod = state.selectedPaymentMethod;
 
     if (selectedPaymentMethod == null) {
-      _showMessage(
-        context,
-        localizations.pleaseselectapaymentmethod,
-      );
+      _showMessage(context, localizations.pleaseselectapaymentmethod);
 
       return;
     }
 
     if (state.isGift) {
       if (state.giftName.trim().isEmpty) {
-        _showMessage(
-          context,
-          localizations.pleaseenterrecipientname,
-        );
+        _showMessage(context, localizations.pleaseenterrecipientname);
 
         return;
       }
 
       if (state.giftPhone.trim().isEmpty) {
-        _showMessage(
-          context,
-          localizations.pleaseenterrecipientphone,
-        );
+        _showMessage(context, localizations.pleaseenterrecipientphone);
 
         return;
       }
     }
 
-    final isCard =
-        selectedPaymentMethod == Endpoints.creditCard;
+    final isCard = selectedPaymentMethod == Endpoints.creditCard;
 
     final request = CardOrderRequestEntity(
       cartId: cartId,
@@ -309,30 +218,16 @@ class TotalPrice extends StatelessWidget {
               recipientPhone: state.giftPhone.trim(),
             )
           : null,
-      paymentMethod:
-          isCard ? Endpoints.card : Endpoints.cod,
-      paymentGateway:
-          isCard ? Endpoints.stripe : null,
+      paymentMethod: isCard ? Endpoints.card : Endpoints.cod,
+      paymentGateway: isCard ? Endpoints.stripe : null,
     );
 
-    cubit.doEvent(
-      PlaceOrder(
-        order: request,
-      ),
-    );
+    cubit.doEvent(PlaceOrder(order: request));
   }
 
-  void _showMessage(
-    BuildContext context,
-    String message,
-  ) {
+  void _showMessage(BuildContext context, String message) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-        ),
-      );
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 }
- 

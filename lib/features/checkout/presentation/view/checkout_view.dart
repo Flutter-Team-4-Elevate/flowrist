@@ -98,10 +98,7 @@ class _CheckoutViewState extends State<CheckoutView> {
                       final deliveryFee =
                           state.deliveryFeeState.data;
 
-                      // No CircularProgressIndicator here.
-                      //
-                      // While the delivery fee is loading,
-                      // DeliveryTime receives null.
+ 
                       return DeliveryTime(
                         estimatedDeliveryAt:
                             deliveryFee?.estimatedDeliveryAt,

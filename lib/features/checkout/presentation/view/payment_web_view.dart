@@ -38,7 +38,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
             });
           },
           onWebResourceError: (error) {
-            debugPrint('WebView error: ${error.description}');
+         
             if (!mounted) return;
             setState(() {
               _isLoading = false;
@@ -54,10 +54,9 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     if (uri == null) {
       return NavigationDecision.prevent;
     }
-    debugPrint('Payment navigation URL: ${request.url}');
-    debugPrint('Payment navigation path: ${uri.path}');
+   
     if (_isPaymentSuccess(uri)) {
-      debugPrint('PAYMENT SUCCESS URL DETECTED');
+   
       if (_isPaymentCompleted) {
         return NavigationDecision.prevent;
       }
@@ -69,7 +68,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       return NavigationDecision.prevent;
     }
     if (_isPaymentCancelled(uri)) {
-      debugPrint('PAYMENT CANCEL URL DETECTED');
+     
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         Navigator.of(context).pop(false);

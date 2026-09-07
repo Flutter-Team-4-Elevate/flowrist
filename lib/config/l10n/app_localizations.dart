@@ -1221,6 +1221,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Payment'**
   String get payment;
+
+  /// No description provided for @noAddressSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No location selected'**
+  String get noAddressSelected;
 }
 
 class _AppLocalizationsDelegate

@@ -188,6 +188,8 @@
   "app_version": "v 6.3.0 - (446)",
   "selectCityAndArea": "Please select city and area",
   "savedAddress": "Saved address",
-  "payment":"Payment"
+  "payment":"Payment",
+  "noAddressSelected":"No location selected"
+     
 
 }
