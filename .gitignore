@@ -54,3 +54,23 @@ app.*.map.json
 
 # Environment Variables
 .env
+.env.*
+!.env.example
+
+# Firebase / Google credentials
+android/app/google-services.json
+GoogleService-Info.plist
+
+# Firebase service account credentials
+android/fastlane/*-adminsdk-*.json
+
+# Android signing keys
+android/key.properties
+*.jks
+*.keystore
+
+# Fastlane
+android/fastlane/report.xml
+android/fastlane/Preview.html
+android/fastlane/screenshots/
+android/fastlane/test_output/
