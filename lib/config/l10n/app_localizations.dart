@@ -1215,6 +1215,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved address'**
   String get savedAddress;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
 }
 
 class _AppLocalizationsDelegate

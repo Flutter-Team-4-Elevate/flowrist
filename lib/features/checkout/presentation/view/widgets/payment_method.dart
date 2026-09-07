@@ -1,3 +1,4 @@
+ 
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/payment_method_item.dart';
@@ -8,7 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentMethod extends StatelessWidget {
-  const PaymentMethod({super.key});
+  const PaymentMethod({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +23,16 @@ class PaymentMethod extends StatelessWidget {
     ];
 
     return BlocBuilder<CheckoutCubit, CheckoutState>(
-      buildWhen: (previous, current) =>
-          previous.selectedPaymentMethod !=
-          current.selectedPaymentMethod,
+      buildWhen: (previous, current) {
+        return previous.selectedPaymentMethod !=
+                current.selectedPaymentMethod ||
+            previous.placeOrderState.isLoading !=
+                current.placeOrderState.isLoading;
+      },
       builder: (context, state) {
+        final isLoading =
+            state.placeOrderState.isLoading;
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -47,26 +56,41 @@ class PaymentMethod extends StatelessWidget {
                   return const SizedBox(height: 16);
                 },
                 itemBuilder: (context, index) {
-                  final paymentMethod = paymentMethods[index];
+                  final paymentMethod =
+                      paymentMethods[index];
 
-                  final title = paymentMethod == Endpoints.cash
-                      ? localizations.cashOnDelivery
-                      : localizations.creditCard;
+                  final title =
+                      paymentMethod == Endpoints.cash
+                          ? localizations.cashOnDelivery
+                          : localizations.creditCard;
 
                   return PaymentMethodItem(
                     title: title,
                     isSelected:
-                        state.selectedPaymentMethod == paymentMethod,
-                    onTap: () {
-                      context.read<CheckoutCubit>().doEvent(
-                        SelectPaymentMethod(
-                          paymentMethod: paymentMethod,
-                        ),
-                      );
-                    },
+                        state.selectedPaymentMethod ==
+                            paymentMethod,
+                    onTap: isLoading
+                        ? null
+                        : () {
+                            context
+                                .read<CheckoutCubit>()
+                                .doEvent(
+                                  SelectPaymentMethod(
+                                    paymentMethod:
+                                        paymentMethod,
+                                  ),
+                                );
+                          },
                   );
                 },
               ),
+
+              if (isLoading) ...[
+                const SizedBox(height: 20),
+                const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ],
             ],
           ),
         );
@@ -74,3 +98,4 @@ class PaymentMethod extends StatelessWidget {
     );
   }
 }
+ 

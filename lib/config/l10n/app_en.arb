@@ -187,5 +187,7 @@
   "terms_and_conditions": "Terms & conditions",
   "app_version": "v 6.3.0 - (446)",
   "selectCityAndArea": "Please select city and area",
-  "savedAddress": "Saved address"
+  "savedAddress": "Saved address",
+  "payment":"Payment"
+
 }

@@ -591,4 +591,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedAddress => 'Saved address';
+
+  @override
+  String get payment => 'Payment';
 }

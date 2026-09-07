@@ -4,6 +4,7 @@ import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
 import 'package:flowrist/features/auth/presentation/signup/view/signup_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/checkout_view.dart';
+import 'package:flowrist/features/checkout/presentation/view/success_order.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
 import 'package:flowrist/features/home/cart/presentation/view/cart_tab_view.dart';
@@ -60,6 +61,7 @@ abstract final class AppRoutes {
   static const activeSessions = '/active-sessions';
   static const myOrders = '/my-orders';
   static const orderDetails = '/order-details/:orderId';
+  static const successOrder = '/successOrder';
   static String orderDetailsPath(String orderId) {
     return '/order-details/$orderId';
   }
@@ -100,6 +102,11 @@ abstract final class AppRouter {
         path: AppRoutes.search,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const SearchView(),
+      ),
+      GoRoute(
+        path: AppRoutes.successOrder,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const SuccessOrder(),
       ),
       GoRoute(
         path: AppRoutes.checkOut,
