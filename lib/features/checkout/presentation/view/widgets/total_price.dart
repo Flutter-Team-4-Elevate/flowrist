@@ -5,7 +5,6 @@ import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/gift_recipient_entity.dart';
 import 'package:flowrist/features/checkout/presentation/view/payment_web_view.dart';
-import 'package:flowrist/features/checkout/presentation/view/success_order.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/sub_total.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
@@ -53,17 +52,13 @@ class TotalPrice extends StatelessWidget {
 
         final order = placeOrderState.data;
 
-        // COD
-        //
-        // Your API returns null data for COD.
-        // The order is already completed and the
-        // backend automatically clears the cart.
+        // Cash on Delivery
         if (order == null) {
           await _handleOrderSuccess(context);
           return;
         }
 
-        // CARD
+        // Credit Card
         final sessionUrl = order.sessionUrl.trim();
 
         if (sessionUrl.isEmpty) {
@@ -81,8 +76,7 @@ class TotalPrice extends StatelessWidget {
 
         if (uri == null ||
             !uri.hasScheme ||
-            (uri.scheme != 'http' &&
-                uri.scheme != 'https')) {
+            (uri.scheme != 'http' && uri.scheme != 'https')) {
           if (!context.mounted) return;
 
           _showMessage(
@@ -113,18 +107,14 @@ class TotalPrice extends StatelessWidget {
         );
 
         if (paymentResult == true) {
-          debugPrint(
-            'CARD PAYMENT SUCCESS',
-          );
+          debugPrint('CARD PAYMENT SUCCESS');
 
           await _handleOrderSuccess(context);
 
           return;
         }
 
-        debugPrint(
-          'CARD PAYMENT CANCELLED',
-        );
+        debugPrint('CARD PAYMENT CANCELLED');
       },
       builder: (context, state) {
         final deliveryFee =
@@ -164,6 +154,8 @@ class TotalPrice extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
+
+              // Only loading indicator in checkout.
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -199,7 +191,11 @@ class TotalPrice extends StatelessWidget {
 
     const maxAttempts = 5;
 
-    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+    for (
+      int attempt = 1;
+      attempt <= maxAttempts;
+      attempt++
+    ) {
       if (!context.mounted) return;
 
       debugPrint(
@@ -215,9 +211,7 @@ class TotalPrice extends StatelessWidget {
       final cart = cartCubit.state.cart.data;
 
       if (cart == null) {
-        debugPrint(
-          'Cart data is null, retrying...',
-        );
+        debugPrint('Cart data is null, retrying...');
       } else {
         debugPrint(
           'Cart items count: ${cart.items.length}',
@@ -231,19 +225,19 @@ class TotalPrice extends StatelessWidget {
           'Cart total: ${cart.total}',
         );
 
-        // Backend has successfully cleared the cart.
         if (cart.items.isEmpty) {
           debugPrint(
             'CART CLEARED SUCCESSFULLY',
           );
 
-        context.go(AppRoutes.successOrder);
+          context.go(
+            AppRoutes.successOrder,
+          );
 
           return;
         }
       }
 
-      // Don't wait after the last request.
       if (attempt < maxAttempts) {
         await Future.delayed(
           const Duration(milliseconds: 700),
@@ -251,9 +245,6 @@ class TotalPrice extends StatelessWidget {
       }
     }
 
-    // We don't want to block the user forever.
-    // The order was already successful, so navigate
-    // even if the cart API did not return empty yet.
     if (!context.mounted) return;
 
     debugPrint(
@@ -261,7 +252,9 @@ class TotalPrice extends StatelessWidget {
       '$maxAttempts attempts.',
     );
 
-  context.go(AppRoutes.successOrder);
+    context.go(
+      AppRoutes.successOrder,
+    );
   }
 
   void _placeOrder(BuildContext context) {

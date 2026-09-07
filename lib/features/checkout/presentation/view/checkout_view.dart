@@ -1,4 +1,3 @@
-
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_address.dart';
@@ -62,10 +61,14 @@ class _CheckoutViewState extends State<CheckoutView> {
               floating: false,
               pinned: false,
               titleSpacing: 0,
-              title: Text(localizations.checkout),
+              title: Text(
+                localizations.checkout,
+              ),
               leading: IconButton(
                 onPressed: context.pop,
-                icon: const Icon(Icons.arrow_back_ios),
+                icon: const Icon(
+                  Icons.arrow_back_ios,
+                ),
               ),
             ),
 
@@ -92,21 +95,13 @@ class _CheckoutViewState extends State<CheckoutView> {
                       }
                     },
                     builder: (context, state) {
-                      final deliveryFeeState =
-                          state.deliveryFeeState;
-
                       final deliveryFee =
-                          deliveryFeeState.data;
+                          state.deliveryFeeState.data;
 
-                      if (deliveryFeeState.isLoading) {
-                        return const Padding(
-                          padding: EdgeInsets.all(20),
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        );
-                      }
-
+                      // No CircularProgressIndicator here.
+                      //
+                      // While the delivery fee is loading,
+                      // DeliveryTime receives null.
                       return DeliveryTime(
                         estimatedDeliveryAt:
                             deliveryFee?.estimatedDeliveryAt,
@@ -187,4 +182,3 @@ class _SectionDivider extends StatelessWidget {
     );
   }
 }
- 
