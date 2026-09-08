@@ -1,0 +1,37 @@
+name: Firebase Auto Deploy APK
+
+on:
+  push:
+    branches:
+      - release/*
+
+jobs:
+  deploy:
+    name: Deploy to Firebase App Distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.4
+      - name: Install packages
+        run: flutter pub get
+      - name: Run generator
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID_ANDROID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIAL_FILE_CONTENT }}
+          groups: testers  # Replace with your Firebase tester group alias
+          file: build/app/outputs/flutter-apk/app-release.apk      

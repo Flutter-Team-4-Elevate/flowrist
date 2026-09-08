@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+#
+# Git pre-commit hook
+# Mirrors the CI checks: branch name validation, formatting/static analysis,
+# and unit + widget tests. Runs locally before every commit.
+#
+# Install:
+#   cp pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+# Skip once if you really need to:
+#   git commit --no-verify
+
+set -uo pipefail
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+FAILED=0
+
+step() {
+  echo ""
+  echo -e "${YELLOW}▶ $1${NC}"
+}
+
+pass() {
+  echo -e "${GREEN}✅ $1${NC}"
+}
+
+fail() {
+  echo -e "${RED}❌ $1${NC}"
+  FAILED=1
+}
+
+# ------------------------------------------------------------------
+# 1. Branch name validation
+# ------------------------------------------------------------------
+step "Checking branch name"
+
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+BRANCH_REGEX='^(feature|fix|docs|style|refactor|test|chore|perf|ci|build|revert|release)\/[a-zA-Z0-9._-]+$'
+
+if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "master" || "$BRANCH_NAME" == "develop" ]]; then
+  pass "On protected branch '$BRANCH_NAME' — skipping naming check"
+elif [[ ! "$BRANCH_NAME" =~ $BRANCH_REGEX ]]; then
+  fail "Invalid branch name: '$BRANCH_NAME'"
+  echo "   Expected format: <type>/<description>"
+  echo "   Allowed types: feature, fix, docs, style, refactor, test, chore, perf, ci, build, revert, release"
+  echo "   Example: feature/cart-management"
+else
+  pass "Branch name '$BRANCH_NAME' is valid"
+fi
+
+# ------------------------------------------------------------------
+# 2. Formatting check
+# ------------------------------------------------------------------
+step "Checking formatting (dart format)"
+
+if dart format --output=none --set-exit-if-changed . ; then
+  pass "Formatting is clean"
+else
+  fail "Formatting issues found — run: dart format ."
+fi
+
+# ------------------------------------------------------------------
+# 3. Generate mocks (needed for analyze + tests)
+# ------------------------------------------------------------------
+step "Running build_runner (generating mocks)"
+
+if flutter pub run build_runner build --delete-conflicting-outputs > /tmp/build_runner.log 2>&1; then
+  pass "Code generation succeeded"
+else
+  fail "build_runner failed — see /tmp/build_runner.log"
+  cat /tmp/build_runner.log
+fi
+
+# ------------------------------------------------------------------
+# 4. Static analysis
+# ------------------------------------------------------------------
+step "Running static analysis (flutter analyze)"
+
+if flutter analyze ; then
+  pass "No analysis issues"
+else
+  fail "Static analysis found issues"
+fi
+
+# ------------------------------------------------------------------
+# 5. Unit + widget tests
+# ------------------------------------------------------------------
+step "Running unit + widget tests"
+
+if flutter test test ; then
+  pass "All tests passed"
+else
+  fail "Tests failed"
+fi
+
+# ------------------------------------------------------------------
+# Summary
+# ------------------------------------------------------------------
+echo ""
+if [[ $FAILED -eq 0 ]]; then
+  echo -e "${GREEN}✅ All pre-commit checks passed. Proceeding with commit.${NC}"
+  exit 0
+else
+  echo -e "${RED}❌ Pre-commit checks failed. Fix the issues above, or bypass with --no-verify.${NC}"
+  exit 1
+fi
