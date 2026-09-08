@@ -1,15 +1,14 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
-import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_state.dart';
+import 'package:flowrist/features/home/profile/my_orders/presentation/helper/date_time_extension.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/orders_empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class OrderDetailsView extends StatelessWidget {
   final String orderId;
@@ -80,11 +79,7 @@ class OrderDetailsView extends StatelessWidget {
               return OrdersEmptyStateWidget(message: locale.noOrdersFound);
             }
 
-            final formattedDate = details.createdAt != null
-                ? DateFormat(
-                    AppConstants.orderDateFormat,
-                  ).format(details.createdAt!)
-                : null;
+            final formattedDate = details.createdAt.toOrderDetailsDate();
 
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
@@ -96,7 +91,7 @@ class OrderDetailsView extends StatelessWidget {
                     style: AppStyles.bold20Inter,
                   ),
                   const SizedBox(height: 16),
-                  if (formattedDate != null)
+                  if (formattedDate.isNotEmpty)
                     _buildDetailRow(locale.orderDate, formattedDate),
                   _buildDetailRow(locale.status, details.status),
                   _buildDetailRow(locale.paymentMethod, details.paymentMethod),

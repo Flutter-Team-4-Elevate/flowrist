@@ -1,10 +1,11 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_order_details_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_orders_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_state.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -31,6 +32,7 @@ class OrdersCubit extends Cubit<OrdersState> {
       state.copyWith(
         orders: state.orders.copyWith(isLoading: true, errorMessage: null),
         currentPage: 1,
+        pageSize: pageSize,
         hasNextPage: true,
       ),
     );
@@ -41,17 +43,16 @@ class OrdersCubit extends Cubit<OrdersState> {
     );
 
     switch (response) {
-      case SuccessResponse(data: final orders):
-        final list = orders ?? [];
+      case SuccessResponse(data: final result):
         emit(
           state.copyWith(
             orders: state.orders.copyWith(
               isLoading: false,
-              data: list,
+              data: result?.orders ?? [],
               errorMessage: null,
             ),
-            currentPage: 1,
-            hasNextPage: list.length >= pageSize,
+            currentPage: result?.currentPage ?? 1,
+            hasNextPage: result?.hasNextPage ?? false,
           ),
         );
       case ErrorResponse(errorMessage: final message):
@@ -74,19 +75,22 @@ class OrdersCubit extends Cubit<OrdersState> {
     emit(state.copyWith(isLoadingMore: true));
     final nextPage = state.currentPage + 1;
 
-    final response = await _getOrdersUseCase.call(page: nextPage, pageSize: 10);
+    final response = await _getOrdersUseCase.call(
+      page: nextPage,
+      pageSize: state.pageSize,
+    );
 
     switch (response) {
-      case SuccessResponse(data: final newOrders):
-        final newItems = newOrders ?? [];
+      case SuccessResponse(data: final result):
+        final newItems = result?.orders ?? [];
         final currentItems = List<OrderEntity>.from(state.orders.data ?? []);
         currentItems.addAll(newItems);
 
         emit(
           state.copyWith(
             isLoadingMore: false,
-            currentPage: nextPage,
-            hasNextPage: newItems.length >= 10,
+            currentPage: result?.currentPage ?? nextPage,
+            hasNextPage: result?.hasNextPage ?? false,
             orders: state.orders.copyWith(data: currentItems),
           ),
         );
@@ -96,37 +100,27 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> _loadOrderDetails(String orderId) async {
-    emit(
-      state.copyWith(
-        orderDetails: state.orderDetails.copyWith(
-          isLoading: true,
-          errorMessage: null,
-        ),
-      ),
-    );
+    emit(state.copyWith(orderDetails: BaseState.loading()));
 
     final response = await _getOrderDetailsUseCase.call(orderId: orderId);
 
     switch (response) {
       case SuccessResponse(data: final details):
-        emit(
-          state.copyWith(
-            orderDetails: state.orderDetails.copyWith(
-              isLoading: false,
-              data: details,
-              errorMessage: null,
+        if (details != null) {
+          emit(state.copyWith(orderDetails: BaseState.success(details)));
+        } else {
+          emit(
+            state.copyWith(
+              orderDetails: const BaseState(
+                isLoading: false,
+                errorMessage: 'Order details not found',
+                data: null,
+              ),
             ),
-          ),
-        );
+          );
+        }
       case ErrorResponse(errorMessage: final message):
-        emit(
-          state.copyWith(
-            orderDetails: state.orderDetails.copyWith(
-              isLoading: false,
-              errorMessage: message,
-            ),
-          ),
-        );
+        emit(state.copyWith(orderDetails: BaseState.error(message)));
     }
   }
 }

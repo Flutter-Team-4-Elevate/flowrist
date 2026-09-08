@@ -2,6 +2,7 @@ import 'package:flowrist/features/home/profile/my_orders/data/models/response/or
 import 'package:flowrist/features/home/profile/my_orders/data/models/response/orders_response_dto.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_details_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/paginated_orders_entity.dart';
 
 abstract final class OrdersMapper {
   static const Set<String> _completedStatuses = {
@@ -13,6 +14,20 @@ abstract final class OrdersMapper {
     'returned',
     'failed',
   };
+
+  static PaginatedOrdersEntity toPaginatedOrdersEntity(OrdersResponseDto dto) {
+    final pagination = dto.pagination;
+    final page = pagination?.page ?? 1;
+    final totalPages = pagination?.totalPages ?? 1;
+    final hasNext = pagination?.hasNextPage ?? (page < totalPages);
+
+    return PaginatedOrdersEntity(
+      orders: toOrderEntityList(dto),
+      currentPage: page,
+      totalPages: totalPages,
+      hasNextPage: hasNext,
+    );
+  }
 
   static List<OrderEntity> toOrderEntityList(OrdersResponseDto dto) {
     final items = dto.data ?? [];

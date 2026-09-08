@@ -9,6 +9,7 @@ class OrdersState extends Equatable {
   final int currentPage;
   final bool hasNextPage;
   final bool isLoadingMore;
+  final int pageSize;
 
   const OrdersState({
     this.orders = const BaseState.initial(),
@@ -16,6 +17,7 @@ class OrdersState extends Equatable {
     this.currentPage = 1,
     this.hasNextPage = true,
     this.isLoadingMore = false,
+    this.pageSize = 10,
   });
 
   List<OrderEntity> get activeOrders => (orders.data ?? [])
@@ -32,6 +34,7 @@ class OrdersState extends Equatable {
     int? currentPage,
     bool? hasNextPage,
     bool? isLoadingMore,
+    int? pageSize,
   }) {
     return OrdersState(
       orders: orders ?? this.orders,
@@ -39,6 +42,7 @@ class OrdersState extends Equatable {
       currentPage: currentPage ?? this.currentPage,
       hasNextPage: hasNextPage ?? this.hasNextPage,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      pageSize: pageSize ?? this.pageSize,
     );
   }
 
@@ -49,5 +53,6 @@ class OrdersState extends Equatable {
     currentPage,
     hasNextPage,
     isLoadingMore,
+    pageSize,
   ];
 }

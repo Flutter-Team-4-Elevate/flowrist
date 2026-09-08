@@ -1,6 +1,7 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
@@ -182,7 +183,7 @@ class _OrdersListViewState extends State<_OrdersListView> {
               final order = widget.orders[index];
               return OrderCardWidget(
                 order: order,
-                onTap: () => context.push('/order-details/${order.id}'),
+                onTap: () => context.push(AppRoutes.orderDetailsPath(order.id)),
                 onActionPressed: () {},
               );
             },
