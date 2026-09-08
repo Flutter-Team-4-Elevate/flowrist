@@ -1039,7 +1039,7 @@ abstract class AppLocalizations {
   /// No description provided for @orderNumberPrefix.
   ///
   /// In en, this message translates to:
-  /// **'Order number#'**
+  /// **'Order number:'**
   String get orderNumberPrefix;
 
   /// No description provided for @orderDetails.
@@ -1057,7 +1057,7 @@ abstract class AppLocalizations {
   /// No description provided for @paymentMethod.
   ///
   /// In en, this message translates to:
-  /// **'Payment method'**
+  /// **'Payment Method'**
   String get paymentMethod;
 
   /// No description provided for @paymentStatus.
@@ -1215,6 +1215,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Saved address'**
   String get savedAddress;
+
+  /// No description provided for @orderDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Order date'**
+  String get orderDate;
+
+  /// No description provided for @orderIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Order ID is required'**
+  String get orderIdRequired;
 }
 
 class _AppLocalizationsDelegate

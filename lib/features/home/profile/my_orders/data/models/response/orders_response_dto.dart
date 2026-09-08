@@ -9,7 +9,6 @@ class OrdersResponseDto {
   final String? message;
   final List<OrderItemDto>? data;
   final OrdersPaginationDto? pagination;
-  final dynamic errors;
 
   const OrdersResponseDto({
     this.status,
@@ -17,7 +16,6 @@ class OrdersResponseDto {
     this.message,
     this.data,
     this.pagination,
-    this.errors,
   });
 
   factory OrdersResponseDto.fromJson(Map<String, dynamic> json) =>

@@ -1,54 +1,58 @@
 import 'package:equatable/equatable.dart';
+import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_details_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 
-enum OrdersStatus { initial, loading, success, failure }
-
 class OrdersState extends Equatable {
-  final OrdersStatus status;
-  final List<OrderEntity> allOrders;
-  final OrderDetailsEntity? selectedOrderDetails;
-  final bool isLoadingDetails;
-  final String? errorMessage;
+  final BaseState<List<OrderEntity>> orders;
+  final BaseState<OrderDetailsEntity> orderDetails;
+  final int currentPage;
+  final bool hasNextPage;
+  final bool isLoadingMore;
+  final int pageSize;
 
   const OrdersState({
-    this.status = OrdersStatus.initial,
-    this.allOrders = const [],
-    this.selectedOrderDetails,
-    this.isLoadingDetails = false,
-    this.errorMessage,
+    this.orders = const BaseState.initial(),
+    this.orderDetails = const BaseState.initial(),
+    this.currentPage = 1,
+    this.hasNextPage = true,
+    this.isLoadingMore = false,
+    this.pageSize = 10,
   });
 
-  List<OrderEntity> get activeOrders => allOrders
+  List<OrderEntity> get activeOrders => (orders.data ?? [])
       .where((order) => order.displayStatus == OrderDisplayStatus.active)
       .toList();
 
-  List<OrderEntity> get completedOrders => allOrders
+  List<OrderEntity> get completedOrders => (orders.data ?? [])
       .where((order) => order.displayStatus == OrderDisplayStatus.completed)
       .toList();
 
   OrdersState copyWith({
-    OrdersStatus? status,
-    List<OrderEntity>? allOrders,
-    OrderDetailsEntity? selectedOrderDetails,
-    bool? isLoadingDetails,
-    String? errorMessage,
+    BaseState<List<OrderEntity>>? orders,
+    BaseState<OrderDetailsEntity>? orderDetails,
+    int? currentPage,
+    bool? hasNextPage,
+    bool? isLoadingMore,
+    int? pageSize,
   }) {
     return OrdersState(
-      status: status ?? this.status,
-      allOrders: allOrders ?? this.allOrders,
-      selectedOrderDetails: selectedOrderDetails ?? this.selectedOrderDetails,
-      isLoadingDetails: isLoadingDetails ?? this.isLoadingDetails,
-      errorMessage: errorMessage ?? this.errorMessage,
+      orders: orders ?? this.orders,
+      orderDetails: orderDetails ?? this.orderDetails,
+      currentPage: currentPage ?? this.currentPage,
+      hasNextPage: hasNextPage ?? this.hasNextPage,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      pageSize: pageSize ?? this.pageSize,
     );
   }
 
   @override
   List<Object?> get props => [
-    status,
-    allOrders,
-    selectedOrderDetails,
-    isLoadingDetails,
-    errorMessage,
+    orders,
+    orderDetails,
+    currentPage,
+    hasNextPage,
+    isLoadingMore,
+    pageSize,
   ];
 }

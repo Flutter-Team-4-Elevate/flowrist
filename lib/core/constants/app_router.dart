@@ -1,4 +1,8 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/session/session_invalidation_notifier.dart';
+import 'package:flowrist/config/session/session_service.dart';
+import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
@@ -59,7 +63,7 @@ abstract final class AppRoutes {
   static const addAddress = '/add-address';
   static const activeSessions = '/active-sessions';
   static const myOrders = '/my-orders';
-  static const orderDetails = '/order-details/:orderId';
+  static const orderDetails = '/order-details/:${AppConstants.orderIdParam}';
   static String orderDetailsPath(String orderId) {
     return '/order-details/$orderId';
   }
@@ -72,6 +76,23 @@ abstract final class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: AppRoutes.splash,
+    refreshListenable: getIt<SessionInvalidationNotifier>(),
+    redirect: (context, state) async {
+      final sessionService = getIt<SessionService>();
+      final token = await sessionService.getToken();
+
+      final isAuthFlow =
+          state.matchedLocation == AppRoutes.login ||
+          state.matchedLocation == AppRoutes.signUp ||
+          state.matchedLocation == AppRoutes.splash ||
+          state.matchedLocation == AppRoutes.forgetPassword;
+
+      if (token.isEmpty && !isAuthFlow) {
+        return AppRoutes.login;
+      }
+
+      return null;
+    },
 
     routes: [
       // ==================================================
@@ -327,11 +348,10 @@ abstract final class AppRouter {
         path: AppRoutes.orderDetails,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.pathParameters['orderId'];
+          final orderId = state.pathParameters[AppConstants.orderIdParam];
           if (orderId == null || orderId.isEmpty) {
-            return const Scaffold(
-              body: Center(child: Text('Order ID is required')),
-            );
+            final l10n = AppLocalizations.of(context)!;
+            return Scaffold(body: Center(child: Text(l10n.orderIdRequired)));
           }
           return OrderDetailsView(orderId: orderId);
         },
