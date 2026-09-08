@@ -3,6 +3,7 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_details_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/paginated_orders_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_order_details_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_orders_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
@@ -32,6 +33,13 @@ void main() {
     ),
   ];
 
+  const tPaginatedOrders = PaginatedOrdersEntity(
+    orders: tOrders,
+    currentPage: 1,
+    totalPages: 1,
+    hasNextPage: false,
+  );
+
   const tOrderDetails = OrderDetailsEntity(
     id: '1',
     orderNumber: 'ORD-1',
@@ -44,8 +52,8 @@ void main() {
   );
 
   setUp(() {
-    provideDummy<BaseResponse<List<OrderEntity>>>(
-      SuccessResponse<List<OrderEntity>>([]),
+    provideDummy<BaseResponse<PaginatedOrdersEntity>>(
+      SuccessResponse<PaginatedOrdersEntity>(tPaginatedOrders),
     );
     provideDummy<BaseResponse<OrderDetailsEntity>>(
       SuccessResponse<OrderDetailsEntity>(tOrderDetails),
@@ -68,9 +76,9 @@ void main() {
     blocTest<OrdersCubit, OrdersState>(
       'emits [orders.isLoading: true, orders.success with data] when GetOrdersUseCase succeeds',
       build: () {
-        when(
-          mockGetOrdersUseCase.call(page: 1, pageSize: 10),
-        ).thenAnswer((_) async => SuccessResponse<List<OrderEntity>>(tOrders));
+        when(mockGetOrdersUseCase.call(page: 1, pageSize: 10)).thenAnswer(
+          (_) async => SuccessResponse<PaginatedOrdersEntity>(tPaginatedOrders),
+        );
         return ordersCubit;
       },
       act: (cubit) =>
@@ -79,6 +87,7 @@ void main() {
         const OrdersState(
           orders: BaseState(isLoading: true, errorMessage: null, data: null),
           currentPage: 1,
+          pageSize: 10,
           hasNextPage: true,
         ),
         const OrdersState(
@@ -88,6 +97,7 @@ void main() {
             data: tOrders,
           ),
           currentPage: 1,
+          pageSize: 10,
           hasNextPage: false,
         ),
       ],
@@ -100,7 +110,7 @@ void main() {
       'emits [orders.isLoading: true, orders.error with message] when GetOrdersUseCase fails',
       build: () {
         when(mockGetOrdersUseCase.call(page: 1, pageSize: 10)).thenAnswer(
-          (_) async => ErrorResponse<List<OrderEntity>>('Network error'),
+          (_) async => ErrorResponse<PaginatedOrdersEntity>('Network error'),
         );
         return ordersCubit;
       },
@@ -110,6 +120,7 @@ void main() {
         const OrdersState(
           orders: BaseState(isLoading: true, errorMessage: null, data: null),
           currentPage: 1,
+          pageSize: 10,
           hasNextPage: true,
         ),
         const OrdersState(
@@ -119,6 +130,7 @@ void main() {
             data: null,
           ),
           currentPage: 1,
+          pageSize: 10,
           hasNextPage: true,
         ),
       ],
@@ -141,17 +153,26 @@ void main() {
       ),
     ];
 
+    const tSecondPaginatedOrders = PaginatedOrdersEntity(
+      orders: tSecondPageOrders,
+      currentPage: 2,
+      totalPages: 2,
+      hasNextPage: false,
+    );
+
     blocTest<OrdersCubit, OrdersState>(
       'emits [isLoadingMore: true, updated orders list with page 2] on success',
       seed: () => const OrdersState(
         orders: BaseState(isLoading: false, errorMessage: null, data: tOrders),
         currentPage: 1,
+        pageSize: 10,
         hasNextPage: true,
         isLoadingMore: false,
       ),
       build: () {
         when(mockGetOrdersUseCase.call(page: 2, pageSize: 10)).thenAnswer(
-          (_) async => SuccessResponse<List<OrderEntity>>(tSecondPageOrders),
+          (_) async =>
+              SuccessResponse<PaginatedOrdersEntity>(tSecondPaginatedOrders),
         );
         return ordersCubit;
       },
@@ -164,6 +185,7 @@ void main() {
             data: tOrders,
           ),
           currentPage: 1,
+          pageSize: 10,
           hasNextPage: true,
           isLoadingMore: true,
         ),
@@ -174,6 +196,7 @@ void main() {
             data: [...tOrders, ...tSecondPageOrders],
           ),
           currentPage: 2,
+          pageSize: 10,
           hasNextPage: false,
           isLoadingMore: false,
         ),

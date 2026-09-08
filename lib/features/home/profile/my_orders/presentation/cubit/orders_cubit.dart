@@ -1,5 +1,4 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_order_details_use_case.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/use_cases/get_orders_use_case.dart';
@@ -100,18 +99,34 @@ class OrdersCubit extends Cubit<OrdersState> {
   }
 
   Future<void> _loadOrderDetails(String orderId) async {
-    emit(state.copyWith(orderDetails: BaseState.loading()));
+    emit(
+      state.copyWith(
+        orderDetails: state.orderDetails.copyWith(
+          isLoading: true,
+          errorMessage: null,
+          data: null,
+        ),
+      ),
+    );
 
     final response = await _getOrderDetailsUseCase.call(orderId: orderId);
 
     switch (response) {
       case SuccessResponse(data: final details):
         if (details != null) {
-          emit(state.copyWith(orderDetails: BaseState.success(details)));
+          emit(
+            state.copyWith(
+              orderDetails: state.orderDetails.copyWith(
+                isLoading: false,
+                data: details,
+                errorMessage: null,
+              ),
+            ),
+          );
         } else {
           emit(
             state.copyWith(
-              orderDetails: const BaseState(
+              orderDetails: state.orderDetails.copyWith(
                 isLoading: false,
                 errorMessage: 'Order details not found',
                 data: null,
@@ -120,7 +135,15 @@ class OrdersCubit extends Cubit<OrdersState> {
           );
         }
       case ErrorResponse(errorMessage: final message):
-        emit(state.copyWith(orderDetails: BaseState.error(message)));
+        emit(
+          state.copyWith(
+            orderDetails: state.orderDetails.copyWith(
+              isLoading: false,
+              errorMessage: message,
+              data: null,
+            ),
+          ),
+        );
     }
   }
 }

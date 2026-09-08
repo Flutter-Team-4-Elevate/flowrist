@@ -1,13 +1,13 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/data_sources/contract/orders_remote_data_source.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/models/response/order_details_response_dto.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/models/response/orders_response_dto.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/repositories/orders_repository_impl.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_details_entity.dart';
-import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/paginated_orders_entity.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'orders_repository_impl_test.mocks.dart';
 
@@ -32,10 +32,18 @@ void main() {
           total: 100,
         ),
       ],
+      pagination: OrdersPaginationDto(
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        totalPages: 1,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      ),
     );
 
     test(
-      'should return SuccessResponse<List<OrderEntity>> when data source succeeds',
+      'should return SuccessResponse<PaginatedOrdersEntity> when data source succeeds',
       () async {
         when(
           mockRemoteDataSource.getOrders(page: 1, pageSize: 10),
@@ -43,15 +51,17 @@ void main() {
 
         final result = await repository.getOrders(page: 1, pageSize: 10);
 
-        expect(result, isA<SuccessResponse<List<OrderEntity>>>());
-        final data = (result as SuccessResponse<List<OrderEntity>>).data;
-        expect(data?.first.id, '1');
+        expect(result, isA<SuccessResponse<PaginatedOrdersEntity>>());
+        final data = (result as SuccessResponse<PaginatedOrdersEntity>).data;
+        expect(data?.orders.first.id, '1');
+        expect(data?.currentPage, 1);
+        expect(data?.hasNextPage, false);
         verify(mockRemoteDataSource.getOrders(page: 1, pageSize: 10)).called(1);
       },
     );
 
     test(
-      'should return ErrorResponse when data source throws an exception',
+      'should return ErrorResponse<PaginatedOrdersEntity> when data source throws an exception',
       () async {
         when(
           mockRemoteDataSource.getOrders(page: 1, pageSize: 10),
@@ -59,7 +69,7 @@ void main() {
 
         final result = await repository.getOrders(page: 1, pageSize: 10);
 
-        expect(result, isA<ErrorResponse<List<OrderEntity>>>());
+        expect(result, isA<ErrorResponse<PaginatedOrdersEntity>>());
         verify(mockRemoteDataSource.getOrders(page: 1, pageSize: 10)).called(1);
       },
     );
