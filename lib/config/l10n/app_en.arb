@@ -151,5 +151,20 @@
   "revokeAllConfirmation": "This will revoke all active sessions except your current device. Continue?",
   "sessionRevokedSuccessfully": "Session revoked successfully",
   "currentSession": "Current Session",
-  "allSessionsRevokedSuccessfully": "All sessions revoked successfully"
+  "allSessionsRevokedSuccessfully": "All sessions revoked successfully",
+  "myOrders": "My orders",
+  "active": "Active",
+  "completed": "Completed",
+  "trackOrder": "Track order",
+  "reorder": "Reorder",
+  "deliveredOn": "Delivered on",
+  "noOrdersFound": "No orders found",
+  "orderNumberPrefix": "Order number:",
+  "orderDetails": "Order Details",
+  "status": "Status",
+  "paymentMethod": "Payment Method",
+  "paymentStatus": "Payment Status",
+  "somethingWentWrong": "Something went wrong",
+  "orderDate": "Order date",
+  "orderIdRequired": "Order ID is required"
 }

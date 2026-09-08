@@ -480,4 +480,49 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get allSessionsRevokedSuccessfully =>
       'All sessions revoked successfully';
+
+  @override
+  String get myOrders => 'My orders';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get trackOrder => 'Track order';
+
+  @override
+  String get reorder => 'Reorder';
+
+  @override
+  String get deliveredOn => 'Delivered on';
+
+  @override
+  String get noOrdersFound => 'No orders found';
+
+  @override
+  String get orderNumberPrefix => 'Order number:';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get paymentMethod => 'Payment Method';
+
+  @override
+  String get paymentStatus => 'Payment Status';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get orderDate => 'Order date';
+
+  @override
+  String get orderIdRequired => 'Order ID is required';
 }

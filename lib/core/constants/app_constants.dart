@@ -40,4 +40,7 @@ abstract final class AppConstants {
   static const String activeNow = 'Active Now';
   static const String jwtJtiClaim = 'jti';
   static const String sessionIdParam = 'sessionId';
+  static const String orderIdParam = 'orderId';
+  static const String orderDateFormat = 'd MMM yyyy, hh:mm a';
+  static const String orderCardDateFormat = 'd MMM yyyy';
 }
