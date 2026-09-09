@@ -1,7 +1,7 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-
+ 
 class PaymentWebView extends StatefulWidget {
   const PaymentWebView({super.key, required this.paymentUrl});
   final String paymentUrl;
