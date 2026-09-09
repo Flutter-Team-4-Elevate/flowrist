@@ -1,5 +1,6 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/core/ui/widgets/cart_item_card.dart';
@@ -7,10 +8,13 @@ import 'package:flowrist/features/home/cart/domain/entities/cart_item_entity.dar
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
+import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
+
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_state.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CartTabView extends StatefulWidget {
   const CartTabView({super.key});
@@ -25,6 +29,29 @@ class _CartTabViewState extends State<CartTabView> {
     super.initState();
 
     context.read<CartCubit>().doEvent(GetCartEvent());
+  }
+
+  void _goToCheckout(String cartId, double subTotal) {
+    final selectedAddress = context
+        .read<AddressesViewModel>()
+        .state
+        .selectedAddress;
+
+    if (selectedAddress == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a delivery address')),
+      );
+      return;
+    }
+
+    context.push(
+      AppRoutes.checkOut,
+      extra: CheckoutArguments(
+        cartId: cartId,
+        addressId: selectedAddress.id,
+        subTotal: subTotal,
+      ),
+    );
   }
 
   @override
@@ -91,8 +118,10 @@ class _CartTabViewState extends State<CartTabView> {
                           final selectedAddress = state.selectedAddress;
                           return Expanded(
                             child: Text(
-                              '${localization.deliverTo} '
-                              '${selectedAddress?.area}-${selectedAddress?.addressLine}',
+                              selectedAddress == null
+                                  ? localization.noAddressSelected
+                                  : '${localization.deliverTo} '
+                                        '${selectedAddress.area}-${selectedAddress.addressLine}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.medium18Inter.copyWith(
@@ -278,7 +307,12 @@ class _CartTabViewState extends State<CartTabView> {
 
                   const SizedBox(height: 40),
 
-                  AppButton(text: localization.checkout, onPressed: () {}),
+                  AppButton(
+                    text: localization.checkout,
+                    onPressed: () {
+                      _goToCheckout(cart.cartId, cart.subtotal.toDouble());
+                    },
+                  ),
                 ],
               ),
             );

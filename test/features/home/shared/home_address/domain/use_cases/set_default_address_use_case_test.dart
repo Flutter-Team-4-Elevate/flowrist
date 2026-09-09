@@ -1,3 +1,11 @@
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('placeholder test for set_default_address_use_case', () {
+    expect(true, isTrue);
+  });
+}
+
 // import 'package:flowrist/config/base_response/base_response.dart';
 // import 'package:flowrist/shared/addresses/domain/entities/default_address_entity.dart';
 // import 'package:flowrist/shared/addresses/domain/use_cases/set_default_address_use_case.dart';

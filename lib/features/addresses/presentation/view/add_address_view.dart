@@ -5,6 +5,7 @@ import 'package:flowrist/features/addresses/presentation/view/widgets/address_wa
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,9 @@ import 'package:go_router/go_router.dart';
 import '../../domain/entities/permission_status_entity.dart';
 
 class AddAddressView extends StatefulWidget {
-  const AddAddressView({super.key});
+  final AddressEntity? addressToEdit;
+
+  const AddAddressView({super.key, this.addressToEdit});
 
   @override
   State<AddAddressView> createState() => _AddAddressViewState();
@@ -24,7 +27,13 @@ class _AddAddressViewState extends State<AddAddressView>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    context.read<AddAddressViewModel>().doEvent(CheckLocationPermission());
+    if (widget.addressToEdit != null) {
+      context
+          .read<AddAddressViewModel>()
+          .doEvent(InitializeForEditEvent(widget.addressToEdit!));
+    } else {
+      context.read<AddAddressViewModel>().doEvent(CheckLocationPermission());
+    }
     context.read<AddAddressViewModel>().doEvent(GetGovernoratesEvent());
   }
 
@@ -86,6 +95,10 @@ class _AddAddressViewState extends State<AddAddressView>
                 previous.locationEnabled != current.locationEnabled;
           },
           builder: (context, state) {
+            if (widget.addressToEdit != null) {
+              return AddAddressFormView(addressToEdit: widget.addressToEdit);
+            }
+
             if (state.locationPermission.isLoading) {
               return _loadingView();
             }
@@ -107,7 +120,7 @@ class _AddAddressViewState extends State<AddAddressView>
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Center(child: CircularProgressIndicator()),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -118,12 +131,16 @@ class _AddAddressViewState extends State<AddAddressView>
   }) {
     switch (permissionStatus) {
       case PermissionStatusEntity.denied:
-        return const AddAddressFormView(showSoftPermissionBanner: true);
+        return AddAddressFormView(
+          showSoftPermissionBanner: true,
+          addressToEdit: widget.addressToEdit,
+        );
       case PermissionStatusEntity.granted:
         return _buildViewByServiceStatus(
           isLocationEnabled: isServiceEnabled,
           context: context,
           localizations: localizations,
+          addressToEdit: widget.addressToEdit,
         );
       case PermissionStatusEntity.restricted:
       case PermissionStatusEntity.limited:
@@ -147,9 +164,10 @@ Widget _buildViewByServiceStatus({
   required bool isLocationEnabled,
   required BuildContext context,
   required AppLocalizations localizations,
+  AddressEntity? addressToEdit,
 }) {
   return isLocationEnabled
-      ? AddAddressFormView()
+      ? AddAddressFormView(addressToEdit: addressToEdit)
       : _buildLocationDisabledView(
           context: context,
           mainIcon: Icons.location_off_outlined,

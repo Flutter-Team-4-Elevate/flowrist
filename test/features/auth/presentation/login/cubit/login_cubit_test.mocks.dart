@@ -98,9 +98,32 @@ class MockSessionService extends _i1.Mock implements _i8.SessionService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<void> saveToken(String? token, {bool? rememberMe = false}) =>
+  _i3.Future<void> saveTokens({
+    required String? token,
+    required String? refreshToken,
+    bool? rememberMe = true,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#saveToken, [token], {#rememberMe: rememberMe}),
+            Invocation.method(#saveTokens, [], {
+              #token: token,
+              #refreshToken: refreshToken,
+              #rememberMe: rememberMe,
+            }),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> updateTokens({
+    required String? token,
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateTokens, [], {
+              #token: token,
+              #refreshToken: refreshToken,
+            }),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )
@@ -112,6 +135,19 @@ class MockSessionService extends _i1.Mock implements _i8.SessionService {
             Invocation.method(#getToken, []),
             returnValue: _i3.Future<String>.value(
               _i7.dummyValue<String>(this, Invocation.method(#getToken, [])),
+            ),
+          )
+          as _i3.Future<String>);
+
+  @override
+  _i3.Future<String> getRefreshToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getRefreshToken, []),
+            returnValue: _i3.Future<String>.value(
+              _i7.dummyValue<String>(
+                this,
+                Invocation.method(#getRefreshToken, []),
+              ),
             ),
           )
           as _i3.Future<String>);

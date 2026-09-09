@@ -9,6 +9,7 @@ import 'package:flowrist/features/addresses/presentation/view/widgets/address_ma
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
+import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/shared/domain/entities/city_entity.dart';
 import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,13 @@ import '../../../domain/entities/coordinates_entity.dart';
 
 class AddAddressFormView extends StatefulWidget {
   final bool showSoftPermissionBanner;
+  final AddressEntity? addressToEdit;
 
-  const AddAddressFormView({super.key, this.showSoftPermissionBanner = false});
+  const AddAddressFormView({
+    super.key,
+    this.showSoftPermissionBanner = false,
+    this.addressToEdit,
+  });
 
   @override
   State<AddAddressFormView> createState() => _AddAddressFormViewState();
@@ -31,6 +37,17 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.addressToEdit != null) {
+      final address = widget.addressToEdit!;
+      _nameController.text = address.recipientName;
+      _phoneController.text = address.recipientPhone;
+      _addressController.text = address.addressLine;
+    }
+  }
 
   @override
   void dispose() {
@@ -478,14 +495,33 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
                     governorateId: state.selectedGovernorate!.id!,
                     cityId: state.selectedCity!.id!,
                     // TODO: wait for the backend team's response regarding what to send in this field of the request
-                    area: state.selectedCity!.nameEn!,
-                    lat: state.selectedLocation?.latitude ?? 0.0,
-                    lng: state.selectedLocation?.longitude ?? 0.0,
-                    label: "home",
+                    area:
+                        state.selectedCity!.nameEn ??
+                        state.selectedCity!.nameAr ??
+                        '',
+                    lat:
+                        state.selectedLocation?.latitude ??
+                        widget.addressToEdit?.lat ??
+                        0.0,
+                    lng:
+                        state.selectedLocation?.longitude ??
+                        widget.addressToEdit?.lng ??
+                        0.0,
+                    label: widget.addressToEdit?.label ?? "home",
                   );
-                  context.read<AddAddressViewModel>().doEvent(
-                    SaveAddressEvent(request),
-                  );
+
+                  if (widget.addressToEdit != null) {
+                    context.read<AddAddressViewModel>().doEvent(
+                      UpdateAddressEvent(
+                        addressId: widget.addressToEdit!.id,
+                        request: request,
+                      ),
+                    );
+                  } else {
+                    context.read<AddAddressViewModel>().doEvent(
+                      SaveAddressEvent(request),
+                    );
+                  }
                 }
               },
             ),

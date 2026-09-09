@@ -1,7 +1,3 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart';
@@ -12,6 +8,9 @@ import 'package:flowrist/features/auth/data/repositories/auth_repository_impl.da
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
 import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
 import 'package:flowrist/features/auth/domain/params/login_params.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([AuthRemoteDataSource, SessionService])
 import 'auth_repository_impl_test.mocks.dart';
@@ -120,7 +119,7 @@ void main() {
 
   group('AuthRepositoryImpl - Login Tests', () {
     test(
-      'should save session state and token with rememberMe=true on successful login',
+      'should save session state and tokens with rememberMe=true on successful login',
       () async {
         // Arrange
         when(
@@ -129,7 +128,11 @@ void main() {
         when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
         when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
         when(
-          mockSessionService.saveToken(any, rememberMe: anyNamed('rememberMe')),
+          mockSessionService.saveTokens(
+            token: anyNamed('token'),
+            refreshToken: anyNamed('refreshToken'),
+            rememberMe: anyNamed('rememberMe'),
+          ),
         ).thenAnswer((_) async => {});
 
         // Act
@@ -139,17 +142,22 @@ void main() {
         expect(result, isA<SuccessResponse<LoginEntity>>());
         final loginData = (result as SuccessResponse<LoginEntity>).data;
         expect(loginData?.token, equals('jwt_token_123'));
+        expect(loginData?.refreshToken, equals('refresh_token_123'));
 
         verify(mockSessionService.setRememberMe(true)).called(1);
         verify(mockSessionService.setGuestMode(false)).called(1);
         verify(
-          mockSessionService.saveToken('jwt_token_123', rememberMe: true),
+          mockSessionService.saveTokens(
+            token: 'jwt_token_123',
+            refreshToken: 'refresh_token_123',
+            rememberMe: true,
+          ),
         ).called(1);
       },
     );
 
     test(
-      'should save session state and token with rememberMe=false on successful login',
+      'should save session state and tokens with rememberMe=false on successful login',
       () async {
         // Arrange
         when(
@@ -158,7 +166,11 @@ void main() {
         when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
         when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
         when(
-          mockSessionService.saveToken(any, rememberMe: anyNamed('rememberMe')),
+          mockSessionService.saveTokens(
+            token: anyNamed('token'),
+            refreshToken: anyNamed('refreshToken'),
+            rememberMe: anyNamed('rememberMe'),
+          ),
         ).thenAnswer((_) async => {});
 
         // Act
@@ -169,7 +181,11 @@ void main() {
         verify(mockSessionService.setRememberMe(false)).called(1);
         verify(mockSessionService.setGuestMode(false)).called(1);
         verify(
-          mockSessionService.saveToken('jwt_token_123', rememberMe: false),
+          mockSessionService.saveTokens(
+            token: 'jwt_token_123',
+            refreshToken: 'refresh_token_123',
+            rememberMe: false,
+          ),
         ).called(1);
       },
     );

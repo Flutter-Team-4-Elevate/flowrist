@@ -134,7 +134,7 @@ class AddressesViewModel extends Cubit<AddressesState> {
           );
       }
     } catch (e, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace);
+      debugPrint(stackTrace.toString());
 
       emit(
         state.copyWith(
@@ -245,7 +245,8 @@ class AddressesViewModel extends Cubit<AddressesState> {
           );
       }
     } catch (e, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace);
+    debugPrint(stackTrace.toString());
+
 
       emit(
         state.copyWith(
@@ -404,7 +405,7 @@ class AddressesViewModel extends Cubit<AddressesState> {
           );
       }
     } catch (e, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace);
+    debugPrint(stackTrace.toString());
 
       emit(
         state.copyWith(

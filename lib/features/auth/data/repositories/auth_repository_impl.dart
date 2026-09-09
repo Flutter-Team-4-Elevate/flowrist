@@ -45,8 +45,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
       await _sessionService.setRememberMe(rememberMe);
       await _sessionService.setGuestMode(false);
-      await _sessionService.saveToken(
-        loginEntity.token,
+      await _sessionService.saveTokens(
+        token: loginEntity.token,
+        refreshToken: loginEntity.refreshToken,
         rememberMe: rememberMe,
       );
 

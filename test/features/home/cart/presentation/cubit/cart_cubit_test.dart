@@ -1,403 +1,344 @@
-import 'dart:async';
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/features/home/cart/data/models/request/add_to_cart_request_dto.dart';
-import 'package:flowrist/features/home/cart/data/models/request/update_cart_item_request_dto.dart';
+import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_entity.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_item_entity.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/add_to_cart_use_case.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/get_cart_use_case.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/remove_cart_item_use_case.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/update_cart_quantity_use_case.dart';
+import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:injectable/injectable.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
-@lazySingleton
-class CartCubit extends Cubit<CartState> {
-  final GetCartUseCase _getCartUseCase;
-  final AddToCartUseCase _addToCartUseCase;
-  final UpdateCartQuantityUseCase _updateCartQuantityUseCase;
-  final RemoveCartItemUseCase _removeCartItemUseCase;
+@GenerateMocks([
+  GetCartUseCase,
+  AddToCartUseCase,
+  UpdateCartQuantityUseCase,
+  RemoveCartItemUseCase,
+])
+import 'cart_cubit_test.mocks.dart';
 
-  final Map<String, Timer> _quantityTimers = {};
+void main() {
+  late MockGetCartUseCase mockGetCartUseCase;
+  late MockAddToCartUseCase mockAddToCartUseCase;
+  late MockUpdateCartQuantityUseCase mockUpdateCartQuantityUseCase;
+  late MockRemoveCartItemUseCase mockRemoveCartItemUseCase;
+  late CartCubit cartCubit;
 
-  CartCubit(
-    this._getCartUseCase,
-    this._addToCartUseCase,
-    this._updateCartQuantityUseCase,
-    this._removeCartItemUseCase,
-  ) : super(CartState.initial());
+  final tCartItem = CartItemEntity(
+    itemId: 'item_1',
+    productId: 'prod_1',
+    productName: 'Red Rose Bouquet',
+    productImage: 'https://example.com/rose.png',
+    unitPrice: 50.0,
+    priceAtAdd: 50.0,
+    quantity: 2,
+    lineSubtotal: 100.0,
+    availableStock: 10,
+    isAvailable: true,
+    priceChanged: false,
+    stockChanged: false,
+  );
 
-  Future<void> doEvent(CartEvent event) async {
-    switch (event) {
-      case GetCartEvent():
-        await _getCart();
+  final tCartEntity = CartEntity(
+    cartId: 'cart_123',
+    items: [tCartItem],
+    totalQuantity: 2,
+    lineCount: 1,
+    subtotal: 100.0,
+    deliveryFee: 20.0,
+    total: 120.0,
+    hasChanges: false,
+  );
 
-      case AddToCartEvent():
-        await _addToCart(event.productId);
+  setUp(() {
+    provideDummy<BaseResponse<CartEntity>>(
+      SuccessResponse<CartEntity>(tCartEntity),
+    );
+    provideDummy<BaseResponse<void>>(
+      SuccessResponse<void>(null),
+    );
 
-      case ChangeCartQuantityEvent():
-        _changeQuantity(
-          itemId: event.itemId,
-          quantity: event.quantity,
+    mockGetCartUseCase = MockGetCartUseCase();
+    mockAddToCartUseCase = MockAddToCartUseCase();
+    mockUpdateCartQuantityUseCase = MockUpdateCartQuantityUseCase();
+    mockRemoveCartItemUseCase = MockRemoveCartItemUseCase();
+
+    cartCubit = CartCubit(
+      mockGetCartUseCase,
+      mockAddToCartUseCase,
+      mockUpdateCartQuantityUseCase,
+      mockRemoveCartItemUseCase,
+    );
+  });
+
+  tearDown(() {
+    cartCubit.close();
+  });
+
+  test('initial state should be CartState.initial()', () {
+    expect(cartCubit.state, equals(CartState.initial()));
+  });
+
+  group('GetCartEvent', () {
+    blocTest<CartCubit, CartState>(
+      'emits [loading, success] when getCart succeeds',
+      build: () {
+        when(mockGetCartUseCase()).thenAnswer(
+          (_) async => SuccessResponse<CartEntity>(tCartEntity),
         );
-
-      case RemoveCartItemEvent():
-        await _removeCartItem(event.itemId);
-    }
-  }
-
-  Future<void> _getCart() async {
-    emit(
-      state.copyWith(
-        cart: state.cart.copyWith(
-          isLoading: true,
-          errorMessage: null,
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(GetCartEvent()),
+      expect: () => [
+        CartState.initial().copyWith(
+          cart: BaseState<CartEntity>(
+            isLoading: true,
+            errorMessage: null,
+            data: null,
+          ),
         ),
-      ),
-    );
-
-    final result = await _getCartUseCase();
-
-    switch (result) {
-      case SuccessResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: null,
-              data: result.data,
-            ),
+        CartState.initial().copyWith(
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: tCartEntity,
           ),
-        );
-
-      case ErrorResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: result.errorMessage,
-            ),
-          ),
-        );
-    }
-  }
-
-  Future<void> _addToCart(String productId) async {
-    final addingProducts = Set<String>.from(
-      state.addingProductIds,
-    )..add(productId);
-
-    emit(
-      state.copyWith(
-        addingProductIds: addingProducts,
-        cart: state.cart.copyWith(
-          errorMessage: null,
         ),
-      ),
-    );
-
-    final result = await _addToCartUseCase(
-      AddToCartRequestDto(
-        productId: productId,
-        quantity: 1,
-      ),
-    );
-
-    switch (result) {
-      case SuccessResponse<void>():
-        final cartResult = await _getCartUseCase();
-
-        switch (cartResult) {
-          case SuccessResponse<CartEntity>():
-            final updatedAddingProducts = Set<String>.from(
-              state.addingProductIds,
-            )..remove(productId);
-
-            emit(
-              state.copyWith(
-                addingProductIds: updatedAddingProducts,
-                cart: state.cart.copyWith(
-                  isLoading: false,
-                  errorMessage: null,
-                  data: cartResult.data,
-                ),
-              ),
-            );
-
-          case ErrorResponse<CartEntity>():
-            final updatedAddingProducts = Set<String>.from(
-              state.addingProductIds,
-            )..remove(productId);
-
-            emit(
-              state.copyWith(
-                addingProductIds: updatedAddingProducts,
-                cart: state.cart.copyWith(
-                  isLoading: false,
-                  errorMessage: cartResult.errorMessage,
-                ),
-              ),
-            );
-        }
-
-      case ErrorResponse<void>():
-        final updatedAddingProducts = Set<String>.from(
-          state.addingProductIds,
-        )..remove(productId);
-
-        emit(
-          state.copyWith(
-            addingProductIds: updatedAddingProducts,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: result.errorMessage,
-            ),
-          ),
-        );
-    }
-  }
-
-  void _changeQuantity({
-    required String itemId,
-    required int quantity,
-  }) {
-    final cart = state.cart.data;
-
-    if (cart == null) return;
-
-    final itemIndex = cart.items.indexWhere(
-      (item) => item.itemId == itemId,
-    );
-
-    if (itemIndex == -1) return;
-
-    final currentItem = cart.items[itemIndex];
-
-    if (quantity > currentItem.availableStock) {
-      return;
-    }
-
-    _quantityTimers[itemId]?.cancel();
-
-    if (quantity <= 0) {
-      _quantityTimers[itemId] = Timer(
-        const Duration(milliseconds: 400),
-        () async {
-          await _removeCartItem(itemId);
-        },
-      );
-
-      return;
-    }
-
-    final updatedItems = List<CartItemEntity>.from(
-      cart.items,
-    );
-
-    updatedItems[itemIndex] = currentItem.copyWith(
-      quantity: quantity,
-      lineSubtotal: currentItem.unitPrice * quantity,
-    );
-
-    final updatedCart = _calculateCart(
-      cart: cart,
-      items: updatedItems,
-    );
-
-    emit(
-      state.copyWith(
-        cart: state.cart.copyWith(
-          data: updatedCart,
-          errorMessage: null,
-        ),
-      ),
-    );
-
-    _quantityTimers[itemId] = Timer(
-      const Duration(milliseconds: 400),
-      () async {
-        final loadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..add(itemId);
-
-        emit(
-          state.copyWith(
-            loadingItemIds: loadingItems,
-          ),
-        );
-
-        await _updateQuantityOnServer(
-          itemId: itemId,
-          quantity: quantity,
-        );
+      ],
+      verify: (_) {
+        verify(mockGetCartUseCase()).called(1);
       },
     );
-  }
 
-  Future<void> _updateQuantityOnServer({
-    required String itemId,
-    required int quantity,
-  }) async {
-    final result = await _updateCartQuantityUseCase(
-      itemId: itemId,
-      request: UpdateCartItemRequestDto(
-        quantity: quantity,
-      ),
+    blocTest<CartCubit, CartState>(
+      'emits [loading, error] when getCart fails',
+      build: () {
+        when(mockGetCartUseCase()).thenAnswer(
+          (_) async => ErrorResponse<CartEntity>('Failed to fetch cart'),
+        );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(GetCartEvent()),
+      expect: () => [
+        CartState.initial().copyWith(
+          cart: BaseState<CartEntity>(
+            isLoading: true,
+            errorMessage: null,
+            data: null,
+          ),
+        ),
+        CartState.initial().copyWith(
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: 'Failed to fetch cart',
+            data: null,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(mockGetCartUseCase()).called(1);
+      },
+    );
+  });
+
+  group('AddToCartEvent', () {
+    final tProductId = 'prod_1';
+
+    blocTest<CartCubit, CartState>(
+      'emits [addingProduct, successWithUpdatedCart] when addToCart succeeds',
+      build: () {
+        when(mockAddToCartUseCase(any)).thenAnswer(
+          (_) async => SuccessResponse<void>(null),
+        );
+        when(mockGetCartUseCase()).thenAnswer(
+          (_) async => SuccessResponse<CartEntity>(tCartEntity),
+        );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(AddToCartEvent(productId: tProductId)),
+      expect: () => [
+        CartState.initial().copyWith(
+          addingProductIds: {tProductId},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: null,
+          ),
+        ),
+        CartState.initial().copyWith(
+          addingProductIds: {},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: tCartEntity,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(mockAddToCartUseCase(any)).called(1);
+        verify(mockGetCartUseCase()).called(1);
+      },
     );
 
-    switch (result) {
-      case SuccessResponse<CartEntity>():
-        final loadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
-
-        emit(
-          state.copyWith(
-            loadingItemIds: loadingItems,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: null,
-              data: result.data,
-            ),
+    blocTest<CartCubit, CartState>(
+      'emits [addingProduct, error] when addToCart fails',
+      build: () {
+        when(mockAddToCartUseCase(any)).thenAnswer(
+          (_) async => ErrorResponse<void>('Product out of stock'),
+        );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(AddToCartEvent(productId: tProductId)),
+      expect: () => [
+        CartState.initial().copyWith(
+          addingProductIds: {tProductId},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: null,
           ),
-        );
+        ),
+        CartState.initial().copyWith(
+          addingProductIds: {},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: 'Product out of stock',
+            data: null,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(mockAddToCartUseCase(any)).called(1);
+        verifyNever(mockGetCartUseCase());
+      },
+    );
+  });
 
-      case ErrorResponse<CartEntity>():
-        await _getCartAfterQuantityError(
-          itemId: itemId,
-          errorMessage: result.errorMessage,
-        );
-    }
-  }
-
-  Future<void> _removeCartItem(String itemId) async {
-    _quantityTimers[itemId]?.cancel();
-    _quantityTimers.remove(itemId);
-
-    final loadingItems = Set<String>.from(
-      state.loadingItemIds,
-    )..add(itemId);
-
-    emit(
-      state.copyWith(
-        loadingItemIds: loadingItems,
-        cart: state.cart.copyWith(
+  group('ChangeCartQuantityEvent', () {
+    blocTest<CartCubit, CartState>(
+      'optimistically updates quantity locally then calls API after timer debounce',
+      seed: () => CartState.initial().copyWith(
+        cart: BaseState<CartEntity>(
+          isLoading: false,
           errorMessage: null,
+          data: tCartEntity,
         ),
       ),
+      build: () {
+        when(
+          mockUpdateCartQuantityUseCase(
+            itemId: anyNamed('itemId'),
+            request: anyNamed('request'),
+          ),
+        ).thenAnswer(
+          (_) async => SuccessResponse<CartEntity>(tCartEntity),
+        );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(
+        ChangeCartQuantityEvent(itemId: 'item_1', quantity: 3),
+      ),
+      wait: Duration(milliseconds: 500),
+      verify: (_) {
+        verify(
+          mockUpdateCartQuantityUseCase(
+            itemId: 'item_1',
+            request: anyNamed('request'),
+          ),
+        ).called(1);
+      },
     );
 
-    final result = await _removeCartItemUseCase(itemId);
-
-    switch (result) {
-      case SuccessResponse<CartEntity>():
-        final updatedLoadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
-
-        emit(
-          state.copyWith(
-            loadingItemIds: updatedLoadingItems,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: null,
-              data: result.data,
+    blocTest<CartCubit, CartState>(
+      'triggers removeCartItem when quantity is 0 after debounce',
+      seed: () => CartState.initial().copyWith(
+        cart: BaseState<CartEntity>(
+          isLoading: false,
+          errorMessage: null,
+          data: tCartEntity,
+        ),
+      ),
+      build: () {
+        when(mockRemoveCartItemUseCase('item_1')).thenAnswer(
+          (_) async => SuccessResponse<CartEntity>(
+            CartEntity(
+              cartId: 'cart_123',
+              items: [],
+              totalQuantity: 0,
+              lineCount: 0,
+              subtotal: 0,
+              deliveryFee: 20,
+              total: 20,
+              hasChanges: false,
             ),
           ),
         );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(
+        ChangeCartQuantityEvent(itemId: 'item_1', quantity: 0),
+      ),
+      wait: Duration(milliseconds: 500),
+      verify: (_) {
+        verify(mockRemoveCartItemUseCase('item_1')).called(1);
+      },
+    );
+  });
 
-      case ErrorResponse<CartEntity>():
-        final updatedLoadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
-
-        emit(
-          state.copyWith(
-            loadingItemIds: updatedLoadingItems,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: result.errorMessage,
-            ),
-          ),
-        );
-    }
-  }
-
-  Future<void> _getCartAfterQuantityError({
-    required String itemId,
-    required String errorMessage,
-  }) async {
-    final result = await _getCartUseCase();
-
-    final loadingItems = Set<String>.from(
-      state.loadingItemIds,
-    )..remove(itemId);
-
-    switch (result) {
-      case SuccessResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            loadingItemIds: loadingItems,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: errorMessage,
-              data: result.data,
-            ),
-          ),
-        );
-
-      case ErrorResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            loadingItemIds: loadingItems,
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: errorMessage,
-            ),
-          ),
-        );
-    }
-  }
-
-  CartEntity _calculateCart({
-    required CartEntity cart,
-    required List<CartItemEntity> items,
-  }) {
-    final totalQuantity = items.fold<int>(
-      0,
-      (sum, item) => sum + item.quantity,
+  group('RemoveCartItemEvent', () {
+    final tEmptyCart = CartEntity(
+      cartId: 'cart_123',
+      items: [],
+      totalQuantity: 0,
+      lineCount: 0,
+      subtotal: 0,
+      deliveryFee: 20.0,
+      total: 20.0,
+      hasChanges: false,
     );
 
-    final subtotal = items.fold<num>(
-      0,
-      (sum, item) => sum + (item.unitPrice * item.quantity),
+    blocTest<CartCubit, CartState>(
+      'removes item successfully and updates cart',
+      seed: () => CartState.initial().copyWith(
+        cart: BaseState<CartEntity>(
+          isLoading: false,
+          errorMessage: null,
+          data: tCartEntity,
+        ),
+      ),
+      build: () {
+        when(mockRemoveCartItemUseCase('item_1')).thenAnswer(
+          (_) async => SuccessResponse<CartEntity>(tEmptyCart),
+        );
+        return cartCubit;
+      },
+      act: (cubit) => cubit.doEvent(RemoveCartItemEvent(itemId: 'item_1')),
+      expect: () => [
+        CartState.initial().copyWith(
+          loadingItemIds: {'item_1'},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: tCartEntity,
+          ),
+        ),
+        CartState.initial().copyWith(
+          loadingItemIds: {},
+          cart: BaseState<CartEntity>(
+            isLoading: false,
+            errorMessage: null,
+            data: tEmptyCart,
+          ),
+        ),
+      ],
+      verify: (_) {
+        verify(mockRemoveCartItemUseCase('item_1')).called(1);
+      },
     );
-
-    final deliveryFee = cart.deliveryFee;
-    final total = subtotal + deliveryFee;
-
-    return CartEntity(
-      cartId: cart.cartId,
-      items: items,
-      totalQuantity: totalQuantity,
-      lineCount: items.length,
-      subtotal: subtotal,
-      deliveryFee: deliveryFee,
-      total: total,
-      hasChanges: cart.hasChanges,
-    );
-  }
-
-  @override
-  Future<void> close() {
-    for (final timer in _quantityTimers.values) {
-      timer.cancel();
-    }
-
-    _quantityTimers.clear();
-
-    return super.close();
-  }
+  });
 }

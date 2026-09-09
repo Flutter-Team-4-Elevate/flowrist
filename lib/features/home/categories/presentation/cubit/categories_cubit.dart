@@ -40,6 +40,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     String? targetCategoryId,
     int initialIndex = 0,
   }) async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         categories: state.categories.copyWith(
@@ -50,12 +51,14 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     );
 
     final result = await _getCategoriesUseCase();
+    if (isClosed) return;
 
     switch (result) {
       case SuccessResponse<List<CategoryEntity>>():
         final categories = result.data ?? [];
 
         if (categories.isEmpty) {
+          if (isClosed) return;
           emit(
             state.copyWith(
               categories: state.categories.copyWith(
@@ -83,6 +86,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
           }
         }
 
+        if (isClosed) return;
         emit(
           state.copyWith(
             categories: state.categories.copyWith(
@@ -100,6 +104,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
         );
 
       case ErrorResponse<List<CategoryEntity>>():
+        if (isClosed) return;
         emit(
           state.copyWith(
             categories: state.categories.copyWith(
@@ -117,6 +122,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
       return;
     }
 
+    if (isClosed) return;
     emit(state.copyWith(selectedIndex: index));
 
     await _getProductsByCategory(
@@ -129,6 +135,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
     final categories = state.categories.data;
     if (categories == null || categories.isEmpty) return;
 
+    if (isClosed) return;
     emit(
       state.copyWith(selectedSort: sortOption, clearSort: sortOption == null),
     );
@@ -138,6 +145,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
   }
 
   Future<void> _getProductsByCategory(String categoryId, {String? sort}) async {
+    if (isClosed) return;
     emit(
       state.copyWith(
         products: state.products.copyWith(isLoading: true, errorMessage: null),
@@ -149,6 +157,7 @@ class CategoriesCubit extends Cubit<CategoriesState> {
       sort: sort,
     );
 
+    if (isClosed) return;
     switch (result) {
       case SuccessResponse<List<ProductEntity>>():
         emit(
