@@ -1,10 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/local_notificatoin_service.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/core/ui/theme/app_theme.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
+import 'package:flowrist/firebase_options.dart';
 import 'package:flowrist/flowrist_bloc_observer.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +20,17 @@ import 'config/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await LocalNotificationService.init();
+
+  await PushNotificationsServices.init();
+
   await _loadEnvironmentVariables();
+
   configureDependencies();
 
   Bloc.observer = FlowristBlocObserver();
@@ -24,8 +38,12 @@ void main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => getIt<CartCubit>()),
-        BlocProvider(create: (_) => getIt<AddressesViewModel>()),
+        BlocProvider(
+          create: (_) => getIt<CartCubit>(),
+        ),
+        BlocProvider(
+          create: (_) => getIt<AddressesViewModel>(),
+        ),
       ],
       child: const FlowristApp(),
     ),
