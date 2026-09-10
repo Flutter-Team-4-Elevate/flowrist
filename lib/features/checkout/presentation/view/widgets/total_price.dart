@@ -38,6 +38,7 @@ class TotalPrice extends StatelessWidget {
       listener: (context, state) async {
         final placeOrderState = state.placeOrderState;
 
+        // Repository/Cubit failure.
         if (placeOrderState.errorMessage != null) {
           if (!context.mounted) return;
 
@@ -46,50 +47,40 @@ class TotalPrice extends StatelessWidget {
           return;
         }
 
-        final order = placeOrderState.data;
-
-        // Cash on Delivery
-        if (order == null) {
+        // ----------------------------------------
+        // CASH ON DELIVERY
+        // ----------------------------------------
+        if (state.selectedPaymentMethod == Endpoints.cash) {
           await _handleOrderSuccess(context);
           return;
         }
 
-        // Credit Card
-        final sessionUrl = order.sessionUrl.trim();
+        // ----------------------------------------
+        // CREDIT CARD
+        // ----------------------------------------
+        final order = placeOrderState.data;
 
-        if (sessionUrl.isEmpty) {
+        if (order == null) {
           if (!context.mounted) return;
 
-          _showMessage(context, localizations.invalidpaymentURL);
+          _showMessage(context, 'Invalid order response');
 
           return;
         }
 
-        final uri = Uri.tryParse(sessionUrl);
-
-        if (uri == null ||
-            !uri.hasScheme ||
-            (uri.scheme != 'http' && uri.scheme != 'https')) {
-          if (!context.mounted) return;
-
-          _showMessage(context, localizations.invalidpaymentURL);
-
-          return;
-        }
-
-        final paymentResult = await Navigator.of(context).push<bool>(
-          MaterialPageRoute(
-            builder: (_) => PaymentWebView(paymentUrl: sessionUrl),
-          ),
+        final paymentResult = await context.push<bool>(
+          AppRoutes.paymentWebView,
+          extra: order.sessionUrl,
         );
 
         if (!context.mounted) return;
 
         if (paymentResult == true) {
           await _handleOrderSuccess(context);
-
           return;
         }
+
+        _showMessage(context, 'Payment failed. Please try again.');
       },
       builder: (context, state) {
         final deliveryFee = state.deliveryFeeState.data?.deliveryFee ?? 0.0;
@@ -126,14 +117,8 @@ class TotalPrice extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: isLoading ? null : () => _placeOrder(context),
-                  child: isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(localizations.placeOrder),
+                  onPressed: () => _placeOrder(context),
+                  child: Text(localizations.placeOrder),
                 ),
               ),
             ],
@@ -146,35 +131,28 @@ class TotalPrice extends StatelessWidget {
   Future<void> _handleOrderSuccess(BuildContext context) async {
     final cartCubit = context.read<CartCubit>();
 
-    const maxAttempts = 5;
-
-    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-      if (!context.mounted) return;
-
-      await cartCubit.doEvent(GetCartEvent());
-
-      if (!context.mounted) return;
-
-      final cart = cartCubit.state.cart.data;
-
-      if (cart == null) {
-        debugPrint('Cart data is null, retrying...');
-      } else {
-        if (cart.items.isEmpty) {
-          context.go(AppRoutes.successOrder);
-
-          return;
-        }
-      }
-
-      if (attempt < maxAttempts) {
-        await Future.delayed(const Duration(milliseconds: 700));
-      }
-    }
+    await cartCubit.doEvent(GetCartEvent());
 
     if (!context.mounted) return;
 
-    context.go(AppRoutes.successOrder);
+    final cartState = cartCubit.state.cart;
+
+    if (cartState.errorMessage != null) {
+      _showMessage(context, cartState.errorMessage!);
+      return;
+    }
+
+    // Cart was successfully cleared after placing the order.
+    if (cartState.data == null || cartState.data!.items.isEmpty) {
+      context.go(AppRoutes.successOrder);
+      return;
+    }
+
+    // Unexpected case: order succeeded but cart is still not empty.
+    _showMessage(
+      context,
+      'Order placed successfully, but cart could not be refreshed.',
+    );
   }
 
   void _placeOrder(BuildContext context) {

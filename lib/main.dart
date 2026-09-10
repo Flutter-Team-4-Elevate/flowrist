@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/notifications/local_notificatoin_service.dart';
 import 'package:flowrist/config/notifications/notification_service.dart';
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
@@ -10,13 +11,12 @@ import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
 import 'package:flowrist/firebase_options.dart';
 import 'package:flowrist/flowrist_bloc_observer.dart';
+import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'config/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,9 @@ void main() async {
 
   await PushNotificationsServices.init();
 
+
   await _loadEnvironmentVariables();
+
 
   configureDependencies();
 
@@ -52,14 +54,70 @@ void main() async {
 
 Future<void> _loadEnvironmentVariables() async {
   try {
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(
+      fileName: '.env',
+    );
   } catch (e) {
-    debugPrint('Error loading .env file: $e');
+    debugPrint(
+      'Error loading .env file: $e',
+    );
   }
 }
 
-class FlowristApp extends StatelessWidget {
-  const FlowristApp({super.key});
+class FlowristApp extends StatefulWidget {
+  const FlowristApp({
+    super.key,
+  });
+
+  @override
+  State<FlowristApp> createState() => _FlowristAppState();
+}
+
+class _FlowristAppState extends State<FlowristApp>
+    with WidgetsBindingObserver {
+  bool _isRefreshingAddress = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addObserver(this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshAddress();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(
+    AppLifecycleState state,
+  ) {
+    if (state == AppLifecycleState.resumed) {
+      _refreshAddress();
+    }
+  }
+
+  Future<void> _refreshAddress() async {
+    if (!mounted || _isRefreshingAddress) {
+      return;
+    }
+
+    _isRefreshingAddress = true;
+
+    try {
+      await context.read<AddressesViewModel>().doEvent(
+            InitializeAddress(),
+          );
+    } finally {
+      _isRefreshingAddress = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,18 +129,23 @@ class FlowristApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en')],
+      supportedLocales: const [
+        Locale('en'),
+      ],
       theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         return BlocListener<CartCubit, CartState>(
           listenWhen: (prev, curr) =>
               curr.cart.errorMessage != null &&
-              prev.cart.errorMessage != curr.cart.errorMessage,
+              prev.cart.errorMessage !=
+                  curr.cart.errorMessage,
           listener: (context, state) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.cart.errorMessage!),
+                content: Text(
+                  state.cart.errorMessage!,
+                ),
                 backgroundColor: AppColors.red,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -94,3 +157,4 @@ class FlowristApp extends StatelessWidget {
     );
   }
 }
+ 
