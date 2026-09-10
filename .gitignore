@@ -60,6 +60,7 @@ app.*.map.json
 # Firebase / Google credentials
 android/app/google-services.json
 GoogleService-Info.plist
+firebase.json
 
 # Firebase service account credentials
 android/fastlane/*-adminsdk-*.json
