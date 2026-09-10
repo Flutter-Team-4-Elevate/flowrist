@@ -1,11 +1,14 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_events.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_state.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/change_language_bottom_sheet.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/logout_dialog.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_app_bar.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
@@ -154,28 +157,51 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
   }
 
   Widget _buildSettingsSection(AppLocalizations l10n) {
+    final currentLocale = context.watch<AppLanguageCubit>().state.languageCode;
+    final currentLanguageText = currentLocale == 'ar'
+        ? l10n.arabic
+        : l10n.english;
+
     return ProfileSection(
       children: [
         ProfileMenuItem(
           icon: Icons.translate,
           title: l10n.language,
           trailing: Text(
-            l10n.current_language,
+            currentLanguageText,
             style: AppStyles.regular13W500.copyWith(
               color: AppColors.purpleBase,
             ),
           ),
-          onTap: () {},
+          onTap: () => ChangeLanguageBottomSheet.show(context),
         ),
         ProfileMenuItem(
           icon: Icons.info_outline,
           title: l10n.about_us,
-          onTap: () {},
+          onTap: () {
+            context.push(
+              AppRoutes.webView,
+              extra: {
+                AppConstants.title: l10n.about_us,
+                AppConstants.url:
+                    'https://elevate-flutter-team.github.io/flower_app_web_views/about.html',
+              },
+            );
+          },
         ),
         ProfileMenuItem(
           icon: Icons.description_outlined,
           title: l10n.terms_and_conditions,
-          onTap: () {},
+          onTap: () {
+            context.push(
+              AppRoutes.webView,
+              extra: {
+                AppConstants.title: l10n.terms_and_conditions,
+                AppConstants.url:
+                    'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html',
+              },
+            );
+          },
         ),
       ],
     );

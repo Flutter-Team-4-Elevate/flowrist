@@ -3,6 +3,7 @@ import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
+import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
@@ -69,6 +70,7 @@ abstract final class AppRoutes {
   }
 
   static const savedAddresses = '/saved-addresses';
+  static const webView = '/web-view';
 }
 
 abstract final class AppRouter {
@@ -87,7 +89,8 @@ abstract final class AppRouter {
           state.matchedLocation == AppRoutes.login ||
           state.matchedLocation == AppRoutes.signUp ||
           state.matchedLocation == AppRoutes.splash ||
-          state.matchedLocation == AppRoutes.forgetPassword;
+          state.matchedLocation == AppRoutes.forgetPassword ||
+          state.matchedLocation == AppRoutes.webView;
 
       final hasAccess = token.isNotEmpty || isGuest;
 
@@ -358,6 +361,20 @@ abstract final class AppRouter {
             return Scaffold(body: Center(child: Text(l10n.orderIdRequired)));
           }
           return OrderDetailsView(orderId: orderId);
+        },
+      ),
+
+      // --------------------------------------------------
+      // Web View Screen
+      // --------------------------------------------------
+      GoRoute(
+        path: AppRoutes.webView,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>? ?? {};
+          return AppWebViewScreen(
+            title: extra[AppConstants.title] ?? '',
+            url: extra[AppConstants.url] ?? '',
+          );
         },
       ),
     ],

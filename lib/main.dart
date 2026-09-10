@@ -1,4 +1,5 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
@@ -10,8 +11,6 @@ import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'config/l10n/app_localizations.dart';
 
 void main() async {
@@ -26,6 +25,7 @@ void main() async {
       providers: [
         BlocProvider(create: (_) => getIt<CartCubit>()),
         BlocProvider(create: (_) => getIt<AddressesViewModel>()),
+        BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
       ],
       child: const FlowristApp(),
     ),
@@ -45,32 +45,33 @@ class FlowristApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('en')],
-      theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
-      builder: (context, child) {
-        return BlocListener<CartCubit, CartState>(
-          listenWhen: (prev, curr) =>
-              curr.cart.errorMessage != null &&
-              prev.cart.errorMessage != curr.cart.errorMessage,
-          listener: (context, state) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.cart.errorMessage!),
-                backgroundColor: AppColors.red,
-                behavior: SnackBarBehavior.floating,
-              ),
+    return BlocBuilder<AppLanguageCubit, Locale>(
+      builder: (context, locale) {
+        return MaterialApp.router(
+          title: AppStrings.appName,
+          debugShowCheckedModeBanner: false,
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: AppTheme.lightTheme,
+          routerConfig: AppRouter.router,
+          builder: (context, child) {
+            return BlocListener<CartCubit, CartState>(
+              listenWhen: (prev, curr) =>
+                  curr.cart.errorMessage != null &&
+                  prev.cart.errorMessage != curr.cart.errorMessage,
+              listener: (context, state) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.cart.errorMessage!),
+                    backgroundColor: AppColors.red,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              child: child ?? const SizedBox.shrink(),
             );
           },
-          child: child ?? const SizedBox.shrink(),
         );
       },
     );

@@ -43,4 +43,7 @@ abstract final class AppConstants {
   static const String orderIdParam = 'orderId';
   static const String orderDateFormat = 'd MMM yyyy, hh:mm a';
   static const String orderCardDateFormat = 'd MMM yyyy';
+  static const String languageKey = 'app_language';
+  static const String title = 'title';
+  static const String url = 'url';
 }

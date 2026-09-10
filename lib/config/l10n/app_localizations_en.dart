@@ -600,4 +600,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmLogout => 'Confirm logout!!';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get allPricesIncludeTax => 'All prices include tax';
 }

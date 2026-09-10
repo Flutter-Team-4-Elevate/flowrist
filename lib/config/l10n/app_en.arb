@@ -188,5 +188,9 @@
   "savedAddress": "Saved address",
   "orderDate": "Order date",
   "orderIdRequired": "Order ID is required",
-  "confirmLogout": "Confirm logout!!"
+  "confirmLogout": "Confirm logout!!",
+  "changeLanguage": "Change Language",
+  "arabic": "Arabic",
+  "english": "English",
+  "allPricesIncludeTax": "All prices include tax"
 }
