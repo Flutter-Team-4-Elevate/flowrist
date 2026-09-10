@@ -42,4 +42,5 @@ abstract final class Endpoints {
   static const String idempotencyKey = "Idempotency-Key";
   static const String cartId = 'CartId';
   static const String orders = 'api/orders';
+  static const String logout = 'api/identity/auth/logout';
 }

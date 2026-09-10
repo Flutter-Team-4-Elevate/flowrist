@@ -452,7 +452,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revoke => 'Revoke';
 
   @override
-  String get logOut => 'Log Out';
+  String get logOut => 'Logout';
 
   @override
   String get logOutEverywhere => 'Log out everywhere';
@@ -597,4 +597,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderIdRequired => 'Order ID is required';
+
+  @override
+  String get confirmLogout => 'Confirm logout!!';
 }

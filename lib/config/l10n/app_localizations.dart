@@ -943,7 +943,7 @@ abstract class AppLocalizations {
   /// No description provided for @logOut.
   ///
   /// In en, this message translates to:
-  /// **'Log Out'**
+  /// **'Logout'**
   String get logOut;
 
   /// No description provided for @logOutEverywhere.
@@ -1227,6 +1227,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order ID is required'**
   String get orderIdRequired;
+
+  /// No description provided for @confirmLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm logout!!'**
+  String get confirmLogout;
 }
 
 class _AppLocalizationsDelegate

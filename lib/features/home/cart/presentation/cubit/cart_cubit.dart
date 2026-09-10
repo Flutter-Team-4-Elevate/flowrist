@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/home/cart/data/models/request/add_to_cart_request_dto.dart';
 import 'package:flowrist/features/home/cart/data/models/request/update_cart_item_request_dto.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_entity.dart';
@@ -19,6 +20,7 @@ class CartCubit extends Cubit<CartState> {
   final AddToCartUseCase _addToCartUseCase;
   final UpdateCartQuantityUseCase _updateCartQuantityUseCase;
   final RemoveCartItemUseCase _removeCartItemUseCase;
+  final SessionService _sessionService;
 
   final Map<String, Timer> _quantityTimers = {};
 
@@ -27,12 +29,16 @@ class CartCubit extends Cubit<CartState> {
     this._addToCartUseCase,
     this._updateCartQuantityUseCase,
     this._removeCartItemUseCase,
+    this._sessionService,
   ) : super(CartState.initial());
 
   Future<void> doEvent(CartEvent event) async {
     switch (event) {
       case GetCartEvent():
         await _getCart();
+
+      case ClearCartEvent():
+        emit(CartState.initial());
 
       case AddToCartEvent():
         await _addToCart(event.productId);
@@ -46,6 +52,12 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> _getCart() async {
+    final isGuest = await _sessionService.isGuest();
+    if (isGuest) {
+      emit(CartState.initial());
+      return;
+    }
+
     emit(
       state.copyWith(
         cart: state.cart.copyWith(isLoading: true, errorMessage: null),

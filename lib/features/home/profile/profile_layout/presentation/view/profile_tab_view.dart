@@ -1,317 +1,205 @@
+import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_images.dart';
+import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
+import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_events.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_state.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/logout_dialog.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_app_bar.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_menu_item.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_section.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ProfileTabView extends StatefulWidget {
+class ProfileTabView extends StatelessWidget {
   const ProfileTabView({super.key});
 
   @override
-  State<ProfileTabView> createState() => _ProfileTabViewState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => getIt<ProfileCubit>(),
+      child: const _ProfileTabViewContent(),
+    );
+  }
 }
 
-class _ProfileTabViewState extends State<ProfileTabView> {
-  bool isNotificationEnabled = true;
+class _ProfileTabViewContent extends StatefulWidget {
+  const _ProfileTabViewContent();
 
-  static const Color pinkPrimary = Color(0xFFD81B60);
-  static const Color iconGrey = Color(0xFF555555);
-  static const Color borderGrey = Color(0xFFE5E5E5);
+  @override
+  State<_ProfileTabViewContent> createState() => _ProfileTabViewContentState();
+}
+
+class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
+  bool isNotificationEnabled = true;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final screenHeight = MediaQuery.sizeOf(context).height;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header Row
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+    return BlocListener<ProfileCubit, ProfileState>(
+      listenWhen: (prev, current) => prev.logoutState != current.logoutState,
+      listener: _handleLogoutState,
+      child: Scaffold(
+        backgroundColor: AppColors.whiteBase,
+        body: SafeArea(
+          child: Column(
+            children: [
+              ProfileAppBar(onNotificationTap: () {}),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
                     children: [
-                      // const Text('🌸', style: TextStyle(fontSize: 18)),
-                      SvgPicture.asset(
-                        AppImages.appLogo,
-                        height: 24,
-                        width: 24,
+                      ProfileHeaderSection(
+                        userName: "Nour",
+                        userEmail: "Nour_mohamed@gmail.com",
+                        onEditName: () {},
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        l10n.flowery,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: pinkPrimary,
-                        ),
-                      ),
+                      _buildOrdersAndAddresses(l10n),
+                      _buildNotificationsSection(l10n),
+                      _buildSettingsSection(l10n),
+                      _buildLogoutSection(l10n),
+                      SizedBox(height: screenHeight * 0.03),
+                      Text(l10n.app_version, style: AppStyles.regular12Inter),
+                      SizedBox(height: screenHeight * 0.02),
                     ],
                   ),
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.notifications_none,
-                          color: Colors.black87,
-                          size: 26,
-                        ),
-                      ),
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: const Text(
-                            '3',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            // Profile Header
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 12),
-
-                    // Avatar
-                    CircleAvatar(
-                      radius: 42,
-                      child: SvgPicture.asset(
-                        AppImages.appLogo,
-                        height: 100,
-                        width: 100,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // User Name with Edit Icon
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Hesham Mohamed",
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        const Icon(
-                          Icons.edit_outlined,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-
-                    // User Email
-                    Text(
-                      "hesham133@1elevate.com",
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    // First Section: Orders & Address
-                    _buildSection([
-                      _buildListTile(
-                        icon: Icons.assignment_outlined,
-                        title: l10n.myOrders,
-                        onTap: () {
-                          context.push(AppRoutes.myOrders);
-                        },
-                      ),
-                      _buildListTile(
-                        icon: Icons.location_on_outlined,
-                        title: l10n.saveAddress,
-                        onTap: () {
-                          context.push(AppRoutes.savedAddresses);
-                        },
-                      ),
-                      _buildListTile(
-                        icon: Icons.location_on_outlined,
-                        title: l10n.activeSessions,
-                        onTap: () {
-                          context.push(AppRoutes.activeSessions);
-                        },
-                      ),
-                    ]),
-
-                    // Second Section: Notifications
-                    _buildSection([
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        leading: Transform.scale(
-                          scale: 0.8,
-                          child: Switch(
-                            value: isNotificationEnabled,
-                            activeColor: Colors.white,
-                            activeTrackColor: pinkPrimary,
-                            onChanged: (val) {
-                              setState(() => isNotificationEnabled = val);
-                            },
-                          ),
-                        ),
-                        title: Text(
-                          l10n.notification,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        trailing: const Icon(
-                          Icons.chevron_right,
-                          color: iconGrey,
-                          size: 20,
-                        ),
-                      ),
-                    ]),
-
-                    // Third Section: Settings & Info
-                    _buildSection([
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        leading: const Icon(
-                          Icons.translate,
-                          color: iconGrey,
-                          size: 20,
-                        ),
-                        title: Text(
-                          l10n.language,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        trailing: Text(
-                          l10n.current_language,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: pinkPrimary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        onTap: () {},
-                      ),
-                      _buildListTile(title: l10n.about_us, onTap: () {}),
-                      _buildListTile(
-                        title: l10n.terms_and_conditions,
-                        onTap: () {},
-                      ),
-                    ]),
-
-                    // Fourth Section: Logout
-                    _buildSection([
-                      ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        leading: const Icon(
-                          Icons.logout,
-                          color: iconGrey,
-                          size: 20,
-                        ),
-                        title: Text(
-                          l10n.logOut,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        trailing: const Icon(
-                          Icons.logout,
-                          color: iconGrey,
-                          size: 20,
-                        ),
-                        onTap: () {},
-                      ),
-                    ]),
-
-                    const SizedBox(height: 24),
-
-                    // App Version Footer
-                    Text(
-                      l10n.app_version,
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                    ),
-
-                    const SizedBox(height: 16),
-                  ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _handleLogoutState(BuildContext context, ProfileState state) {
+    if (state.logoutState.isLoading) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(
+          child: CircularProgressIndicator(color: AppColors.purpleBase),
+        ),
+      );
+    } else {
+      Navigator.of(context, rootNavigator: true).maybePop();
+      if (!state.logoutState.isLoading) {
+        context.go(AppRoutes.login);
+      }
+    }
+  }
+
+  Widget _buildOrdersAndAddresses(AppLocalizations l10n) {
+    return ProfileSection(
+      children: [
+        ProfileMenuItem(
+          icon: Icons.assignment_outlined,
+          title: l10n.myOrders,
+          onTap: () => context.push(AppRoutes.myOrders),
+        ),
+        ProfileMenuItem(
+          icon: Icons.location_on_outlined,
+          title: l10n.saveAddress,
+          onTap: () => context.push(AppRoutes.savedAddresses),
+        ),
+        ProfileMenuItem(
+          icon: Icons.devices_outlined,
+          title: l10n.activeSessions,
+          onTap: () => context.push(AppRoutes.activeSessions),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationsSection(AppLocalizations l10n) {
+    final screenWidth = MediaQuery.sizeOf(context).width;
+
+    return ProfileSection(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+          horizontalTitleGap: 0,
+          leading: Transform.scale(
+            scale: 0.7,
+            alignment: Alignment.centerLeft,
+            child: Switch(
+              value: isNotificationEnabled,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              activeThumbColor: AppColors.white,
+              activeTrackColor: AppColors.purpleBase,
+              onChanged: (val) => setState(() => isNotificationEnabled = val),
             ),
-          ],
+          ),
+          title: Text(
+            l10n.notification,
+            style: AppStyles.regular14Inter.copyWith(
+              color: AppColors.blackBase,
+            ),
+          ),
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.grey,
+            size: 16,
+          ),
         ),
-      ),
+      ],
     );
   }
 
-  // Divider wrapped section list
-  Widget _buildSection(List<Widget> children) {
-    return Container(
-      decoration: const BoxDecoration(
-        border: Border(
-          top: BorderSide(color: borderGrey, width: 0.8),
-          bottom: BorderSide(color: borderGrey, width: 0.8),
+  Widget _buildSettingsSection(AppLocalizations l10n) {
+    return ProfileSection(
+      children: [
+        ProfileMenuItem(
+          icon: Icons.translate,
+          title: l10n.language,
+          trailing: Text(
+            l10n.current_language,
+            style: AppStyles.regular13W500.copyWith(
+              color: AppColors.purpleBase,
+            ),
+          ),
+          onTap: () {},
         ),
-      ),
-      child: Column(children: children),
+        ProfileMenuItem(
+          icon: Icons.info_outline,
+          title: l10n.about_us,
+          onTap: () {},
+        ),
+        ProfileMenuItem(
+          icon: Icons.description_outlined,
+          title: l10n.terms_and_conditions,
+          onTap: () {},
+        ),
+      ],
     );
   }
 
-  // Generic List Tile Item
-  Widget _buildListTile({
-    IconData? icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-      leading: icon != null ? Icon(icon, color: iconGrey, size: 20) : null,
-      title: Text(
-        title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-      ),
-      trailing: const Icon(Icons.chevron_right, color: iconGrey, size: 20),
-      onTap: onTap,
+  Widget _buildLogoutSection(AppLocalizations l10n) {
+    return ProfileSection(
+      showBottomDivider: false,
+      children: [
+        ProfileMenuItem(
+          icon: Icons.logout,
+          title: l10n.logOut,
+          trailing: const Icon(
+            Icons.arrow_forward_ios,
+            color: AppColors.grey,
+            size: 16,
+          ),
+          onTap: () => LogoutDialog.show(
+            context,
+            onConfirm: () =>
+                context.read<ProfileCubit>().doEvent(const LogoutEvent()),
+          ),
+        ),
+      ],
     );
   }
 }

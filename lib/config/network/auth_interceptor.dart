@@ -45,6 +45,12 @@ class AuthInterceptor extends QueuedInterceptor {
         err.requestOptions.path.contains(Endpoints.refreshToken) ||
         err.requestOptions.path.contains(Endpoints.login);
 
+    final isGuest = await _sessionService.isGuest();
+
+    if (isGuest) {
+      return handler.next(err);
+    }
+
     if (isUnauthorized && !isAuthEndpoint) {
       final isRefreshed = await _refreshToken();
 
@@ -132,6 +138,9 @@ class AuthInterceptor extends QueuedInterceptor {
   }
 
   Future<void> _handleRefreshFailure() async {
+    final isGuest = await _sessionService.isGuest();
+    if (isGuest) return;
+
     await _sessionService.clearSession();
     _invalidationNotifier.notifySessionExpired();
   }

@@ -140,7 +140,7 @@
   "thisDevice": "This Device",
   "activeNow": "Active Now",
   "revoke": "Revoke",
-  "logOut": "Log Out",
+  "logOut": "Logout",
   "logOutEverywhere": "Log out everywhere",
   "revokeSessionTitle": "Revoke Session",
   "revokeSessionConfirmation": "Are you sure you want to log out from this device?",
@@ -187,5 +187,6 @@
   "app_version": "v 6.3.0 - (446)",
   "savedAddress": "Saved address",
   "orderDate": "Order date",
-  "orderIdRequired": "Order ID is required"
+  "orderIdRequired": "Order ID is required",
+  "confirmLogout": "Confirm logout!!"
 }

@@ -67,6 +67,7 @@ abstract final class AppRoutes {
   static String orderDetailsPath(String orderId) {
     return '/order-details/$orderId';
   }
+
   static const savedAddresses = '/saved-addresses';
 }
 
@@ -80,6 +81,7 @@ abstract final class AppRouter {
     redirect: (context, state) async {
       final sessionService = getIt<SessionService>();
       final token = await sessionService.getToken();
+      final isGuest = await sessionService.isGuest();
 
       final isAuthFlow =
           state.matchedLocation == AppRoutes.login ||
@@ -87,7 +89,9 @@ abstract final class AppRouter {
           state.matchedLocation == AppRoutes.splash ||
           state.matchedLocation == AppRoutes.forgetPassword;
 
-      if (token.isEmpty && !isAuthFlow) {
+      final hasAccess = token.isNotEmpty || isGuest;
+
+      if (!hasAccess && !isAuthFlow) {
         return AppRoutes.login;
       }
 
