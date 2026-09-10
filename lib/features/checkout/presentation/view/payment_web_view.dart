@@ -1,18 +1,25 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentWebView extends StatefulWidget {
-  const PaymentWebView({super.key, required this.paymentUrl});
+  const PaymentWebView({
+    super.key,
+    required this.paymentUrl,
+  });
+
   final String paymentUrl;
+
   @override
   State<PaymentWebView> createState() => _PaymentWebViewState();
 }
 
 class _PaymentWebViewState extends State<PaymentWebView> {
   late final WebViewController _controller;
-  bool _isLoading = true;
-  bool _isPaymentCompleted = false;
+
+  bool _paymentHandled = false;
+
   @override
   void initState() {
     super.initState();
@@ -25,57 +32,60 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: _handleNavigation,
-          onPageStarted: (_) {
-            if (!mounted) return;
-            setState(() {
-              _isLoading = true;
-            });
-          },
-          onPageFinished: (_) {
-            if (!mounted) return;
-            setState(() {
-              _isLoading = false;
-            });
-          },
-          onWebResourceError: (error) {
-         
-            if (!mounted) return;
-            setState(() {
-              _isLoading = false;
-            });
-          },
+          onWebResourceError: _handleWebResourceError,
         ),
       )
       ..loadRequest(Uri.parse(widget.paymentUrl));
   }
 
-  NavigationDecision _handleNavigation(NavigationRequest request) {
+  NavigationDecision _handleNavigation(
+    NavigationRequest request,
+  ) {
     final uri = Uri.tryParse(request.url);
+
     if (uri == null) {
       return NavigationDecision.prevent;
     }
-   
+
+    // Payment succeeded.
     if (_isPaymentSuccess(uri)) {
-   
-      if (_isPaymentCompleted) {
-        return NavigationDecision.prevent;
-      }
-      _isPaymentCompleted = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        Navigator.of(context).pop(true);
-      });
+      _completePayment(success: true);
+
       return NavigationDecision.prevent;
     }
+
+    // Payment cancelled.
     if (_isPaymentCancelled(uri)) {
-     
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        Navigator.of(context).pop(false);
-      });
+      _completePayment(success: false);
+
       return NavigationDecision.prevent;
     }
+
     return NavigationDecision.navigate;
+  }
+
+  void _completePayment({
+    required bool success,
+  }) {
+    // Prevent multiple callbacks from the payment provider.
+    if (_paymentHandled) {
+      return;
+    }
+
+    _paymentHandled = true;
+
+    if (!mounted) {
+      return;
+    }
+
+    context.pop(success);
+  }
+
+  void _handleWebResourceError(
+    WebResourceError error,
+  ) {
+    // Do not consider a WebView resource error a successful payment.
+    // Only the configured success URL can complete the payment.
   }
 
   bool _isPaymentSuccess(Uri uri) {
@@ -91,17 +101,18 @@ class _PaymentWebViewState extends State<PaymentWebView> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
+
     return PopScope(
-      canPop: !_isPaymentCompleted,
+      canPop: !_paymentHandled,
       child: Scaffold(
-        appBar: AppBar(title: Text(localizations.payment)),
-        body: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading) const Center(child: CircularProgressIndicator()),
-          ],
+        appBar: AppBar(
+          title: Text(localizations.payment),
+        ),
+        body: WebViewWidget(
+          controller: _controller,
         ),
       ),
     );
   }
 }
+ 

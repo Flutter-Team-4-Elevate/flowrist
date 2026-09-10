@@ -35,97 +35,138 @@ class _CheckoutViewState extends State<CheckoutView> {
 
     _getDeliveryFee();
 
-    context.read<CheckoutCubit>().doEvent(GetAddressesEvent());
+    context.read<CheckoutCubit>().doEvent(
+          GetAddressesEvent(),
+        );
   }
 
   void _getDeliveryFee() {
     context.read<CheckoutCubit>().doEvent(
-      GetDeliveryFee(addressId: widget.addressId, cartId: widget.cartId),
-    );
+          GetDeliveryFee(
+            addressId: widget.addressId,
+            cartId: widget.cartId,
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              floating: false,
-              pinned: false,
-              titleSpacing: 0,
-              title: Text(localizations.checkout),
-              leading: IconButton(
-                onPressed: context.pop,
-                icon: const Icon(Icons.arrow_back_ios),
+    return BlocBuilder<CheckoutCubit, CheckoutState>(
+      buildWhen: (previous, current) {
+        return previous.placeOrderState.isLoading !=
+            current.placeOrderState.isLoading;
+      },
+      builder: (context, state) {
+        final isLoading = state.placeOrderState.isLoading;
+
+        return Stack(
+          children: [
+            // ----------------------------------------
+            // CHECKOUT SCREEN
+            // ----------------------------------------
+            Scaffold(
+              body: SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      floating: false,
+                      pinned: false,
+                      titleSpacing: 0,
+                      title: Text(
+                        localizations.checkout,
+                      ),
+                      leading: IconButton(
+                        onPressed: context.pop,
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const _DeliveryTimeSection(),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          const DeliveryAddress(),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          const PaymentMethod(),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          GiftMethods(
+                            onChanged: ({
+                              required bool isGift,
+                              required String name,
+                              required String phone,
+                            }) {
+                              context.read<CheckoutCubit>().doEvent(
+                                    UpdateGiftInfo(
+                                      isGift: isGift,
+                                      name: name,
+                                      phone: phone,
+                                    ),
+                                  );
+                            },
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          TotalPrice(
+                            subTotal: widget.subTotal,
+                            cartId: widget.cartId,
+                            addressId: widget.addressId,
+                          ),
+
+                          const SizedBox(height: 32),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            SliverToBoxAdapter(
-              child: Column(
-                children: [
-                  _DeliveryTimeSection(),
-
-                  const SizedBox(height: 25),
-
-                  const _SectionDivider(),
-
-                  const SizedBox(height: 25),
-
-                  const DeliveryAddress(),
-
-                  const SizedBox(height: 25),
-
-                  const _SectionDivider(),
-
-                  const SizedBox(height: 25),
-
-                  const PaymentMethod(),
-
-                  const SizedBox(height: 25),
-
-                  const _SectionDivider(),
-
-                  const SizedBox(height: 25),
-
-                  GiftMethods(
-                    onChanged:
-                        ({
-                          required bool isGift,
-                          required String name,
-                          required String phone,
-                        }) {
-                          context.read<CheckoutCubit>().doEvent(
-                            UpdateGiftInfo(
-                              isGift: isGift,
-                              name: name,
-                              phone: phone,
-                            ),
-                          );
-                        },
+            // ----------------------------------------
+            // FULL SCREEN LOADING
+            // ----------------------------------------
+            if (isLoading)
+              Positioned.fill(
+                child: AbsorbPointer(
+                  child: Container(
+                    color: Colors.black.withValues(
+                      alpha: 0.35,
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
-
-                  const SizedBox(height: 25),
-
-                  const _SectionDivider(),
-
-                  const SizedBox(height: 25),
-
-                  TotalPrice(
-                    subTotal: widget.subTotal,
-                    cartId: widget.cartId,
-                    addressId: widget.addressId,
-                  ),
-
-                  const SizedBox(height: 32),
-                ],
+                ),
               ),
-            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -141,12 +182,17 @@ class _DeliveryTimeSection extends StatelessWidget {
             current.deliveryFeeState.errorMessage;
       },
       listener: (context, state) {
-        final errorMessage = state.deliveryFeeState.errorMessage;
+        final errorMessage =
+            state.deliveryFeeState.errorMessage;
 
         if (errorMessage != null) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(errorMessage)));
+            ..showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+              ),
+            );
         }
       },
       child: BlocBuilder<CheckoutCubit, CheckoutState>(
@@ -155,10 +201,12 @@ class _DeliveryTimeSection extends StatelessWidget {
               current.deliveryFeeState.data;
         },
         builder: (context, state) {
-          final deliveryFee = state.deliveryFeeState.data;
+          final deliveryFee =
+              state.deliveryFeeState.data;
 
           return DeliveryTime(
-            estimatedDeliveryAt: deliveryFee?.estimatedDeliveryAt,
+            estimatedDeliveryAt:
+                deliveryFee?.estimatedDeliveryAt,
           );
         },
       ),
@@ -178,3 +226,4 @@ class _SectionDivider extends StatelessWidget {
     );
   }
 }
+ 
