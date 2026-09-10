@@ -77,10 +77,9 @@ class TotalPrice extends StatelessWidget {
           return;
         }
 
-        final paymentResult = await Navigator.of(context).push<bool>(
-          MaterialPageRoute(
-            builder: (_) => PaymentWebView(paymentUrl: sessionUrl),
-          ),
+        final paymentResult = await context.push<bool>(
+          AppRoutes.paymentWebView,
+          extra: sessionUrl,
         );
 
         if (!context.mounted) return;
@@ -144,38 +143,31 @@ class TotalPrice extends StatelessWidget {
   }
 
   Future<void> _handleOrderSuccess(BuildContext context) async {
-    final cartCubit = context.read<CartCubit>();
+  final cartCubit = context.read<CartCubit>();
 
-    const maxAttempts = 5;
+  await cartCubit.doEvent(GetCartEvent());
 
-    for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-      if (!context.mounted) return;
+  if (!context.mounted) return;
 
-      await cartCubit.doEvent(GetCartEvent());
+  final cartState = cartCubit.state.cart;
 
-      if (!context.mounted) return;
-
-      final cart = cartCubit.state.cart.data;
-
-      if (cart == null) {
-        debugPrint('Cart data is null, retrying...');
-      } else {
-        if (cart.items.isEmpty) {
-          context.go(AppRoutes.successOrder);
-
-          return;
-        }
-      }
-
-      if (attempt < maxAttempts) {
-        await Future.delayed(const Duration(milliseconds: 700));
-      }
-    }
-
-    if (!context.mounted) return;
-
-    context.go(AppRoutes.successOrder);
+  if (cartState.errorMessage != null) {
+    _showMessage(context, cartState.errorMessage!);
+    return;
   }
+
+  // Cart was successfully cleared after placing the order.
+  if (cartState.data == null || cartState.data!.items.isEmpty) {
+    context.go(AppRoutes.successOrder);
+    return;
+  }
+
+  // Unexpected case: order succeeded but cart is still not empty.
+  _showMessage(
+    context,
+    'Order placed successfully, but cart could not be refreshed.',
+  );
+}
 
   void _placeOrder(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;

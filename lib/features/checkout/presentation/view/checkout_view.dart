@@ -35,18 +35,13 @@ class _CheckoutViewState extends State<CheckoutView> {
 
     _getDeliveryFee();
 
-    context.read<CheckoutCubit>().doEvent(
-          GetAddressesEvent(),
-        );
+    context.read<CheckoutCubit>().doEvent(GetAddressesEvent());
   }
 
   void _getDeliveryFee() {
     context.read<CheckoutCubit>().doEvent(
-          GetDeliveryFee(
-            addressId: widget.addressId,
-            cartId: widget.cartId,
-          ),
-        );
+      GetDeliveryFee(addressId: widget.addressId, cartId: widget.cartId),
+    );
   }
 
   @override
@@ -61,50 +56,17 @@ class _CheckoutViewState extends State<CheckoutView> {
               floating: false,
               pinned: false,
               titleSpacing: 0,
-              title: Text(
-                localizations.checkout,
-              ),
+              title: Text(localizations.checkout),
               leading: IconButton(
                 onPressed: context.pop,
-                icon: const Icon(
-                  Icons.arrow_back_ios,
-                ),
+                icon: const Icon(Icons.arrow_back_ios),
               ),
             ),
 
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  BlocConsumer<CheckoutCubit, CheckoutState>(
-                    listenWhen: (previous, current) {
-                      return previous.deliveryFeeState.errorMessage !=
-                          current.deliveryFeeState.errorMessage;
-                    },
-                    listener: (context, state) {
-                      final errorMessage =
-                          state.deliveryFeeState.errorMessage;
-
-                      if (errorMessage != null) {
-                        ScaffoldMessenger.of(context)
-                          ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                            SnackBar(
-                              content: Text(errorMessage),
-                            ),
-                          );
-                      }
-                    },
-                    builder: (context, state) {
-                      final deliveryFee =
-                          state.deliveryFeeState.data;
-
- 
-                      return DeliveryTime(
-                        estimatedDeliveryAt:
-                            deliveryFee?.estimatedDeliveryAt,
-                      );
-                    },
-                  ),
+                  _DeliveryTimeSection(),
 
                   const SizedBox(height: 25),
 
@@ -129,19 +91,20 @@ class _CheckoutViewState extends State<CheckoutView> {
                   const SizedBox(height: 25),
 
                   GiftMethods(
-                    onChanged: ({
-                      required bool isGift,
-                      required String name,
-                      required String phone,
-                    }) {
-                      context.read<CheckoutCubit>().doEvent(
+                    onChanged:
+                        ({
+                          required bool isGift,
+                          required String name,
+                          required String phone,
+                        }) {
+                          context.read<CheckoutCubit>().doEvent(
                             UpdateGiftInfo(
                               isGift: isGift,
                               name: name,
                               phone: phone,
                             ),
                           );
-                    },
+                        },
                   ),
 
                   const SizedBox(height: 25),
@@ -162,6 +125,42 @@ class _CheckoutViewState extends State<CheckoutView> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _DeliveryTimeSection extends StatelessWidget {
+  const _DeliveryTimeSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<CheckoutCubit, CheckoutState>(
+      listenWhen: (previous, current) {
+        return previous.deliveryFeeState.errorMessage !=
+            current.deliveryFeeState.errorMessage;
+      },
+      listener: (context, state) {
+        final errorMessage = state.deliveryFeeState.errorMessage;
+
+        if (errorMessage != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(errorMessage)));
+        }
+      },
+      child: BlocBuilder<CheckoutCubit, CheckoutState>(
+        buildWhen: (previous, current) {
+          return previous.deliveryFeeState.data !=
+              current.deliveryFeeState.data;
+        },
+        builder: (context, state) {
+          final deliveryFee = state.deliveryFeeState.data;
+
+          return DeliveryTime(
+            estimatedDeliveryAt: deliveryFee?.estimatedDeliveryAt,
+          );
+        },
       ),
     );
   }
