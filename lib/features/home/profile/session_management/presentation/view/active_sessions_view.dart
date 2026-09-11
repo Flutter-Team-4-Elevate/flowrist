@@ -66,8 +66,6 @@ class _ActiveSessionsViewState extends State<ActiveSessionsView> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final mediaQuery = MediaQuery.of(context);
-    final bottomInset = mediaQuery.padding.bottom;
 
     return Scaffold(
       backgroundColor: AppColors.whiteBase,
@@ -99,9 +97,7 @@ class _ActiveSessionsViewState extends State<ActiveSessionsView> {
             );
           }
         },
-        buildWhen: (previous, current) =>
-            previous.sessions != current.sessions ||
-            previous.revokingSessionId != current.revokingSessionId,
+        buildWhen: (previous, current) => previous.sessions != current.sessions,
         builder: (context, state) {
           if (state.sessions.isLoading && state.sessions.data == null) {
             return const Center(
@@ -125,26 +121,32 @@ class _ActiveSessionsViewState extends State<ActiveSessionsView> {
             onRefresh: () async {
               context.read<SessionsCubit>().doEvent(const GetSessionsEvent());
             },
-            child: ListView.separated(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                AppDimensions.defaultScreenPadding,
-                AppDimensions.defaultScreenPadding,
-                AppDimensions.defaultScreenPadding,
-                AppDimensions.defaultScreenPadding + bottomInset,
-              ),
-              itemCount: sessions.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
-              itemBuilder: (context, index) {
-                final session = sessions[index];
-                final isRevoking = state.revokingSessionId == session.id;
+            child: SafeArea(
+              top: false,
+              bottom: true,
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(
+                  AppDimensions.defaultScreenPadding,
+                ),
+                itemCount: sessions.length,
+                separatorBuilder: (_, _) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final session = sessions[index];
 
-                return SessionCard(
-                  session: session,
-                  isRevoking: isRevoking,
-                  onRevoke: () => _confirmRevokeSession(context, session.id),
-                );
-              },
+                  return BlocSelector<SessionsCubit, SessionsState, bool>(
+                    selector: (state) => state.revokingSessionId == session.id,
+                    builder: (context, isRevoking) {
+                      return SessionCard(
+                        session: session,
+                        isRevoking: isRevoking,
+                        onRevoke: () =>
+                            _confirmRevokeSession(context, session.id),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           );
         },

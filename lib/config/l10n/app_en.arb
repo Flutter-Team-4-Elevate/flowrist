@@ -140,7 +140,7 @@
   "thisDevice": "This Device",
   "activeNow": "Active Now",
   "revoke": "Revoke",
-  "logOut": "Log Out",
+  "logOut": "Logout",
   "logOutEverywhere": "Log out everywhere",
   "revokeSessionTitle": "Revoke Session",
   "revokeSessionConfirmation": "Are you sure you want to log out from this device?",
@@ -156,7 +156,7 @@
   "reorder": "Reorder",
   "deliveredOn": "Delivered on",
   "noOrdersFound": "No orders found",
-  "orderNumberPrefix": "Order number",
+  "orderNumberPrefix": "Order number:",
   "orderDetails": "Order Details",
   "status": "Status",
   "paymentMethod": "Payment Method",
@@ -166,7 +166,6 @@
   "instantArriveBy": "Instant, Arrive by",
   "deliveryAddress": "Delivery address",
   "addNew": "Add New",
-  "paymentMethod": "Payment method",
   "cashOnDelivery": "Cash on delivery",
   "creditCard": "Credit card",
   "itIsAGift": "It is a gift",
@@ -186,10 +185,15 @@
   "about_us": "About us",
   "terms_and_conditions": "Terms & conditions",
   "app_version": "v 6.3.0 - (446)",
-  "selectCityAndArea": "Please select city and area",
   "savedAddress": "Saved address",
-  "payment":"Payment",
-  "noAddressSelected":"No location selected"
-     
-
+  "orderDate": "Order date",
+  "orderIdRequired": "Order ID is required",
+  "confirmLogout": "Confirm logout!!",
+  "changeLanguage": "Change Language",
+  "arabic": "Arabic",
+  "english": "English",
+  "allPricesIncludeTax": "All prices include tax",
+  "connectionErrorMessage": "Please check your internet connection and try again.",
+  "noAddressSelected": "No address selected",
+  "payment": "Payment"
 }

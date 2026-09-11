@@ -39,4 +39,13 @@ abstract final class AppConstants {
   static const String currentDevice = 'This Device';
   static const String activeNow = 'Active Now';
   static const String jwtJtiClaim = 'jti';
+  static const String sessionIdParam = 'sessionId';
+  static const String orderIdParam = 'orderId';
+  static const String orderDateFormat = 'd MMM yyyy, hh:mm a';
+  static const String orderCardDateFormat = 'd MMM yyyy';
+  static const String languageKey = 'app_language';
+  static const String title = 'title';
+  static const String url = 'url';
+  static const String aboutUsUrl = 'https://elevate-flutter-team.github.io/flower_app_web_views/about.html';
+  static const String termsAndConditionsUrl = 'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html';
 }

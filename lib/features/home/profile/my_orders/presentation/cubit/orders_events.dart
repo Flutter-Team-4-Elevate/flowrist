@@ -12,3 +12,7 @@ class LoadOrderDetailsEvent extends OrdersEvents {
   final String orderId;
   const LoadOrderDetailsEvent(this.orderId);
 }
+
+class LoadMoreOrdersEvent extends OrdersEvents {
+  const LoadMoreOrdersEvent();
+}

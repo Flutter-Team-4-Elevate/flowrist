@@ -20,6 +20,8 @@ class SessionService {
   }
 
   Future<void> setGuestMode(bool value) async {
+    _inMemoryToken = null;
+    _inMemoryRefreshToken = null;
     await _secureStorage.save(AppConstants.guestModeKey, value.toString());
   }
 

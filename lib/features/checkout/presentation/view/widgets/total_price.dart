@@ -3,7 +3,6 @@ import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/gift_recipient_entity.dart';
-import 'package:flowrist/features/checkout/presentation/view/payment_web_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/sub_total.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';

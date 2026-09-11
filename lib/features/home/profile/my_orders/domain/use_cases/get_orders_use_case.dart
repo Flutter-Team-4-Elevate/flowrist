@@ -1,5 +1,5 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/paginated_orders_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/repositories/orders_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -9,10 +9,10 @@ class GetOrdersUseCase {
 
   GetOrdersUseCase(this._repository);
 
-  Future<BaseResponse<List<OrderEntity>>> call({
-    int? page,
-    int? pageSize,
-  }) async {
-    return await _repository.getOrders(page: page, pageSize: pageSize);
+  Future<BaseResponse<PaginatedOrdersEntity>> call({
+    required int page,
+    required int pageSize,
+  }) {
+    return _repository.getOrders(page: page, pageSize: pageSize);
   }
 }

@@ -452,7 +452,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revoke => 'Revoke';
 
   @override
-  String get logOut => 'Log Out';
+  String get logOut => 'Logout';
 
   @override
   String get logOutEverywhere => 'Log out everywhere';
@@ -503,7 +503,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noOrdersFound => 'No orders found';
 
   @override
-  String get orderNumberPrefix => 'Order number';
+  String get orderNumberPrefix => 'Order number:';
 
   @override
   String get orderDetails => 'Order Details';
@@ -512,7 +512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get status => 'Status';
 
   @override
-  String get paymentMethod => 'Payment method';
+  String get paymentMethod => 'Payment Method';
 
   @override
   String get paymentStatus => 'Payment Status';
@@ -593,8 +593,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedAddress => 'Saved address';
 
   @override
-  String get payment => 'Payment';
+  String get orderDate => 'Order date';
 
   @override
-  String get noAddressSelected => 'No location selected';
+  String get orderIdRequired => 'Order ID is required';
+
+  @override
+  String get confirmLogout => 'Confirm logout!!';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get allPricesIncludeTax => 'All prices include tax';
+
+  @override
+  String get connectionErrorMessage =>
+      'Please check your internet connection and try again.';
+
+  @override
+  String get noAddressSelected => 'No address selected';
+
+  @override
+  String get payment => 'Payment';
 }

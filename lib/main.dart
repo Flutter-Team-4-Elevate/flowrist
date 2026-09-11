@@ -3,6 +3,7 @@ import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/notifications/local_notificatoin_service.dart';
 import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
@@ -38,12 +39,9 @@ Future<void> main() async {
   runApp(
     MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) => getIt<CartCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => getIt<AddressesViewModel>(),
-        ),
+        BlocProvider(create: (_) => getIt<CartCubit>()),
+        BlocProvider(create: (_) => getIt<AddressesViewModel>()),
+        BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
       ],
       child: const FlowristApp(),
     ),
@@ -52,35 +50,26 @@ Future<void> main() async {
 
 Future<void> _loadEnvironmentVariables() async {
   try {
-    await dotenv.load(
-      fileName: '.env',
-    );
+    await dotenv.load(fileName: '.env');
   } catch (e) {
-    debugPrint(
-      'Error loading .env file: $e',
-    );
+    debugPrint('Error loading .env file: $e');
   }
 }
 
 class FlowristApp extends StatefulWidget {
-  const FlowristApp({
-    super.key,
-  });
+  const FlowristApp({super.key});
 
   @override
   State<FlowristApp> createState() => _FlowristAppState();
 }
 
-class _FlowristAppState extends State<FlowristApp>
-    with WidgetsBindingObserver {
+class _FlowristAppState extends State<FlowristApp> with WidgetsBindingObserver {
   bool _isRefreshingAddress = false;
 
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addObserver(this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshAddress();
     });
@@ -93,9 +82,7 @@ class _FlowristAppState extends State<FlowristApp>
   }
 
   @override
-  void didChangeAppLifecycleState(
-    AppLifecycleState state,
-  ) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _refreshAddress();
     }
@@ -109,9 +96,7 @@ class _FlowristAppState extends State<FlowristApp>
     _isRefreshingAddress = true;
 
     try {
-      await context.read<AddressesViewModel>().doEvent(
-            InitializeAddress(),
-          );
+      await context.read<AddressesViewModel>().doEvent(InitializeAddress());
     } finally {
       _isRefreshingAddress = false;
     }
@@ -119,31 +104,31 @@ class _FlowristAppState extends State<FlowristApp>
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = context.watch<AppLanguageCubit>().state;
+
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
+      locale: currentLocale,
       localizationsDelegates: const [
         AppLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en'),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: AppTheme.lightTheme,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         return BlocListener<CartCubit, CartState>(
           listenWhen: (prev, curr) =>
+              prev.cart.errorMessage != curr.cart.errorMessage &&
               curr.cart.errorMessage != null &&
-              prev.cart.errorMessage !=
-                  curr.cart.errorMessage,
+              curr.cart.errorMessage!.isNotEmpty,
           listener: (context, state) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  state.cart.errorMessage!,
-                ),
+                content: Text(state.cart.errorMessage!),
                 backgroundColor: AppColors.red,
                 behavior: SnackBarBehavior.floating,
               ),
@@ -155,4 +140,3 @@ class _FlowristAppState extends State<FlowristApp>
     );
   }
 }
- 

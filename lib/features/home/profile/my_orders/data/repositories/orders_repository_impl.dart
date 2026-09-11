@@ -3,7 +3,7 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/data_sources/contract/orders_remote_data_source.dart';
 import 'package:flowrist/features/home/profile/my_orders/data/mapper/orders_mapper.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_details_entity.dart';
-import 'package:flowrist/features/home/profile/my_orders/domain/entities/order_entity.dart';
+import 'package:flowrist/features/home/profile/my_orders/domain/entities/paginated_orders_entity.dart';
 import 'package:flowrist/features/home/profile/my_orders/domain/repositories/orders_repository.dart';
 import 'package:injectable/injectable.dart';
 
@@ -14,7 +14,7 @@ class OrdersRepositoryImpl implements OrdersRepository {
   OrdersRepositoryImpl(this._remoteDataSource);
 
   @override
-  Future<BaseResponse<List<OrderEntity>>> getOrders({
+  Future<BaseResponse<PaginatedOrdersEntity>> getOrders({
     int? page,
     int? pageSize,
   }) async {
@@ -23,10 +23,10 @@ class OrdersRepositoryImpl implements OrdersRepository {
         page: page,
         pageSize: pageSize,
       );
-      final entities = OrdersMapper.toOrderEntityList(responseDto);
-      return SuccessResponse<List<OrderEntity>>(entities);
+      final entity = OrdersMapper.toPaginatedOrdersEntity(responseDto);
+      return SuccessResponse<PaginatedOrdersEntity>(entity);
     } on Exception catch (e) {
-      return ApiErrorHandler.handleException<List<OrderEntity>>(e);
+      return ApiErrorHandler.handleException<PaginatedOrdersEntity>(e);
     }
   }
 
