@@ -1,3 +1,4 @@
+import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +14,7 @@ class SuccessOrder extends StatelessWidget {
           Center(child: Text("Success order")),
           ElevatedButton(
             onPressed: () {
-              context.pop();
+              context.go(AppRoutes.homeTab);
             },
             child: Text("data"),
           ),

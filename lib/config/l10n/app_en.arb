@@ -187,5 +187,9 @@
   "app_version": "v 6.3.0 - (446)",
   "savedAddress": "Saved address",
   "orderDate": "Order date",
-  "orderIdRequired": "Order ID is required"
+  "orderIdRequired": "Order ID is required",
+  "payment":"Payment",
+  "noAddressSelected":"No location selected"
+     
+
 }

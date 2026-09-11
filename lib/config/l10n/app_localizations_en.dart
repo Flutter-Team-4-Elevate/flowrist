@@ -597,4 +597,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orderIdRequired => 'Order ID is required';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get noAddressSelected => 'No location selected';
 }

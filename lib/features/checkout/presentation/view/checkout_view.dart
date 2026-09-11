@@ -8,8 +8,6 @@ import 'package:flowrist/features/checkout/presentation/view/widgets/total_price
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
-import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
-import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -36,132 +34,181 @@ class _CheckoutViewState extends State<CheckoutView> {
     super.initState();
 
     _getDeliveryFee();
-    context.read<CheckoutCubit>().doEvent(GetAddressesEvent());
+
+    context.read<CheckoutCubit>().doEvent(
+          GetAddressesEvent(),
+        );
   }
 
   void _getDeliveryFee() {
     context.read<CheckoutCubit>().doEvent(
-      GetDeliveryFee(addressId: widget.addressId, cartId: widget.cartId),
-    );
+          GetDeliveryFee(
+            addressId: widget.addressId,
+            cartId: widget.cartId,
+          ),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    return Scaffold(
-      body: SafeArea(
-        child: BlocListener<CheckoutCubit, CheckoutState>(
-          listenWhen: (previous, current) {
-            final previousState = previous.placeOrderState;
-            final currentState = current.placeOrderState;
 
-         
-            return previousState.isLoading &&
-                !currentState.isLoading &&
-                currentState.errorMessage == null;
-          },
-          listener: (context, state) {
-            context.read<CartCubit>().doEvent(GetCartEvent());
-          },
-          child: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                floating: false,
-                pinned: false,
-                titleSpacing: 0,
-                title: Text(localizations.checkout),
-                leading: IconButton(
-                  onPressed: context.pop,
-                  icon: const Icon(Icons.arrow_back_ios),
-                ),
-              ),
+    return BlocBuilder<CheckoutCubit, CheckoutState>(
+      buildWhen: (previous, current) {
+        return previous.placeOrderState.isLoading !=
+            current.placeOrderState.isLoading;
+      },
+      builder: (context, state) {
+        final isLoading = state.placeOrderState.isLoading;
 
-              SliverToBoxAdapter(
-                child: Column(
-                  children: [
-                    BlocConsumer<CheckoutCubit, CheckoutState>(
-                      listenWhen: (previous, current) {
-                        return previous.deliveryFeeState.errorMessage !=
-                            current.deliveryFeeState.errorMessage;
-                      },
-                      listener: (context, state) {
-                        final errorMessage =
-                            state.deliveryFeeState.errorMessage;
-
-                        if (errorMessage != null) {
-                          ScaffoldMessenger.of(context)
-                            ..hideCurrentSnackBar()
-                            ..showSnackBar(
-                              SnackBar(content: Text(errorMessage)),
-                            );
-                        }
-                      }, 
-                      builder: (context, state) {
-                        final deliveryFeeState = state.deliveryFeeState;
-                        final deliveryFee = deliveryFeeState.data;
-
-                        if (deliveryFeeState.isLoading) {
-                          return const Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
-                        }
-
-                        return DeliveryTime(
-                          estimatedDeliveryAt: deliveryFee?.estimatedDeliveryAt,
-                        );
-                      },
+        return Stack(
+          children: [
+            // ----------------------------------------
+            // CHECKOUT SCREEN
+            // ----------------------------------------
+            Scaffold(
+              body: SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverAppBar(
+                      floating: false,
+                      pinned: false,
+                      titleSpacing: 0,
+                      title: Text(
+                        localizations.checkout,
+                      ),
+                      leading: IconButton(
+                        onPressed: context.pop,
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 25),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const _DeliveryTimeSection(),
 
-                    const _SectionDivider(),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
-                    const DeliveryAddress(),
-                    const SizedBox(height: 25),
+                          const _SectionDivider(),
 
-                    const _SectionDivider(),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
-                    const PaymentMethod(),
-                    const SizedBox(height: 25),
+                          const DeliveryAddress(),
 
-                    const _SectionDivider(),
+                          const SizedBox(height: 25),
 
-                    const SizedBox(height: 25),
-                    GiftMethods(
-                      onChanged:
-                          ({
-                            required bool isGift,
-                            required String name,
-                            required String phone,
-                          }) {
-                            context.read<CheckoutCubit>().doEvent(
-                              UpdateGiftInfo(
-                                isGift: isGift,
-                                name: name,
-                                phone: phone,
-                              ),
-                            );
-                          },
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          const PaymentMethod(),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          GiftMethods(
+                            onChanged: ({
+                              required bool isGift,
+                              required String name,
+                              required String phone,
+                            }) {
+                              context.read<CheckoutCubit>().doEvent(
+                                    UpdateGiftInfo(
+                                      isGift: isGift,
+                                      name: name,
+                                      phone: phone,
+                                    ),
+                                  );
+                            },
+                          ),
+
+                          const SizedBox(height: 25),
+
+                          const _SectionDivider(),
+
+                          const SizedBox(height: 25),
+
+                          TotalPrice(
+                            subTotal: widget.subTotal,
+                            cartId: widget.cartId,
+                            addressId: widget.addressId,
+                          ),
+
+                          const SizedBox(height: 32),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 25),
-
-                    const _SectionDivider(),
-
-                    const SizedBox(height: 25),
-                    TotalPrice(
-                      subTotal: widget.subTotal,
-                      cartId: widget.cartId,
-                      addressId: widget.addressId,
-                    ),
-                    const SizedBox(height: 32),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+
+            // ----------------------------------------
+            // FULL SCREEN LOADING
+            // ----------------------------------------
+            if (isLoading)
+              Positioned.fill(
+                child: AbsorbPointer(
+                  child: Container(
+                    color: Colors.black.withValues(
+                      alpha: 0.35,
+                    ),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _DeliveryTimeSection extends StatelessWidget {
+  const _DeliveryTimeSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<CheckoutCubit, CheckoutState>(
+      listenWhen: (previous, current) {
+        return previous.deliveryFeeState.errorMessage !=
+            current.deliveryFeeState.errorMessage;
+      },
+      listener: (context, state) {
+        final errorMessage =
+            state.deliveryFeeState.errorMessage;
+
+        if (errorMessage != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+              ),
+            );
+        }
+      },
+      child: BlocBuilder<CheckoutCubit, CheckoutState>(
+        buildWhen: (previous, current) {
+          return previous.deliveryFeeState.data !=
+              current.deliveryFeeState.data;
+        },
+        builder: (context, state) {
+          final deliveryFee =
+              state.deliveryFeeState.data;
+
+          return DeliveryTime(
+            estimatedDeliveryAt:
+                deliveryFee?.estimatedDeliveryAt,
+          );
+        },
       ),
     );
   }
@@ -179,3 +226,4 @@ class _SectionDivider extends StatelessWidget {
     );
   }
 }
+ 

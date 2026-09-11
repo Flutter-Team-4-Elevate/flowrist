@@ -45,38 +45,43 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  Future<void> _getCart() async {
-    emit(
-      state.copyWith(
-        cart: state.cart.copyWith(isLoading: true, errorMessage: null),
+Future<void> _getCart() async {
+  emit(
+    state.copyWith(
+      cart: state.cart.copyWith(
+        isLoading: true,
+        errorMessage: null,
       ),
-    );
+    ),
+  );
 
-    final result = await _getCartUseCase();
+  final result = await _getCartUseCase();
 
-    switch (result) {
-      case SuccessResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: null,
-              data: result.data,
-            ),
+  switch (result) {
+    case SuccessResponse<CartEntity>():
+
+      emit(
+        state.copyWith(
+          cart: state.cart.copyWith(
+            isLoading: false,
+            errorMessage: null,
+            data: result.data,
           ),
-        );
+        ),
+      );
 
-      case ErrorResponse<CartEntity>():
-        emit(
-          state.copyWith(
-            cart: state.cart.copyWith(
-              isLoading: false,
-              errorMessage: result.errorMessage,
-            ),
+    case ErrorResponse<CartEntity>():
+
+      emit(
+        state.copyWith(
+          cart: state.cart.copyWith(
+            isLoading: false,
+            errorMessage: result.errorMessage,
           ),
-        );
-    }
+        ),
+      );
   }
+}
 
   Future<void> _addToCart(String productId) async {
     final addingProducts = Set<String>.from(state.addingProductIds)

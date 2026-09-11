@@ -9,7 +9,7 @@ import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
 import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
- 
+
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_state.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
@@ -118,8 +118,10 @@ class _CartTabViewState extends State<CartTabView> {
                           final selectedAddress = state.selectedAddress;
                           return Expanded(
                             child: Text(
-                              '${localization.deliverTo} '
-                              '${selectedAddress?.area}-${selectedAddress?.addressLine}',
+                              selectedAddress == null
+                                  ? localization.noAddressSelected
+                                  : '${localization.deliverTo} '
+                                        '${selectedAddress.area}-${selectedAddress.addressLine}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.medium18Inter.copyWith(
@@ -301,7 +303,7 @@ class _CartTabViewState extends State<CartTabView> {
                         ],
                       );
                     },
-                  ), 
+                  ),
 
                   const SizedBox(height: 40),
 

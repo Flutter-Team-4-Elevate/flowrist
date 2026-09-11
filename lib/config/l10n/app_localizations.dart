@@ -1227,6 +1227,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Order ID is required'**
   String get orderIdRequired;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
+
+  /// No description provided for @noAddressSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No location selected'**
+  String get noAddressSelected;
 }
 
 class _AppLocalizationsDelegate

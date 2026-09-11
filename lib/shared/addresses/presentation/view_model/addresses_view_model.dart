@@ -56,14 +56,27 @@ class AddressesViewModel extends Cubit<AddressesState> {
     try {
       CoordinatesEntity? position;
 
+      // Get current GPS location.
       try {
         final response = await _getUserCurrentLocationUseCase();
-        final data = (response as SuccessResponse).data!;
-        position = data.$1;
+
+        if (response case SuccessResponse()) {
+          final data = response.data;
+
+          if (data != null) {
+            position = data.$1;
+
+            debugPrint(
+              'CURRENT LOCATION: '
+              '${position.latitude}, ${position.longitude}',
+            );
+          }
+        }
       } catch (e) {
         debugPrint('LOCATION NOT AVAILABLE: $e');
       }
 
+      // Get user's saved addresses.
       final response = await _getAllUserAddressesUseCase();
 
       switch (response) {
@@ -85,24 +98,34 @@ class AddressesViewModel extends Cubit<AddressesState> {
             return;
           }
 
-          AddressEntity? nearestAddress;
+          AddressEntity? selectedAddress;
 
+          // 1. If GPS is available, choose nearest address.
           if (position != null) {
-            nearestAddress = _findNearestAddress(
+            selectedAddress = _findNearestAddress(
               addresses,
               position,
             );
+
+            debugPrint(
+              'NEAREST ADDRESS: ${selectedAddress?.id}',
+            );
           }
 
-          nearestAddress ??= _findDefaultAddress(addresses);
-          nearestAddress ??= addresses.first;
+          // 2. If GPS is unavailable, use default address.
+          selectedAddress ??= _findDefaultAddress(addresses);
 
+          // 3. Last fallback.
+          selectedAddress ??= addresses.first;
+
+          // If GPS found a different address than the current
+          // default address, make the nearest one default.
           if (position != null) {
             final currentDefault = _findDefaultAddress(addresses);
 
-            if (currentDefault?.id != nearestAddress.id) {
+            if (currentDefault?.id != selectedAddress.id) {
               await _makeAddressDefault(
-                nearestAddress,
+                selectedAddress,
                 addresses,
               );
 
@@ -117,7 +140,7 @@ class AddressesViewModel extends Cubit<AddressesState> {
                 isLoading: false,
                 errorMessage: null,
               ),
-              selectedAddress: nearestAddress,
+              selectedAddress: selectedAddress,
             ),
           );
 
@@ -208,7 +231,8 @@ class AddressesViewModel extends Cubit<AddressesState> {
             );
           }
 
-          if (selectedAddress == null && selectedAddressId != null) {
+          if (selectedAddress == null &&
+              selectedAddressId != null) {
             selectedAddress = _findAddressById(
               addresses,
               selectedAddressId,
@@ -231,7 +255,9 @@ class AddressesViewModel extends Cubit<AddressesState> {
 
           if (newlyAddedAddress != null &&
               !newlyAddedAddress.isDefault) {
-            await _setNewAddressAsDefault(newlyAddedAddress);
+            await _setNewAddressAsDefault(
+              newlyAddedAddress,
+            );
           }
 
         case ErrorResponse<List<AddressEntity>>():
@@ -245,8 +271,7 @@ class AddressesViewModel extends Cubit<AddressesState> {
           );
       }
     } catch (e, stackTrace) {
-    debugPrint(stackTrace.toString());
-
+      debugPrint(stackTrace.toString());
 
       emit(
         state.copyWith(
@@ -311,7 +336,9 @@ class AddressesViewModel extends Cubit<AddressesState> {
             return;
           }
 
-          await _refreshAddressesAfterDefault(defaultAddress);
+          await _refreshAddressesAfterDefault(
+            defaultAddress,
+          );
 
         case ErrorResponse<DefaultAddressEntity>():
           emit(
@@ -405,7 +432,7 @@ class AddressesViewModel extends Cubit<AddressesState> {
           );
       }
     } catch (e, stackTrace) {
-    debugPrint(stackTrace.toString());
+      debugPrint(stackTrace.toString());
 
       emit(
         state.copyWith(
@@ -439,11 +466,19 @@ class AddressesViewModel extends Cubit<AddressesState> {
         address.lng,
       );
 
+      debugPrint(
+        'Address ${address.id} distance: ${distance.toStringAsFixed(2)} m',
+      );
+
       if (distance < shortestDistance) {
         shortestDistance = distance;
         nearestAddress = address;
       }
     }
+
+    debugPrint(
+      'Selected nearest address: ${nearestAddress?.id}',
+    );
 
     return nearestAddress;
   }

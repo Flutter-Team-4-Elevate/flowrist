@@ -9,23 +9,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PaymentMethod extends StatelessWidget {
   const PaymentMethod({super.key});
-
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-
     final paymentMethods = [Endpoints.cash, Endpoints.creditCard];
-
     return BlocBuilder<CheckoutCubit, CheckoutState>(
       buildWhen: (previous, current) {
-        return previous.selectedPaymentMethod !=
-                current.selectedPaymentMethod ||
-            previous.placeOrderState.isLoading !=
-                current.placeOrderState.isLoading;
+        return previous.selectedPaymentMethod != current.selectedPaymentMethod;
       },
       builder: (context, state) {
-        final isLoading = state.placeOrderState.isLoading;
-
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -38,9 +30,7 @@ class PaymentMethod extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               const SizedBox(height: 16),
-
               ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -50,29 +40,20 @@ class PaymentMethod extends StatelessWidget {
                 },
                 itemBuilder: (context, index) {
                   final paymentMethod = paymentMethods[index];
-
                   final title = paymentMethod == Endpoints.cash
                       ? localizations.cashOnDelivery
                       : localizations.creditCard;
-
                   return PaymentMethodItem(
                     title: title,
                     isSelected: state.selectedPaymentMethod == paymentMethod,
-                    onTap: isLoading
-                        ? null
-                        : () {
-                            context.read<CheckoutCubit>().doEvent(
-                              SelectPaymentMethod(paymentMethod: paymentMethod),
-                            );
-                          },
+                    onTap: () {
+                      context.read<CheckoutCubit>().doEvent(
+                        SelectPaymentMethod(paymentMethod: paymentMethod),
+                      );
+                    },
                   );
                 },
               ),
-
-              if (isLoading) ...[
-                const SizedBox(height: 20),
-                const Center(child: CircularProgressIndicator()),
-              ],
             ],
           ),
         );

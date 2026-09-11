@@ -1,5 +1,6 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
@@ -29,34 +30,57 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     switch (event) {
       case SelectPaymentMethod():
         _selectPaymentMethod(event.paymentMethod);
+
       case PlaceOrder():
         _placeOrder(event.order);
+
       case GetDeliveryFee():
-        _getDeliveryFee(addressId: event.addressId, cartId: event.cartId);
+        _getDeliveryFee(
+          addressId: event.addressId,
+          cartId: event.cartId,
+        );
+
       case UpdateGiftInfo():
         _updateGiftInfo(
           isGift: event.isGift,
           name: event.name,
           phone: event.phone,
         );
+
       case GetAddressesEvent():
         _getAddresses();
+
       case SelectDeliveryAddressEvent():
         _selectAddress(event.addressId);
     }
   }
 
   void _selectPaymentMethod(String paymentMethod) {
+    final isCashOnDelivery = paymentMethod == Endpoints.cash;
+
     emit(
       state.copyWith(
         selectedPaymentMethod: paymentMethod,
+
+        // Cash on Delivery does not support gifts.
+        isGift: isCashOnDelivery ? false : state.isGift,
+
+        // Clear gift information when switching to Cash.
+        giftName: isCashOnDelivery ? '' : state.giftName,
+        giftPhone: isCashOnDelivery ? '' : state.giftPhone,
+
+        // Reset previous order state.
         placeOrderState: BaseState<CardOrderEntity?>.initial(),
       ),
     );
   }
 
   void _selectAddress(String addressId) {
-    emit(state.copyWith(selectedAddressId: addressId));
+    emit(
+      state.copyWith(
+        selectedAddressId: addressId,
+      ),
+    );
   }
 
   void _updateGiftInfo({
@@ -64,12 +88,23 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     required String name,
     required String phone,
   }) {
-    emit(state.copyWith(isGift: isGift, giftName: name, giftPhone: phone));
+    emit(
+      state.copyWith(
+        isGift: isGift,
+        giftName: isGift ? name : '',
+        giftPhone: isGift ? phone : '',
+      ),
+    );
   }
 
-  Future<void> _placeOrder(CardOrderRequestEntity order) async {
+  Future<void> _placeOrder(
+    CardOrderRequestEntity order,
+  ) async {
     emit(
-      state.copyWith(placeOrderState: BaseState<CardOrderEntity?>.loading()),
+      state.copyWith(
+        placeOrderState:
+            BaseState<CardOrderEntity?>.loading(),
+      ),
     );
 
     try {
@@ -78,16 +113,19 @@ class CheckoutCubit extends Cubit<CheckoutState> {
       switch (response) {
         case SuccessResponse<CardOrderEntity?>():
           final entity = response.data;
+
           emit(
             state.copyWith(
-              placeOrderState: BaseState<CardOrderEntity?>.success(entity),
+              placeOrderState:
+                  BaseState<CardOrderEntity?>.success(entity),
             ),
           );
 
         case ErrorResponse<CardOrderEntity?>():
           emit(
             state.copyWith(
-              placeOrderState: BaseState<CardOrderEntity?>.error(
+              placeOrderState:
+                  BaseState<CardOrderEntity?>.error(
                 response.errorMessage,
               ),
             ),
@@ -96,7 +134,10 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     } catch (e) {
       emit(
         state.copyWith(
-          placeOrderState: BaseState<CardOrderEntity?>.error(e.toString()),
+          placeOrderState:
+              BaseState<CardOrderEntity?>.error(
+            e.toString(),
+          ),
         ),
       );
     }
@@ -107,7 +148,10 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     required String cartId,
   }) async {
     emit(
-      state.copyWith(deliveryFeeState: BaseState<DeliveryFeeEntity>.loading()),
+      state.copyWith(
+        deliveryFeeState:
+            BaseState<DeliveryFeeEntity>.loading(),
+      ),
     );
 
     try {
@@ -123,7 +167,8 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           if (entity == null) {
             emit(
               state.copyWith(
-                deliveryFeeState: BaseState<DeliveryFeeEntity>.error(
+                deliveryFeeState:
+                    BaseState<DeliveryFeeEntity>.error(
                   'Invalid delivery fee response',
                 ),
               ),
@@ -133,14 +178,18 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
           emit(
             state.copyWith(
-              deliveryFeeState: BaseState<DeliveryFeeEntity>.success(entity),
+              deliveryFeeState:
+                  BaseState<DeliveryFeeEntity>.success(
+                entity,
+              ),
             ),
           );
 
         case ErrorResponse<DeliveryFeeEntity>():
           emit(
             state.copyWith(
-              deliveryFeeState: BaseState<DeliveryFeeEntity>.error(
+              deliveryFeeState:
+                  BaseState<DeliveryFeeEntity>.error(
                 response.errorMessage,
               ),
             ),
@@ -149,14 +198,19 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     } catch (e) {
       emit(
         state.copyWith(
-          deliveryFeeState: BaseState<DeliveryFeeEntity>.error(e.toString()),
+          deliveryFeeState:
+              BaseState<DeliveryFeeEntity>.error(
+            e.toString(),
+          ),
         ),
       );
     }
   }
 
   void reset() {
-    emit(CheckoutState.initial());
+    emit(
+      CheckoutState.initial(),
+    );
   }
 
   Future<void> _getAddresses() async {
@@ -175,19 +229,25 @@ class CheckoutCubit extends Cubit<CheckoutState> {
       switch (response) {
         case SuccessResponse<List<AddressEntity>>():
           final addresses = response.data ?? const [];
-          String? selectedId = state.selectedAddressId;
+
+          String? selectedId =
+              state.selectedAddressId;
 
           if (selectedId == null && addresses.isNotEmpty) {
             final defaultAddress = addresses.firstWhere(
               (a) => a.isDefault,
               orElse: () => addresses.first,
             );
+
             selectedId = defaultAddress.id;
           }
 
           emit(
             state.copyWith(
-              addressesState: BaseState<List<AddressEntity>>.success(addresses),
+              addressesState:
+                  BaseState<List<AddressEntity>>.success(
+                addresses,
+              ),
               selectedAddressId: selectedId,
             ),
           );
@@ -195,7 +255,8 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         case ErrorResponse<List<AddressEntity>>():
           emit(
             state.copyWith(
-              addressesState: BaseState<List<AddressEntity>>.error(
+              addressesState:
+                  BaseState<List<AddressEntity>>.error(
                 response.errorMessage,
               ),
             ),
@@ -204,7 +265,10 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     } catch (e) {
       emit(
         state.copyWith(
-          addressesState: BaseState<List<AddressEntity>>.error(e.toString()),
+          addressesState:
+              BaseState<List<AddressEntity>>.error(
+            e.toString(),
+          ),
         ),
       );
     }

@@ -8,6 +8,8 @@ import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
 import 'package:flowrist/features/auth/presentation/signup/view/signup_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/checkout_view.dart';
+import 'package:flowrist/features/checkout/presentation/view/payment_web_view.dart';
+import 'package:flowrist/features/checkout/presentation/view/success_order.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
 import 'package:flowrist/features/home/cart/presentation/view/cart_tab_view.dart';
@@ -48,6 +50,7 @@ abstract final class AppRoutes {
   static const cartTab = '/cart-tab';
   static const checkOut = '/checkout';
   static const profileTab = '/profile-tab';
+  static const paymentWebView = '/paymentWebView';
 
   static const productDetails = '/product/:productId';
 
@@ -64,6 +67,7 @@ abstract final class AppRoutes {
   static const activeSessions = '/active-sessions';
   static const myOrders = '/my-orders';
   static const orderDetails = '/order-details/:${AppConstants.orderIdParam}';
+  static const successOrder = '/successOrder';
   static String orderDetailsPath(String orderId) {
     return '/order-details/$orderId';
   }
@@ -123,6 +127,11 @@ abstract final class AppRouter {
         builder: (context, state) => const SearchView(),
       ),
       GoRoute(
+        path: AppRoutes.successOrder,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const SuccessOrder(),
+      ),
+      GoRoute(
         path: AppRoutes.checkOut,
         builder: (context, state) {
           final args = state.extra as CheckoutArguments?;
@@ -153,6 +162,24 @@ abstract final class AppRouter {
           return const SplashView();
         },
       ),
+  GoRoute(
+  path: AppRoutes.paymentWebView,
+  builder: (context, state) {
+    final sessionUrl = state.extra;
+
+    if (sessionUrl is! String || sessionUrl.isEmpty) {
+      return const Scaffold(
+        body: Center(
+          child: Text('Payment URL is missing'),
+        ),
+      );
+    }
+
+    return PaymentWebView(
+      paymentUrl: sessionUrl,
+    );
+  },
+),
 
       // --------------------------------------------------
       // Login
