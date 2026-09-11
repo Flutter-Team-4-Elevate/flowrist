@@ -452,7 +452,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get revoke => 'Revoke';
 
   @override
-  String get logOut => 'Log Out';
+  String get logOut => 'Logout';
 
   @override
   String get logOutEverywhere => 'Log out everywhere';
@@ -599,8 +599,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orderIdRequired => 'Order ID is required';
 
   @override
-  String get payment => 'Payment';
+  String get confirmLogout => 'Confirm logout!!';
 
   @override
-  String get noAddressSelected => 'No location selected';
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get allPricesIncludeTax => 'All prices include tax';
+
+  @override
+  String get connectionErrorMessage =>
+      'Please check your internet connection and try again.';
 }

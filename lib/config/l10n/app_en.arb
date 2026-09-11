@@ -140,7 +140,7 @@
   "thisDevice": "This Device",
   "activeNow": "Active Now",
   "revoke": "Revoke",
-  "logOut": "Log Out",
+  "logOut": "Logout",
   "logOutEverywhere": "Log out everywhere",
   "revokeSessionTitle": "Revoke Session",
   "revokeSessionConfirmation": "Are you sure you want to log out from this device?",
@@ -188,8 +188,10 @@
   "savedAddress": "Saved address",
   "orderDate": "Order date",
   "orderIdRequired": "Order ID is required",
-  "payment":"Payment",
-  "noAddressSelected":"No location selected"
-     
-
+  "confirmLogout": "Confirm logout!!",
+  "changeLanguage": "Change Language",
+  "arabic": "Arabic",
+  "english": "English",
+  "allPricesIncludeTax": "All prices include tax",
+  "connectionErrorMessage": "Please check your internet connection and try again."
 }

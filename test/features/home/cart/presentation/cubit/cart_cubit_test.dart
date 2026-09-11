@@ -14,6 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../auth/data/repositories/auth_repository_impl_test.mocks.dart';
 @GenerateMocks([
   GetCartUseCase,
   AddToCartUseCase,
@@ -27,6 +28,7 @@ void main() {
   late MockAddToCartUseCase mockAddToCartUseCase;
   late MockUpdateCartQuantityUseCase mockUpdateCartQuantityUseCase;
   late MockRemoveCartItemUseCase mockRemoveCartItemUseCase;
+  late MockSessionService mockSessionService;
   late CartCubit cartCubit;
 
   final tCartItem = CartItemEntity(
@@ -59,20 +61,23 @@ void main() {
     provideDummy<BaseResponse<CartEntity>>(
       SuccessResponse<CartEntity>(tCartEntity),
     );
-    provideDummy<BaseResponse<void>>(
-      SuccessResponse<void>(null),
-    );
+    provideDummy<BaseResponse<void>>(SuccessResponse<void>(null));
 
     mockGetCartUseCase = MockGetCartUseCase();
     mockAddToCartUseCase = MockAddToCartUseCase();
     mockUpdateCartQuantityUseCase = MockUpdateCartQuantityUseCase();
     mockRemoveCartItemUseCase = MockRemoveCartItemUseCase();
+    mockSessionService = MockSessionService();
+
+    // القيمة الافتراضية: المستخدم ليس Guest
+    when(mockSessionService.isGuest()).thenAnswer((_) async => false);
 
     cartCubit = CartCubit(
       mockGetCartUseCase,
       mockAddToCartUseCase,
       mockUpdateCartQuantityUseCase,
       mockRemoveCartItemUseCase,
+      mockSessionService,
     );
   });
 
@@ -86,11 +91,25 @@ void main() {
 
   group('GetCartEvent', () {
     blocTest<CartCubit, CartState>(
+      'emits [initial] without calling API when user is guest',
+      setUp: () {
+        when(mockSessionService.isGuest()).thenAnswer((_) async => true);
+      },
+      build: () => cartCubit,
+      act: (cubit) => cubit.doEvent(GetCartEvent()),
+      expect: () => [CartState.initial()],
+      verify: (_) {
+        verify(mockSessionService.isGuest()).called(1);
+        verifyZeroInteractions(mockGetCartUseCase);
+      },
+    );
+
+    blocTest<CartCubit, CartState>(
       'emits [loading, success] when getCart succeeds',
       build: () {
-        when(mockGetCartUseCase()).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCartEntity),
-        );
+        when(
+          mockGetCartUseCase(),
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCartEntity));
         return cartCubit;
       },
       act: (cubit) => cubit.doEvent(GetCartEvent()),
@@ -111,6 +130,7 @@ void main() {
         ),
       ],
       verify: (_) {
+        verify(mockSessionService.isGuest()).called(1);
         verify(mockGetCartUseCase()).called(1);
       },
     );
@@ -141,23 +161,40 @@ void main() {
         ),
       ],
       verify: (_) {
+        verify(mockSessionService.isGuest()).called(1);
         verify(mockGetCartUseCase()).called(1);
       },
     );
   });
 
+  group('ClearCartEvent', () {
+    blocTest<CartCubit, CartState>(
+      'emits [CartState.initial()] when ClearCartEvent is triggered',
+      seed: () => CartState.initial().copyWith(
+        cart: BaseState<CartEntity>(
+          isLoading: false,
+          errorMessage: null,
+          data: tCartEntity,
+        ),
+      ),
+      build: () => cartCubit,
+      act: (cubit) => cubit.doEvent(ClearCartEvent()),
+      expect: () => [CartState.initial()],
+    );
+  });
+
   group('AddToCartEvent', () {
-    final tProductId = 'prod_1';
+    const tProductId = 'prod_1';
 
     blocTest<CartCubit, CartState>(
       'emits [addingProduct, successWithUpdatedCart] when addToCart succeeds',
       build: () {
-        when(mockAddToCartUseCase(any)).thenAnswer(
-          (_) async => SuccessResponse<void>(null),
-        );
-        when(mockGetCartUseCase()).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCartEntity),
-        );
+        when(
+          mockAddToCartUseCase(any),
+        ).thenAnswer((_) async => SuccessResponse<void>(null));
+        when(
+          mockGetCartUseCase(),
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCartEntity));
         return cartCubit;
       },
       act: (cubit) => cubit.doEvent(AddToCartEvent(productId: tProductId)),
@@ -188,9 +225,9 @@ void main() {
     blocTest<CartCubit, CartState>(
       'emits [addingProduct, error] when addToCart fails',
       build: () {
-        when(mockAddToCartUseCase(any)).thenAnswer(
-          (_) async => ErrorResponse<void>('Product out of stock'),
-        );
+        when(
+          mockAddToCartUseCase(any),
+        ).thenAnswer((_) async => ErrorResponse<void>('Product out of stock'));
         return cartCubit;
       },
       act: (cubit) => cubit.doEvent(AddToCartEvent(productId: tProductId)),
@@ -235,15 +272,12 @@ void main() {
             itemId: anyNamed('itemId'),
             request: anyNamed('request'),
           ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCartEntity),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCartEntity));
         return cartCubit;
       },
-      act: (cubit) => cubit.doEvent(
-        ChangeCartQuantityEvent(itemId: 'item_1', quantity: 3),
-      ),
-      wait: Duration(milliseconds: 500),
+      act: (cubit) =>
+          cubit.doEvent(ChangeCartQuantityEvent(itemId: 'item_1', quantity: 3)),
+      wait: const Duration(milliseconds: 500),
       verify: (_) {
         verify(
           mockUpdateCartQuantityUseCase(
@@ -280,10 +314,9 @@ void main() {
         );
         return cartCubit;
       },
-      act: (cubit) => cubit.doEvent(
-        ChangeCartQuantityEvent(itemId: 'item_1', quantity: 0),
-      ),
-      wait: Duration(milliseconds: 500),
+      act: (cubit) =>
+          cubit.doEvent(ChangeCartQuantityEvent(itemId: 'item_1', quantity: 0)),
+      wait: const Duration(milliseconds: 500),
       verify: (_) {
         verify(mockRemoveCartItemUseCase('item_1')).called(1);
       },
@@ -312,9 +345,9 @@ void main() {
         ),
       ),
       build: () {
-        when(mockRemoveCartItemUseCase('item_1')).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tEmptyCart),
-        );
+        when(
+          mockRemoveCartItemUseCase('item_1'),
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tEmptyCart));
         return cartCubit;
       },
       act: (cubit) => cubit.doEvent(RemoveCartItemEvent(itemId: 'item_1')),

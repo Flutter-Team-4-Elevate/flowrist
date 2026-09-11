@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+  ];
 
   /// No description provided for @login.
   ///
@@ -943,7 +947,7 @@ abstract class AppLocalizations {
   /// No description provided for @logOut.
   ///
   /// In en, this message translates to:
-  /// **'Log Out'**
+  /// **'Logout'**
   String get logOut;
 
   /// No description provided for @logOutEverywhere.
@@ -1228,17 +1232,41 @@ abstract class AppLocalizations {
   /// **'Order ID is required'**
   String get orderIdRequired;
 
-  /// No description provided for @payment.
+  /// No description provided for @confirmLogout.
   ///
   /// In en, this message translates to:
-  /// **'Payment'**
-  String get payment;
+  /// **'Confirm logout!!'**
+  String get confirmLogout;
 
-  /// No description provided for @noAddressSelected.
+  /// No description provided for @changeLanguage.
   ///
   /// In en, this message translates to:
-  /// **'No location selected'**
-  String get noAddressSelected;
+  /// **'Change Language'**
+  String get changeLanguage;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @allPricesIncludeTax.
+  ///
+  /// In en, this message translates to:
+  /// **'All prices include tax'**
+  String get allPricesIncludeTax;
+
+  /// No description provided for @connectionErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get connectionErrorMessage;
 }
 
 class _AppLocalizationsDelegate
@@ -1252,7 +1280,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['ar', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1261,6 +1289,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
     case 'en':
       return AppLocalizationsEn();
   }
