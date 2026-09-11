@@ -51,6 +51,7 @@ void main() {
   );
 
   const tLoginParams = LoginParams(
+    deviceId: "",
     email: 'ali@example.com',
     password: 'Password123!',
     fcmToken: '',

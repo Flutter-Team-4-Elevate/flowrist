@@ -39,6 +39,7 @@ class AuthRepositoryImpl implements AuthRepository {
         email: params.email,
         password: params.password,
         fcmToken: params.fcmToken,
+        deviceId: params.deviceId,
       );
       final response = await _remoteDataSource.login(request);
       final loginEntity = response.toEntity();

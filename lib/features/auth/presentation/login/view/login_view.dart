@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flowrist/config/device_id/device_id_services.dart';
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
@@ -193,6 +194,9 @@ class _LoginViewState extends State<LoginView> {
                               final fcmToken =
                                   await PushNotificationsServices.getFcmToken();
 
+                              final deviceId = await getIt<DeviceIdService>()
+                                  .getDeviceId();
+
                               if (!context.mounted) {
                                 return;
                               }
@@ -201,6 +205,7 @@ class _LoginViewState extends State<LoginView> {
                                 LoginSubmitted(
                                   email: emailController.text.trim(),
                                   password: passwordController.text,
+                                  deviceId: deviceId,
                                   fcmToken: fcmToken ?? '',
                                 ),
                               );

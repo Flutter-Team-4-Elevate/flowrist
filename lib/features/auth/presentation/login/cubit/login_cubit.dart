@@ -60,6 +60,7 @@ class LoginCubit extends Cubit<LoginState> {
       email: event.email,
       password: event.password,
       fcmToken: event.fcmToken,
+      deviceId: event.deviceId,
     );
 
     final result = await _loginUseCase(params, state.rememberMe);

@@ -1,9 +1,13 @@
+ 
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flowrist/config/device_id/device_id_services.dart';
+import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/notifications/local_notificatoin_service.dart';
 import 'package:flowrist/firebase_options.dart';
+import 'package:flowrist/shared/notifications/domain/use_cases/update_fcmtoken_use_case.dart';
 
 class PushNotificationsServices {
   static final FirebaseMessaging message =
@@ -13,11 +17,13 @@ class PushNotificationsServices {
 
   /// Returns the current FCM token.
   static Future<String?> getFcmToken() async {
-    if (_fcmToken != null && _fcmToken!.isNotEmpty) {
-      return _fcmToken;
-    }
-
     try {
+      // Return cached token if available.
+      if (_fcmToken != null && _fcmToken!.isNotEmpty) {
+        return _fcmToken;
+      }
+
+      // Get the current token from Firebase.
       _fcmToken = await message.getToken();
 
       log(
@@ -36,6 +42,42 @@ class PushNotificationsServices {
     }
   }
 
+  /// Handles FCM token changes.
+static void handleTokenRefresh() {
+  message.onTokenRefresh.listen(
+    (String newToken) async {
+      try {
+        _fcmToken = newToken;
+
+        log('FCM TOKEN UPDATED: $newToken');
+
+        final deviceId =
+            await getIt<DeviceIdService>().getDeviceId();
+
+        await getIt<UpdateFcmTokenUseCase>().call(
+          deviceId: deviceId,
+          fcmToken: newToken,
+        );
+
+    
+      } catch (error, stackTrace) {
+        log(
+          'Failed to update FCM token on server',
+          error: error,
+          stackTrace: stackTrace,
+        );
+      }
+    },
+    onError: (Object error, StackTrace stackTrace) {
+      log(
+        'FCM token refresh listener error',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    },
+  );
+}
+
   /// Handles FCM messages when the app is in the background.
   @pragma('vm:entry-point')
   static Future<void> handleBackgroundMessage(
@@ -45,28 +87,12 @@ class PushNotificationsServices {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    log(
-      'Background notification: '
-      '${remoteMessage.notification?.title ?? "null"}',
-    );
-
-    log(
-      'Background data: ${remoteMessage.data}',
-    );
   }
 
   /// Handles notifications while the app is open.
   static void handleForegroundMessage() {
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage remoteMessage) {
-        log(
-          'Foreground notification: '
-          '${remoteMessage.notification?.title ?? "null"}',
-        );
-
-        log(
-          'Foreground data: ${remoteMessage.data}',
-        );
 
         LocalNotificationService.showBasicNotification(
           remoteMessage,
@@ -78,38 +104,27 @@ class PushNotificationsServices {
   /// Initializes Firebase Cloud Messaging.
   static Future<void> init() async {
     try {
-      final NotificationSettings settings =
-          await message.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
+      // final NotificationSettings settings =
+      //     await message.requestPermission(
+      //   alert: true,
+      //   badge: true,
+      //   sound: true,
+      // );
 
-      log(
-        'Notification permission: '
-        '${settings.authorizationStatus}',
-      );
 
+
+      // Get the initial/current token.
       await getFcmToken();
 
-      message.onTokenRefresh.listen(
-        (String newToken) {
-          _fcmToken = newToken;
+      // Listen for future token updates.
+      handleTokenRefresh();
 
-          log(
-            'NEW FCM TOKEN: $newToken',
-          );
-
-          // TODO:
-          // If the user is already logged in,
-          // update the token on the backend.
-        },
-      );
-
+      // Background messages.
       FirebaseMessaging.onBackgroundMessage(
         handleBackgroundMessage,
       );
 
+      // Foreground messages.
       handleForegroundMessage();
     } catch (error, stackTrace) {
       log(
@@ -120,3 +135,4 @@ class PushNotificationsServices {
     }
   }
 }
+ 
