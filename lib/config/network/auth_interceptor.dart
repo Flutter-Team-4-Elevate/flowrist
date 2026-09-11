@@ -1,21 +1,23 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
-import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class AuthInterceptor extends QueuedInterceptor {
   final SessionService _sessionService;
+  final SessionInvalidationNotifier _invalidationNotifier;
   final Dio _refreshDio;
 
   Completer<bool>? _refreshCompleter;
 
   AuthInterceptor(
     this._sessionService,
+    this._invalidationNotifier,
     @Named(AppConstants.refreshDioName) this._refreshDio,
   );
 
@@ -60,7 +62,6 @@ class AuthInterceptor extends QueuedInterceptor {
           return handler.next(retryErr);
         }
       } else {
-        await _onRefreshFailed();
         return handler.next(err);
       }
     }
@@ -81,6 +82,7 @@ class AuthInterceptor extends QueuedInterceptor {
 
       if (refreshToken.isEmpty) {
         log('AuthInterceptor: RefreshToken is EMPTY!');
+        await _handleRefreshFailure();
         _refreshCompleter!.complete(false);
         return false;
       }
@@ -115,22 +117,22 @@ class AuthInterceptor extends QueuedInterceptor {
         return true;
       } else {
         log('AuthInterceptor: Refresh failed with response: ${response.data}');
+        await _handleRefreshFailure();
         _refreshCompleter!.complete(false);
         return false;
       }
     } catch (e, stack) {
       log('AuthInterceptor: Refresh Exception: $e', stackTrace: stack);
+      await _handleRefreshFailure();
       _refreshCompleter!.complete(false);
       return false;
+    } finally {
+      _refreshCompleter = null;
     }
   }
 
-  Future<void> _onRefreshFailed() async {
+  Future<void> _handleRefreshFailure() async {
     await _sessionService.clearSession();
-
-    final context = AppRouter.rootNavigatorKey.currentContext;
-    if (context != null && context.mounted) {
-      AppRouter.router.go(AppRoutes.login);
-    }
+    _invalidationNotifier.notifySessionExpired();
   }
 }

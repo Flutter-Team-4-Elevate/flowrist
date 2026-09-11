@@ -503,7 +503,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noOrdersFound => 'No orders found';
 
   @override
-  String get orderNumberPrefix => 'Order number';
+  String get orderNumberPrefix => 'Order number:';
 
   @override
   String get orderDetails => 'Order Details';
@@ -512,7 +512,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get status => 'Status';
 
   @override
-  String get paymentMethod => 'Payment method';
+  String get paymentMethod => 'Payment Method';
 
   @override
   String get paymentStatus => 'Payment Status';
@@ -591,6 +591,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedAddress => 'Saved address';
+
+  @override
+  String get orderDate => 'Order date';
+
+  @override
+  String get orderIdRequired => 'Order ID is required';
 
   @override
   String get payment => 'Payment';

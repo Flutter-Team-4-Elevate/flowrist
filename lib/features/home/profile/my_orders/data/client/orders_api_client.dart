@@ -20,8 +20,8 @@ abstract class OrdersApiClient {
     @Query(AppConstants.searchParamPageSize) int? pageSize,
   });
 
-  @GET('${Endpoints.orders}/{orderId}')
+  @GET('${Endpoints.orders}/{${AppConstants.orderIdParam}}')
   Future<OrderDetailsResponseDto> getOrderDetails({
-    @Path('orderId') required String orderId,
+    @Path(AppConstants.orderIdParam) required String orderId,
   });
 }

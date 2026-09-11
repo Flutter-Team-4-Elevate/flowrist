@@ -5,6 +5,7 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_cubit.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_events.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/cubit/orders_state.dart';
+import 'package:flowrist/features/home/profile/my_orders/presentation/helper/date_time_extension.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/widgets/orders_empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,28 +39,60 @@ class OrderDetailsView extends StatelessWidget {
           titleSpacing: 0,
         ),
         body: BlocBuilder<OrdersCubit, OrdersState>(
+          buildWhen: (previous, current) =>
+              previous.orderDetails != current.orderDetails,
           builder: (context, state) {
-            if (state.isLoadingDetails) {
+            if (state.orderDetails.isLoading &&
+                state.orderDetails.data == null) {
               return const Center(
                 child: CircularProgressIndicator(color: AppColors.purpleBase),
               );
             }
 
-            final details = state.selectedOrderDetails;
+            if (state.orderDetails.errorMessage != null &&
+                state.orderDetails.data == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      state.orderDetails.errorMessage!,
+                      style: AppStyles.regular14Inter,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.purpleBase,
+                      ),
+                      onPressed: () => context.read<OrdersCubit>().doEvent(
+                        LoadOrderDetailsEvent(orderId),
+                      ),
+                      child: Text(locale.retry, style: AppStyles.medium16Inter),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            final details = state.orderDetails.data;
             if (details == null) {
               return OrdersEmptyStateWidget(message: locale.noOrdersFound);
             }
 
-            return Padding(
+            final formattedDate = details.createdAt.toOrderDetailsDate();
+
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${locale.orderNumberPrefix} ${details.orderNumber}',
+                    '${locale.orderNumberPrefix}\n${details.orderNumber}',
                     style: AppStyles.bold20Inter,
                   ),
                   const SizedBox(height: 16),
+                  if (formattedDate.isNotEmpty)
+                    _buildDetailRow(locale.orderDate, formattedDate),
                   _buildDetailRow(locale.status, details.status),
                   _buildDetailRow(locale.paymentMethod, details.paymentMethod),
                   _buildDetailRow(locale.paymentStatus, details.paymentStatus),
