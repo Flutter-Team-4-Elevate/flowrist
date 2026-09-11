@@ -1,3 +1,4 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class AppWebViewScreen extends StatefulWidget {
 class _AppWebViewScreenState extends State<AppWebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -26,18 +28,38 @@ class _AppWebViewScreenState extends State<AppWebViewScreen> {
       ..setBackgroundColor(AppColors.whiteBase)
       ..setNavigationDelegate(
         NavigationDelegate(
-          onPageStarted: (_) => setState(() => _isLoading = true),
+          onPageStarted: (_) {
+            setState(() {
+              _isLoading = true;
+              _hasError = false;
+            });
+          },
           onPageFinished: (_) => setState(() => _isLoading = false),
           onWebResourceError: (error) {
-            setState(() => _isLoading = false);
+            if (error.isForMainFrame ?? true) {
+              setState(() {
+                _isLoading = false;
+                _hasError = true;
+              });
+            }
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
   }
 
+  void _reload() {
+    setState(() {
+      _hasError = false;
+      _isLoading = true;
+    });
+    _controller.reload();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: AppColors.whiteBase,
       appBar: AppBar(
@@ -61,7 +83,40 @@ class _AppWebViewScreenState extends State<AppWebViewScreen> {
               )
             : null,
       ),
-      body: WebViewWidget(controller: _controller),
+      body: _hasError
+          ? _buildErrorView(l10n)
+          : WebViewWidget(controller: _controller),
+    );
+  }
+
+  Widget _buildErrorView(AppLocalizations l10n) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.wifi_off_rounded,
+              size: 64,
+              color: AppColors.grey30,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.generalValidationError,
+              style: AppStyles.medium16InterBlack,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.connectionErrorMessage,
+              textAlign: TextAlign.center,
+              style: AppStyles.regular14Inter,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(onPressed: _reload, child: Text(l10n.retry)),
+          ],
+        ),
+      ),
     );
   }
 }

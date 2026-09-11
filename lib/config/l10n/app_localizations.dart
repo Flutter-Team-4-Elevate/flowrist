@@ -1261,6 +1261,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All prices include tax'**
   String get allPricesIncludeTax;
+
+  /// No description provided for @connectionErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get connectionErrorMessage;
 }
 
 class _AppLocalizationsDelegate

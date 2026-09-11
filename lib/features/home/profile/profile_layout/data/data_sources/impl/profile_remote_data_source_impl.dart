@@ -4,7 +4,7 @@ import 'package:flowrist/features/home/profile/profile_layout/data/models/reques
 import 'package:flowrist/features/home/profile/profile_layout/data/models/response/logout_response_dto.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ProfileRemoteDataSource)
+@Injectable(as: ProfileRemoteDataSource)
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final ProfileApiClient _apiClient;
   ProfileRemoteDataSourceImpl(this._apiClient);

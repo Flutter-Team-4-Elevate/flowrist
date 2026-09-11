@@ -192,5 +192,6 @@
   "changeLanguage": "Change Language",
   "arabic": "Arabic",
   "english": "English",
-  "allPricesIncludeTax": "All prices include tax"
+  "allPricesIncludeTax": "All prices include tax",
+  "connectionErrorMessage": "Please check your internet connection and try again."
 }

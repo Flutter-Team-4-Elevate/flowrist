@@ -5,7 +5,7 @@ import 'package:flowrist/features/home/profile/profile_layout/data/models/reques
 import 'package:flowrist/features/home/profile/profile_layout/domain/repositories/profile_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: ProfileRepository)
+@Injectable(as: ProfileRepository)
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource _remoteDataSource;
   final SessionService _sessionService;
@@ -15,9 +15,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<BaseResponse<void>> logout() async {
     try {
-      final refeshToken = await _sessionService.getRefreshToken();
+      final refreshToken = await _sessionService.getRefreshToken();
       await _remoteDataSource.logout(
-        LogoutRequestDto(refreshToken: refeshToken),
+        LogoutRequestDto(refreshToken: refreshToken),
       );
       await _sessionService.clearSession();
       return SuccessResponse(null);

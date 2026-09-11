@@ -2,7 +2,7 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/profile/profile_layout/domain/repositories/profile_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@injectable
 class LogoutUseCase {
   final ProfileRepository _repository;
 

@@ -7,6 +7,7 @@ class ProfileMenuItem extends StatelessWidget {
   final String title;
   final Widget? trailing;
   final VoidCallback onTap;
+  final double? horizontalPadding;
 
   const ProfileMenuItem({
     super.key,
@@ -14,14 +15,15 @@ class ProfileMenuItem extends StatelessWidget {
     required this.title,
     this.trailing,
     required this.onTap,
+    this.horizontalPadding,
   });
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-
     return ListTile(
-      contentPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+      contentPadding: horizontalPadding != null
+          ? EdgeInsets.symmetric(horizontal: horizontalPadding!)
+          : null,
       leading: icon != null
           ? Icon(icon, color: AppColors.grey, size: 20)
           : null,

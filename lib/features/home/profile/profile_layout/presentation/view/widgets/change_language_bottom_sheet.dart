@@ -1,6 +1,7 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_language.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/language_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,6 @@ class ChangeLanguageBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final cubit = context.read<AppLanguageCubit>();
     final currentLang = context.watch<AppLanguageCubit>().state.languageCode;
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
@@ -59,22 +59,20 @@ class ChangeLanguageBottomSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          LanguageCard(
-            title: l10n.arabic,
-            isSelected: currentLang == 'ar',
-            onTap: () {
-              cubit.changeLanguage('ar');
-              Navigator.pop(context);
-            },
-          ),
-          const SizedBox(height: 12),
-          LanguageCard(
-            title: l10n.english,
-            isSelected: currentLang == 'en',
-            onTap: () {
-              cubit.changeLanguage('en');
-              Navigator.pop(context);
-            },
+          ...AppLanguage.values.map(
+            (language) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: LanguageCard(
+                title: language == AppLanguage.arabic
+                    ? l10n.arabic
+                    : l10n.english,
+                isSelected: currentLang == language.code,
+                onTap: () {
+                  context.read<AppLanguageCubit>().changeLanguage(language);
+                  Navigator.pop(context);
+                },
+              ),
+            ),
           ),
         ],
       ),

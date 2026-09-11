@@ -38,12 +38,19 @@ class _ProfileTabViewContent extends StatefulWidget {
 }
 
 class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
-  bool isNotificationEnabled = true;
+  final ValueNotifier<bool> _isNotificationEnabled = ValueNotifier<bool>(true);
+
+  @override
+  void dispose() {
+    _isNotificationEnabled.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final screenHeight = MediaQuery.sizeOf(context).height;
+    final itemPadding = MediaQuery.sizeOf(context).width * 0.05;
 
     return BlocListener<ProfileCubit, ProfileState>(
       listenWhen: (prev, current) => prev.logoutState != current.logoutState,
@@ -64,10 +71,10 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
                         userEmail: "Nour_mohamed@gmail.com",
                         onEditName: () {},
                       ),
-                      _buildOrdersAndAddresses(l10n),
-                      _buildNotificationsSection(l10n),
-                      _buildSettingsSection(l10n),
-                      _buildLogoutSection(l10n),
+                      _buildOrdersAndAddresses(context, l10n, itemPadding),
+                      _buildNotificationsSection(context, l10n, itemPadding),
+                      _buildSettingsSection(context, l10n, itemPadding),
+                      _buildLogoutSection(context, l10n, itemPadding),
                       SizedBox(height: screenHeight * 0.03),
                       Text(l10n.app_version, style: AppStyles.regular12Inter),
                       SizedBox(height: screenHeight * 0.02),
@@ -99,20 +106,27 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     }
   }
 
-  Widget _buildOrdersAndAddresses(AppLocalizations l10n) {
+  Widget _buildOrdersAndAddresses(
+    BuildContext context,
+    AppLocalizations l10n,
+    double itemPadding,
+  ) {
     return ProfileSection(
       children: [
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.assignment_outlined,
           title: l10n.myOrders,
           onTap: () => context.push(AppRoutes.myOrders),
         ),
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.location_on_outlined,
           title: l10n.saveAddress,
           onTap: () => context.push(AppRoutes.savedAddresses),
         ),
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.devices_outlined,
           title: l10n.activeSessions,
           onTap: () => context.push(AppRoutes.activeSessions),
@@ -121,23 +135,30 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     );
   }
 
-  Widget _buildNotificationsSection(AppLocalizations l10n) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-
+  Widget _buildNotificationsSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    double itemPadding,
+  ) {
     return ProfileSection(
       children: [
         ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+          contentPadding: EdgeInsets.symmetric(horizontal: itemPadding),
           horizontalTitleGap: 0,
           leading: Transform.scale(
             scale: 0.7,
-            alignment: Alignment.centerLeft,
-            child: Switch(
-              value: isNotificationEnabled,
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              activeThumbColor: AppColors.white,
-              activeTrackColor: AppColors.purpleBase,
-              onChanged: (val) => setState(() => isNotificationEnabled = val),
+            alignment: AlignmentDirectional.centerStart,
+            child: ValueListenableBuilder<bool>(
+              valueListenable: _isNotificationEnabled,
+              builder: (context, isEnabled, _) {
+                return Switch(
+                  value: isEnabled,
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  activeThumbColor: AppColors.white,
+                  activeTrackColor: AppColors.purpleBase,
+                  onChanged: (val) => _isNotificationEnabled.value = val,
+                );
+              },
             ),
           ),
           title: Text(
@@ -156,7 +177,11 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     );
   }
 
-  Widget _buildSettingsSection(AppLocalizations l10n) {
+  Widget _buildSettingsSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    double itemPadding,
+  ) {
     final currentLocale = context.watch<AppLanguageCubit>().state.languageCode;
     final currentLanguageText = currentLocale == 'ar'
         ? l10n.arabic
@@ -165,6 +190,7 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     return ProfileSection(
       children: [
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.translate,
           title: l10n.language,
           trailing: Text(
@@ -176,6 +202,7 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
           onTap: () => ChangeLanguageBottomSheet.show(context),
         ),
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.info_outline,
           title: l10n.about_us,
           onTap: () {
@@ -183,13 +210,13 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
               AppRoutes.webView,
               extra: {
                 AppConstants.title: l10n.about_us,
-                AppConstants.url:
-                    'https://elevate-flutter-team.github.io/flower_app_web_views/about.html',
+                AppConstants.url: AppConstants.aboutUsUrl,
               },
             );
           },
         ),
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.description_outlined,
           title: l10n.terms_and_conditions,
           onTap: () {
@@ -197,8 +224,7 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
               AppRoutes.webView,
               extra: {
                 AppConstants.title: l10n.terms_and_conditions,
-                AppConstants.url:
-                    'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html',
+                AppConstants.url: AppConstants.termsAndConditionsUrl,
               },
             );
           },
@@ -207,11 +233,16 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     );
   }
 
-  Widget _buildLogoutSection(AppLocalizations l10n) {
+  Widget _buildLogoutSection(
+    BuildContext context,
+    AppLocalizations l10n,
+    double itemPadding,
+  ) {
     return ProfileSection(
       showBottomDivider: false,
       children: [
         ProfileMenuItem(
+          horizontalPadding: itemPadding,
           icon: Icons.logout,
           title: l10n.logOut,
           trailing: const Icon(

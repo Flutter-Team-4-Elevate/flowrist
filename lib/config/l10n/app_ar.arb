@@ -192,5 +192,6 @@
   "changeLanguage": "تغيير اللغة",
   "arabic": "العربية",
   "english": "الإنجليزية",
-  "allPricesIncludeTax": "جميع الأسعار تتضمن الضريبة"
+  "allPricesIncludeTax": "جميع الأسعار تتضمن الضريبة",
+  "connectionErrorMessage": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى."
 }

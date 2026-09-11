@@ -182,8 +182,7 @@ class SignUpFormState extends State<SignUpForm> {
                   AppRoutes.webView,
                   extra: {
                     AppConstants.title: localizations.termsAndConditions,
-                    AppConstants.url:
-                        'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html',
+                    AppConstants.url: AppConstants.termsAndConditionsUrl,
                   },
                 );
               },

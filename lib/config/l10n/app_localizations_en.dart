@@ -612,4 +612,8 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allPricesIncludeTax => 'All prices include tax';
+
+  @override
+  String get connectionErrorMessage =>
+      'Please check your internet connection and try again.';
 }
