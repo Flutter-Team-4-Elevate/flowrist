@@ -5,6 +5,7 @@ abstract final class Endpoints {
   static const refreshToken = 'api/identity/auth/refresh-token';
   static const sessions = 'api/identity/auth/sessions';
   static const updateFcmToken = 'api/identity/devices/fcm-token';
+  static const updateNotificationStatus = 'api/identity/devices/{deviceId}/notifications';
   static String deleteSession(String sessionId) =>
       'api/identity/auth/sessions/$sessionId';
 
