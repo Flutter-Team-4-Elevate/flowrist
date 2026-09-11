@@ -1267,6 +1267,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please check your internet connection and try again.'**
   String get connectionErrorMessage;
+
+  /// No description provided for @noAddressSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No address selected'**
+  String get noAddressSelected;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
 }
 
 class _AppLocalizationsDelegate

@@ -193,5 +193,7 @@
   "arabic": "Arabic",
   "english": "English",
   "allPricesIncludeTax": "All prices include tax",
-  "connectionErrorMessage": "Please check your internet connection and try again."
+  "connectionErrorMessage": "Please check your internet connection and try again.",
+  "noAddressSelected": "No address selected",
+  "payment": "Payment"
 }

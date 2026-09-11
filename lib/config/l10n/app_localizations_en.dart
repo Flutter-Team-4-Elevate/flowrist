@@ -616,4 +616,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get connectionErrorMessage =>
       'Please check your internet connection and try again.';
+
+  @override
+  String get noAddressSelected => 'No address selected';
+
+  @override
+  String get payment => 'Payment';
 }

@@ -193,5 +193,7 @@
   "arabic": "العربية",
   "english": "الإنجليزية",
   "allPricesIncludeTax": "جميع الأسعار تتضمن الضريبة",
-  "connectionErrorMessage": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى."
+  "connectionErrorMessage": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
+  "noAddressSelected": "لم يتم تحديد أي عنوان",
+  "payment": "الدفع"
 }

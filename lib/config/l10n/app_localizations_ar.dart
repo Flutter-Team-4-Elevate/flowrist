@@ -613,4 +613,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get connectionErrorMessage =>
       'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+
+  @override
+  String get noAddressSelected => 'لم يتم تحديد أي عنوان';
+
+  @override
+  String get payment => 'الدفع';
 }

@@ -12,11 +12,9 @@ import 'package:mockito/mockito.dart';
 
 import 'checkout_repository_impl_test.mocks.dart';
 
-@GenerateMocks([
-  CheckoutRemoteDataSource,
-])
+@GenerateMocks([CheckoutRemoteDataSource])
 void main() {
-    provideDummy<BaseResponse<CardOrderResponseModel>>(
+  provideDummy<BaseResponse<CardOrderResponseModel>>(
     SuccessResponse<CardOrderResponseModel>(
       CardOrderResponseModel(
         status: true,
@@ -45,9 +43,7 @@ void main() {
   setUp(() {
     mockRemoteDataSource = MockCheckoutRemoteDataSource();
 
-    repository = CheckoutRepositoryImpl(
-      mockRemoteDataSource,
-    );
+    repository = CheckoutRepositoryImpl(mockRemoteDataSource);
   });
 
   group('placeOrder', () {
@@ -84,50 +80,27 @@ void main() {
           data: cardOrderModel,
         );
 
-        when(
-          mockRemoteDataSource.placeOrder(any),
-        ).thenAnswer(
-          (_) async =>
-              SuccessResponse<CardOrderResponseModel>(remoteResponse),
+        when(mockRemoteDataSource.placeOrder(any)).thenAnswer(
+          (_) async => SuccessResponse<CardOrderResponseModel>(remoteResponse),
         );
 
         // Act
-        final result = await repository.placeOrder(
-          requestEntity,
-        );
+        final result = await repository.placeOrder(requestEntity);
 
         // Assert
-        expect(
-          result,
-          isA<SuccessResponse>(),
-        );
+        expect(result, isA<SuccessResponse>());
 
-        final successResult =
-            result as SuccessResponse;
+        final successResult = result as SuccessResponse;
 
-        expect(
-          successResult.data,
-          isNotNull,
-        );
+        expect(successResult.data, isNotNull);
 
-        expect(
-          successResult.data!.orderId,
-          'order-123',
-        );
+        expect(successResult.data!.orderId, 'order-123');
 
-        expect(
-          successResult.data!.gateway,
-          'Stripe',
-        );
+        expect(successResult.data!.gateway, 'Stripe');
 
-        expect(
-          successResult.data!.amount,
-          100.0,
-        );
+        expect(successResult.data!.amount, 100.0);
 
-        verify(
-          mockRemoteDataSource.placeOrder(any),
-        ).called(1);
+        verify(mockRemoteDataSource.placeOrder(any)).called(1);
       },
     );
 
@@ -135,6 +108,15 @@ void main() {
       'should return SuccessResponse with null data for COD order',
       () async {
         // Arrange
+        final codRequestEntity = CardOrderRequestEntity(
+          cartId: 'cart-123',
+          addressId: 'address-123',
+          isGift: false,
+          paymentMethod: 'Cash', // 👈 تغيير طريقة الدفع إلى Cash / COD
+          paymentGateway:
+              'Cash', // أو اتركه فارغاً إذا كان الـ Gateway غير مطلوب للـ Cash
+        );
+
         final remoteResponse = CardOrderResponseModel(
           status: true,
           code: 200,
@@ -142,146 +124,95 @@ void main() {
           data: null,
         );
 
-        when(
-          mockRemoteDataSource.placeOrder(any),
-        ).thenAnswer(
-          (_) async =>
-              SuccessResponse<CardOrderResponseModel>(remoteResponse),
+        when(mockRemoteDataSource.placeOrder(any)).thenAnswer(
+          (_) async => SuccessResponse<CardOrderResponseModel>(remoteResponse),
         );
 
         // Act
         final result = await repository.placeOrder(
-          requestEntity,
+          codRequestEntity, // 👈 استخدام الـ Request الخاص بالـ COD
         );
 
         // Assert
-        expect(
-          result,
-          isA<SuccessResponse>(),
-        );
+        expect(result, isA<SuccessResponse>());
 
-        final successResult =
-            result as SuccessResponse;
+        final successResult = result as SuccessResponse;
 
-        expect(
-          successResult.data,
-          isNull,
-        );
+        expect(successResult.data, isNull);
 
-        verify(
-          mockRemoteDataSource.placeOrder(any),
-        ).called(1);
+        verify(mockRemoteDataSource.placeOrder(any)).called(1);
       },
     );
 
-    test(
-      'should return ErrorResponse when remote data source fails',
-      () async {
-        // Arrange
-        when(
-          mockRemoteDataSource.placeOrder(any),
-        ).thenAnswer(
-          (_) async =>
-              ErrorResponse<CardOrderResponseModel>(
-            'Failed to place order',
-          ),
-        );
+    test('should return ErrorResponse when remote data source fails', () async {
+      // Arrange
+      when(mockRemoteDataSource.placeOrder(any)).thenAnswer(
+        (_) async =>
+            ErrorResponse<CardOrderResponseModel>('Failed to place order'),
+      );
 
-        // Act
-        final result = await repository.placeOrder(
-          requestEntity,
-        );
+      // Act
+      final result = await repository.placeOrder(requestEntity);
 
-        // Assert
-        expect(
-          result,
-          isA<ErrorResponse>(),
-        );
+      // Assert
+      expect(result, isA<ErrorResponse>());
 
-        final errorResult =
-            result as ErrorResponse;
+      final errorResult = result as ErrorResponse;
 
-        expect(
-          errorResult.errorMessage,
-          'Failed to place order',
-        );
+      expect(errorResult.errorMessage, 'Failed to place order');
 
-        verify(
-          mockRemoteDataSource.placeOrder(any),
-        ).called(1);
-      },
-    );
+      verify(mockRemoteDataSource.placeOrder(any)).called(1);
+    });
   });
 
   group('getDeliveryFee', () {
     const addressId = 'address-123';
     const cartId = 'cart-123';
 
-    test(
-      'should return DeliveryFeeEntity when remote call succeeds',
-      () async {
-        // Arrange
-        final deliveryFeeModel = DeliveryFeeModel(
-          addressId: addressId,
-          deliveryFee: 25.0,
-          estimatedDeliveryAt: DateTime(2026, 9, 5),
-          isServiceable: true,
-        );
+    test('should return DeliveryFeeEntity when remote call succeeds', () async {
+      // Arrange
+      final deliveryFeeModel = DeliveryFeeModel(
+        addressId: addressId,
+        deliveryFee: 25.0,
+        estimatedDeliveryAt: DateTime(2026, 9, 5),
+        isServiceable: true,
+      );
 
-        when(
-          mockRemoteDataSource.getDeliveryFee(
-            addressId: anyNamed('addressId'),
-            cartId: anyNamed('cartId'),
-          ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<DeliveryFeeModel>(
-            deliveryFeeModel,
-          ),
-        );
+      when(
+        mockRemoteDataSource.getDeliveryFee(
+          addressId: anyNamed('addressId'),
+          cartId: anyNamed('cartId'),
+        ),
+      ).thenAnswer(
+        (_) async => SuccessResponse<DeliveryFeeModel>(deliveryFeeModel),
+      );
 
-        // Act
-        final result = await repository.getDeliveryFee(
+      // Act
+      final result = await repository.getDeliveryFee(
+        addressId: addressId,
+        cartId: cartId,
+      );
+
+      // Assert
+      expect(result, isA<SuccessResponse<DeliveryFeeEntity>>());
+
+      final successResult = result as SuccessResponse<DeliveryFeeEntity>;
+
+      expect(successResult.data, isNotNull);
+
+      expect(successResult.data!.addressId, addressId);
+
+      expect(successResult.data!.deliveryFee, 25.0);
+
+      expect(successResult.data!.isServiceable, true);
+
+      verify(
+        mockRemoteDataSource.getDeliveryFee(
           addressId: addressId,
           cartId: cartId,
-        );
-
-        // Assert
-        expect(
-          result,
-          isA<SuccessResponse<DeliveryFeeEntity>>(),
-        );
-
-        final successResult =
-            result as SuccessResponse<DeliveryFeeEntity>;
-
-        expect(
-          successResult.data,
-          isNotNull,
-        );
-
-        expect(
-          successResult.data!.addressId,
-          addressId,
-        );
-
-        expect(
-          successResult.data!.deliveryFee,
-          25.0,
-        );
-
-        expect(
-          successResult.data!.isServiceable,
-          true,
-        );
-
-        verify(
-          mockRemoteDataSource.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).called(1);
-      },
-    );
+        ),
+      ).called(1);
+    });
 
     test(
       'should return ErrorResponse when delivery fee model is null',
@@ -292,11 +223,7 @@ void main() {
             addressId: anyNamed('addressId'),
             cartId: anyNamed('cartId'),
           ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<DeliveryFeeModel>(
-            null,
-          ),
-        );
+        ).thenAnswer((_) async => SuccessResponse<DeliveryFeeModel>(null));
 
         // Act
         final result = await repository.getDeliveryFee(
@@ -305,63 +232,45 @@ void main() {
         );
 
         // Assert
-        expect(
-          result,
-          isA<ErrorResponse<DeliveryFeeEntity>>(),
-        );
+        expect(result, isA<ErrorResponse<DeliveryFeeEntity>>());
 
-        final errorResult =
-            result as ErrorResponse<DeliveryFeeEntity>;
+        final errorResult = result as ErrorResponse<DeliveryFeeEntity>;
 
-        expect(
-          errorResult.errorMessage,
-          'Invalid delivery fee response',
-        );
+        expect(errorResult.errorMessage, 'Invalid delivery fee response');
       },
     );
 
-    test(
-      'should return ErrorResponse when remote data source fails',
-      () async {
-        // Arrange
-        when(
-          mockRemoteDataSource.getDeliveryFee(
-            addressId: anyNamed('addressId'),
-            cartId: anyNamed('cartId'),
-          ),
-        ).thenAnswer(
-          (_) async => ErrorResponse<DeliveryFeeModel>(
-            'Failed to get delivery fee',
-          ),
-        );
+    test('should return ErrorResponse when remote data source fails', () async {
+      // Arrange
+      when(
+        mockRemoteDataSource.getDeliveryFee(
+          addressId: anyNamed('addressId'),
+          cartId: anyNamed('cartId'),
+        ),
+      ).thenAnswer(
+        (_) async =>
+            ErrorResponse<DeliveryFeeModel>('Failed to get delivery fee'),
+      );
 
-        // Act
-        final result = await repository.getDeliveryFee(
+      // Act
+      final result = await repository.getDeliveryFee(
+        addressId: addressId,
+        cartId: cartId,
+      );
+
+      // Assert
+      expect(result, isA<ErrorResponse<DeliveryFeeEntity>>());
+
+      final errorResult = result as ErrorResponse<DeliveryFeeEntity>;
+
+      expect(errorResult.errorMessage, 'Failed to get delivery fee');
+
+      verify(
+        mockRemoteDataSource.getDeliveryFee(
           addressId: addressId,
           cartId: cartId,
-        );
-
-        // Assert
-        expect(
-          result,
-          isA<ErrorResponse<DeliveryFeeEntity>>(),
-        );
-
-        final errorResult =
-            result as ErrorResponse<DeliveryFeeEntity>;
-
-        expect(
-          errorResult.errorMessage,
-          'Failed to get delivery fee',
-        );
-
-        verify(
-          mockRemoteDataSource.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).called(1);
-      },
-    );
+        ),
+      ).called(1);
+    });
   });
 }

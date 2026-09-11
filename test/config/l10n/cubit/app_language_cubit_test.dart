@@ -2,6 +2,8 @@ import 'dart:ui';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
+import 'package:flowrist/core/constants/app_language.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -11,7 +13,6 @@ import 'app_language_cubit_test.mocks.dart';
 @GenerateMocks([SecureStorageService])
 void main() {
   late MockSecureStorageService mockStorage;
-  const languageKey = 'app_language';
 
   setUp(() {
     mockStorage = MockSecureStorageService();
@@ -21,52 +22,66 @@ void main() {
     test(
       'initial state should be English when no language is stored',
       () async {
-        when(mockStorage.get(languageKey)).thenAnswer((_) async => '');
+        when(
+          mockStorage.get(AppConstants.languageKey),
+        ).thenAnswer((_) async => '');
 
         final cubit = AppLanguageCubit(mockStorage);
 
-        expect(cubit.state, const Locale('en'));
+        expect(cubit.state, AppLanguage.english.locale);
       },
     );
 
     test(
       'initial state should emit saved language when valid language is stored',
       () async {
-        when(mockStorage.get(languageKey)).thenAnswer((_) async => 'ar');
+        when(
+          mockStorage.get(AppConstants.languageKey),
+        ).thenAnswer((_) async => AppLanguage.arabic.code);
 
         final cubit = AppLanguageCubit(mockStorage);
         await pumpEventQueue();
 
-        expect(cubit.state, const Locale('ar'));
+        expect(cubit.state, AppLanguage.arabic.locale);
       },
     );
 
     blocTest<AppLanguageCubit, Locale>(
-      'emits [Locale("ar")] and saves to storage when changeLanguage is called with "ar"',
+      'emits [Locale("ar")] and saves to storage when changeLanguage is called with AppLanguage.arabic',
       build: () {
-        when(mockStorage.get(languageKey)).thenAnswer((_) async => 'en');
-        when(mockStorage.save(languageKey, 'ar')).thenAnswer((_) async => {});
+        when(
+          mockStorage.get(AppConstants.languageKey),
+        ).thenAnswer((_) async => AppLanguage.english.code);
+        when(
+          mockStorage.save(AppConstants.languageKey, AppLanguage.arabic.code),
+        ).thenAnswer((_) async => {});
         return AppLanguageCubit(mockStorage);
       },
-      skip: 1,
-      act: (cubit) => cubit.changeLanguage('ar'),
-      expect: () => [const Locale('ar')],
+      skip: 1, // 👈 يتجاهل emit(Locale('en')) القادمة من _loadSavedLanguage
+      act: (cubit) => cubit.changeLanguage(AppLanguage.arabic),
+      expect: () => [AppLanguage.arabic.locale],
       verify: (_) {
-        verify(mockStorage.save(languageKey, 'ar')).called(1);
+        verify(
+          mockStorage.save(AppConstants.languageKey, AppLanguage.arabic.code),
+        ).called(1);
       },
     );
 
     blocTest<AppLanguageCubit, Locale>(
       'does not emit or save when changing to the already active language',
       build: () {
-        when(mockStorage.get(languageKey)).thenAnswer((_) async => 'en');
+        when(
+          mockStorage.get(AppConstants.languageKey),
+        ).thenAnswer((_) async => AppLanguage.english.code);
         return AppLanguageCubit(mockStorage);
       },
-      skip: 1,
-      act: (cubit) => cubit.changeLanguage('en'),
+      skip: 1, // 👈 يتجاهل emit(Locale('en')) القادمة من _loadSavedLanguage
+      act: (cubit) => cubit.changeLanguage(AppLanguage.english),
       expect: () => [],
       verify: (_) {
-        verifyNever(mockStorage.save(languageKey, 'en'));
+        verifyNever(
+          mockStorage.save(AppConstants.languageKey, AppLanguage.english.code),
+        );
       },
     );
   });
