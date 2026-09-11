@@ -10,6 +10,10 @@
         android:label="flowrist"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+    android:name="com.google.firebase.messaging.default_notification_channel_id"
+    android:value="flowrist_notifications" />
     <activity
             android:name=".MainActivity"
             android:exported="true"

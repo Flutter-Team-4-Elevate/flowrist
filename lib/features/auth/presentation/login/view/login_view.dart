@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:flowrist/config/device_id/device_id_services.dart';
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_router.dart';
@@ -184,15 +186,29 @@ class _LoginViewState extends State<LoginView> {
                           child: AppButton(
                             text: localizations.login,
                             isLoading: state.login.isLoading,
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                context.read<LoginCubit>().doEvent(
-                                  LoginSubmitted(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text,
-                                  ),
-                                );
+                            onPressed: () async {
+                              if (!_formKey.currentState!.validate()) {
+                                return;
                               }
+
+                              final fcmToken =
+                                  await PushNotificationsServices.getFcmToken();
+
+                              final deviceId = await getIt<DeviceIdService>()
+                                  .getDeviceId();
+
+                              if (!context.mounted) {
+                                return;
+                              }
+
+                              context.read<LoginCubit>().doEvent(
+                                LoginSubmitted(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                  deviceId: deviceId,
+                                  fcmToken: fcmToken ?? '',
+                                ),
+                              );
                             },
                           ),
                         );

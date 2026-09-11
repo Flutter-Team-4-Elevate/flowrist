@@ -33,6 +33,7 @@ void main() {
       'Test call repository with correct params and return success response',
       () async {
         final params = LoginParams(
+          deviceId: "",
           email: 'test@test.com',
           password: '123456',
           fcmToken: '',
@@ -69,6 +70,7 @@ void main() {
       'Test call repository with correct params and return error response',
       () async {
         final params = LoginParams(
+          deviceId: "",
           email: 'test@test.com',
           password: 'wrongPassword',
           fcmToken: '',
