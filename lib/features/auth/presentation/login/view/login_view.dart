@@ -116,8 +116,8 @@ class _LoginViewState extends State<LoginView> {
                       valueListenable: obscurePassword,
                       builder: (context, isObscure, child) {
                         return AppTextField(
-                          label: "Password",
-                          hint: "Enter your password",
+                          label: localizations.password,
+                          hint: localizations.enterPassword,
                           controller: passwordController,
                           obscureText: isObscure,
                           suffixIcon: IconButton(
