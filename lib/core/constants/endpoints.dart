@@ -43,4 +43,7 @@ abstract final class Endpoints {
   static const String cartId = 'CartId';
   static const String orders = 'api/orders';
   static const String logout = 'api/identity/auth/logout';
+  static const String getProfile = 'api/identity/users/me';
+  static const String updateProfile = 'api/identity/users/profile';
+  static const String changePassword = 'api/identity/users/change-password';
 }

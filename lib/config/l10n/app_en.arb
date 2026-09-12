@@ -195,5 +195,13 @@
   "allPricesIncludeTax": "All prices include tax",
   "connectionErrorMessage": "Please check your internet connection and try again.",
   "noAddressSelected": "No address selected",
-  "payment": "Payment"
+  "payment": "Payment",
+  "editProfile": "Edit profile",
+  "change": "Change",
+  "update": "Update",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "currentPassword": "Current password",
+  "confirmNewPassword": "Confirm password",
+  "invalidPassword": "Invalid password",
+  "passwordChangedSuccess": "Password changed successfully. Please log in again."
 }
