@@ -43,6 +43,7 @@
   "password": "كلمة المرور",
   "passwordHint": "أدخل كلمة المرور",
   "forgotPassword": "نسيت كلمة المرور؟",
+  "forgetPasswordText": "نسيت كلمة المرور",
   "forgotPasswordDescription": "أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق (OTP).",
   "email": "البريد الإلكتروني",
   "enterYourEmail": "أدخل بريدك الإلكتروني",
