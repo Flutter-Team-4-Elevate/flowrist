@@ -98,9 +98,9 @@ class MockSessionService extends _i1.Mock implements _i8.SessionService {
           as _i3.Future<bool>);
 
   @override
-  _i3.Future<void> saveToken(String? token) =>
+  _i3.Future<void> saveToken(String? token, {bool? rememberMe = false}) =>
       (super.noSuchMethod(
-            Invocation.method(#saveToken, [token]),
+            Invocation.method(#saveToken, [token], {#rememberMe: rememberMe}),
             returnValue: _i3.Future<void>.value(),
             returnValueForMissingStub: _i3.Future<void>.value(),
           )

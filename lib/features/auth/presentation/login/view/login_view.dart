@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
@@ -10,6 +11,9 @@ import 'package:flowrist/core/ui/widgets/app_text_field.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_event.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_state.dart';
+import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
+import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
+import 'package:flowrist/features/home/cart/presentation/helpers/pending_cart_action_store.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -51,6 +55,9 @@ class _LoginViewState extends State<LoginView> {
     final loginCubit = context.read<LoginCubit>();
 
     _subscription = loginCubit.uiStream.listen((event) {
+      if (!mounted) {
+        return;
+      }
       switch (event) {
         case ShowMessage():
           ScaffoldMessenger.of(context).showSnackBar(
@@ -64,6 +71,9 @@ class _LoginViewState extends State<LoginView> {
           );
 
         case LoginSuccess():
+          final cartCubit = context.read<CartCubit>();
+          cartCubit.doEvent(GetCartEvent());
+          getIt<PendingCartActionStore>().executePendingActionIfAny(cartCubit);
           context.go(AppRoutes.homeTab);
 
         case GuestLoginSuccess():

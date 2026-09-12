@@ -187,7 +187,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmPassword.
   ///
   /// In en, this message translates to:
-  /// **'Confirm Password'**
+  /// **'Confirm password'**
   String get confirmPassword;
 
   /// No description provided for @phoneNumber.
@@ -199,7 +199,7 @@ abstract class AppLocalizations {
   /// No description provided for @enterPhoneNumber.
   ///
   /// In en, this message translates to:
-  /// **'Enter phone number'**
+  /// **'Enter the phone number'**
   String get enterPhoneNumber;
 
   /// No description provided for @gender.
@@ -334,12 +334,6 @@ abstract class AppLocalizations {
   /// **'Login Successfully'**
   String get loginSuccessfully;
 
-  /// No description provided for @email.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get email;
-
   /// No description provided for @emailHint.
   ///
   /// In en, this message translates to:
@@ -375,6 +369,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter your email address and we will send you an OTP.'**
   String get forgotPasswordDescription;
+
+  /// No description provided for @email.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
 
   /// No description provided for @enterYourEmail.
   ///
@@ -513,6 +513,408 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password reset successfully'**
   String get passwordResetSuccessfully;
+
+  /// No description provided for @productDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get productDescription;
+
+  /// No description provided for @productIncludes.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes'**
+  String get productIncludes;
+
+  /// No description provided for @productInStock.
+  ///
+  /// In en, this message translates to:
+  /// **'In Stock'**
+  String get productInStock;
+
+  /// No description provided for @productOutOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get productOutOfStock;
+
+  /// No description provided for @productAvailableStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Stock'**
+  String get productAvailableStock;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @egp.
+  ///
+  /// In en, this message translates to:
+  /// **'EGP'**
+  String get egp;
+
+  /// No description provided for @addToCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to cart'**
+  String get addToCart;
+
+  /// No description provided for @noProductsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No products found'**
+  String get noProductsFound;
+
+  /// No description provided for @bestSeller.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Seller'**
+  String get bestSeller;
+
+  /// No description provided for @bestSellerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom with our exquisite best sellers'**
+  String get bestSellerSubtitle;
+
+  /// No description provided for @occasion.
+  ///
+  /// In en, this message translates to:
+  /// **'Occasion'**
+  String get occasion;
+
+  /// No description provided for @flowery.
+  ///
+  /// In en, this message translates to:
+  /// **'Flowery'**
+  String get flowery;
+
+  /// No description provided for @deliverTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliver to'**
+  String get deliverTo;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @bestSellers.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Sellers'**
+  String get bestSellers;
+
+  /// No description provided for @items.
+  ///
+  /// In en, this message translates to:
+  /// **'items'**
+  String get items;
+
+  /// No description provided for @availableStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Available stock'**
+  String get availableStock;
+
+  /// No description provided for @yourCartIsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get yourCartIsEmpty;
+
+  /// No description provided for @subTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Sub Total'**
+  String get subTotal;
+
+  /// No description provided for @deliveryFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Fee'**
+  String get deliveryFee;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout'**
+  String get checkout;
+
+  /// No description provided for @selectAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Address'**
+  String get selectAddress;
+
+  /// No description provided for @setAsDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Set as default'**
+  String get setAsDefault;
+
+  /// No description provided for @addNewaddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new address'**
+  String get addNewaddress;
+
+  /// No description provided for @noAddressessaved.
+  ///
+  /// In en, this message translates to:
+  /// **'No addresses saved'**
+  String get noAddressessaved;
+
+  /// No description provided for @youHaveNosaved.
+  ///
+  /// In en, this message translates to:
+  /// **'You have no saved address yet.'**
+  String get youHaveNosaved;
+
+  /// No description provided for @addOneTocomplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one to complete your gifting experience.'**
+  String get addOneTocomplete;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @locationPermissionNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Location permission needed'**
+  String get locationPermissionNeeded;
+
+  /// No description provided for @allowAccessDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access to auto-fill your address.'**
+  String get allowAccessDescription;
+
+  /// No description provided for @allowAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow access'**
+  String get allowAccess;
+
+  /// No description provided for @couldntResolveAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t resolve address'**
+  String get couldntResolveAddress;
+
+  /// No description provided for @couldntResolveAddressDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We found your coordinates but not a street address. Enter it manually below, or '**
+  String get couldntResolveAddressDescription;
+
+  /// No description provided for @tryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'try again'**
+  String get tryAgain;
+
+  /// No description provided for @findingLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Finding your location...'**
+  String get findingLocation;
+
+  /// No description provided for @enterAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the address'**
+  String get enterAddress;
+
+  /// No description provided for @recipientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipient name'**
+  String get recipientName;
+
+  /// No description provided for @enterRecipientName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the recipient name'**
+  String get enterRecipientName;
+
+  /// No description provided for @city.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get city;
+
+  /// No description provided for @cairo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cairo'**
+  String get cairo;
+
+  /// No description provided for @area.
+  ///
+  /// In en, this message translates to:
+  /// **'Area'**
+  String get area;
+
+  /// No description provided for @october.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get october;
+
+  /// No description provided for @saveAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Save address'**
+  String get saveAddress;
+
+  /// No description provided for @turnOnLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on location'**
+  String get turnOnLocation;
+
+  /// No description provided for @locationDisabledDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your device\'s location service is off. Turn it on so we can find your address automatically.'**
+  String get locationDisabledDescription;
+
+  /// No description provided for @enableLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable location'**
+  String get enableLocation;
+
+  /// No description provided for @enterAddressManually.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter address manually'**
+  String get enterAddressManually;
+
+  /// No description provided for @locationAccessBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Location access blocked'**
+  String get locationAccessBlocked;
+
+  /// No description provided for @locationBlockedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve turned off location for this app. Enable it in settings to use your current address.'**
+  String get locationBlockedDescription;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get openSettings;
+
+  /// No description provided for @permissionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Required'**
+  String get permissionRequired;
+
+  /// No description provided for @locationPermissionDeniedSettingsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The location permission is permanently denied. Please enable it in settings to use the address auto-detection.'**
+  String get locationPermissionDeniedSettingsMessage;
+
+  /// No description provided for @mapConfigWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'High-quality maps are unavailable'**
+  String get mapConfigWarning;
+
+  /// No description provided for @mapConfigWarningDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Using basic map provider. Some map details may be missing.'**
+  String get mapConfigWarningDescription;
+
+  /// No description provided for @addressSavedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Address saved successfully'**
+  String get addressSavedSuccessfully;
+
+  /// No description provided for @selectCityAndArea.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select city and area'**
+  String get selectCityAndArea;
+
+  /// No description provided for @searchForAnyProductYouWant.
+  ///
+  /// In en, this message translates to:
+  /// **'Search For Any Product You Want'**
+  String get searchForAnyProductYouWant;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get sortBy;
+
+  /// No description provided for @lowestPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest Price'**
+  String get lowestPrice;
+
+  /// No description provided for @highestPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Price'**
+  String get highestPrice;
+
+  /// No description provided for @newest.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newest;
+
+  /// No description provided for @oldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Old'**
+  String get oldest;
+
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
 }
 
 class _AppLocalizationsDelegate

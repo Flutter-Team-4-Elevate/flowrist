@@ -5,6 +5,7 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 class SessionService {
   final SecureStorageService _secureStorage;
+  String? _inMemoryToken;
 
   SessionService(this._secureStorage);
 
@@ -28,7 +29,7 @@ class SessionService {
       AppConstants.guestModeKey,
       value.toString(),
     );
-  }
+  } 
 
   Future<bool> isGuest() async {
     final value = await _secureStorage.get(
@@ -38,20 +39,35 @@ class SessionService {
     return value == 'true';
   }
 
-  Future<void> saveToken(String token) async {
-    await _secureStorage.save(
-      AppConstants.storageTokenKey,
-      token,
-    );
+  Future<void> saveToken(String token, {bool rememberMe = false}) async {
+    _inMemoryToken = token;
+    if (rememberMe) {
+      await _secureStorage.save(
+        AppConstants.storageTokenKey,
+        token,
+      );
+    } else {
+      await _secureStorage.delete(
+        AppConstants.storageTokenKey,
+      );
+    }
   }
 
   Future<String> getToken() async {
-    return await _secureStorage.get(
+    if (_inMemoryToken?.isNotEmpty == true) {
+      return _inMemoryToken!;
+    }
+    final storedToken = await _secureStorage.get(
       AppConstants.storageTokenKey,
     );
+    if (storedToken.isNotEmpty) {
+      _inMemoryToken = storedToken;
+    }
+    return storedToken;
   }
 
   Future<void> clearSession() async {
+    _inMemoryToken = null;
     await _secureStorage.delete(
       AppConstants.storageTokenKey,
     );

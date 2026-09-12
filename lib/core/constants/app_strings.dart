@@ -28,4 +28,11 @@ abstract final class AppStrings {
       'Too many attempts. Please wait a moment before trying again.';
   static const code500sMessage =
       'Server is temporarily unavailable. Please try again in a few moments.';
+
+  static const String addressNotFoundMessage =
+      'We couldn\'t find a specific address for this location. Please try entering it manually.';
+  static const String noGovernoratesFound =
+      'We could not find any governorates. Please try again.';
+  static const String noCitiesFound =
+      'We could not find any cities. Please try again.';
 }

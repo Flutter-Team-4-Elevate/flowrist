@@ -3,28 +3,28 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart';
+import 'package:flowrist/features/auth/data/models/login_response.dart';
 import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
 import 'package:flowrist/features/auth/data/models/register_response_dto.dart';
 import 'package:flowrist/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
 import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
+import 'package:flowrist/features/auth/domain/params/login_params.dart';
 
-@GenerateMocks([AuthRemoteDataSource, SecureStorageService])
+@GenerateMocks([AuthRemoteDataSource, SessionService])
 import 'auth_repository_impl_test.mocks.dart';
 
 void main() {
   late MockAuthRemoteDataSource mockRemoteDataSource;
-  late MockSecureStorageService mockSecureStorageService;
+  late MockSessionService mockSessionService;
   late AuthRepositoryImpl repository;
 
   setUp(() {
     mockRemoteDataSource = MockAuthRemoteDataSource();
-    mockSecureStorageService = MockSecureStorageService();
-    repository = AuthRepositoryImpl(
-      mockRemoteDataSource,
-      mockSecureStorageService,
-    );
+    mockSessionService = MockSessionService();
+    repository = AuthRepositoryImpl(mockRemoteDataSource, mockSessionService);
   });
 
   const tRequestDto = RegisterRequestDto(
@@ -51,7 +51,34 @@ void main() {
     data: RegisterDataDto(user: tUserDto, token: 'jwt_token_example'),
   );
 
-  group('AuthRepositoryImpl Unit Tests', () {
+  const tLoginParams = LoginParams(
+    email: 'ali@example.com',
+    password: 'Password123!',
+    fcmToken: '',
+  );
+
+  final tLoginResponse = LoginResponse(
+    status: true,
+    code: 200,
+    message: 'Success',
+    data: LoginData(
+      user: LoginUser(
+        id: '123',
+        email: 'ali@example.com',
+        phone: '01000000000',
+        name: 'Ali Ibrahim',
+        roles: const ['user'],
+        createdAt: DateTime.parse('2026-01-01T00:00:00.000Z'),
+        updatedAt: DateTime.parse('2026-01-01T00:00:00.000Z'),
+        gender: 'male',
+        notificationStatus: '1',
+      ),
+      token: 'jwt_token_123',
+      refreshToken: 'refresh_token_123',
+    ),
+  );
+
+  group('AuthRepositoryImpl - Register Tests', () {
     test(
       'should return SuccessResponse<UserEntity> when remote call is successful',
       () async {
@@ -87,6 +114,80 @@ void main() {
         expect(result, isNot(isA<SuccessResponse<UserEntity>>()));
         verify(mockRemoteDataSource.register(tRequestDto)).called(1);
         verifyNoMoreInteractions(mockRemoteDataSource);
+      },
+    );
+  });
+
+  group('AuthRepositoryImpl - Login Tests', () {
+    test(
+      'should save session state and token with rememberMe=true on successful login',
+      () async {
+        // Arrange
+        when(
+          mockRemoteDataSource.login(any),
+        ).thenAnswer((_) async => tLoginResponse);
+        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
+        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
+        when(
+          mockSessionService.saveToken(any, rememberMe: anyNamed('rememberMe')),
+        ).thenAnswer((_) async => {});
+
+        // Act
+        final result = await repository.login(tLoginParams, true);
+
+        // Assert
+        expect(result, isA<SuccessResponse<LoginEntity>>());
+        final loginData = (result as SuccessResponse<LoginEntity>).data;
+        expect(loginData?.token, equals('jwt_token_123'));
+
+        verify(mockSessionService.setRememberMe(true)).called(1);
+        verify(mockSessionService.setGuestMode(false)).called(1);
+        verify(
+          mockSessionService.saveToken('jwt_token_123', rememberMe: true),
+        ).called(1);
+      },
+    );
+
+    test(
+      'should save session state and token with rememberMe=false on successful login',
+      () async {
+        // Arrange
+        when(
+          mockRemoteDataSource.login(any),
+        ).thenAnswer((_) async => tLoginResponse);
+        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
+        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
+        when(
+          mockSessionService.saveToken(any, rememberMe: anyNamed('rememberMe')),
+        ).thenAnswer((_) async => {});
+
+        // Act
+        final result = await repository.login(tLoginParams, false);
+
+        // Assert
+        expect(result, isA<SuccessResponse<LoginEntity>>());
+        verify(mockSessionService.setRememberMe(false)).called(1);
+        verify(mockSessionService.setGuestMode(false)).called(1);
+        verify(
+          mockSessionService.saveToken('jwt_token_123', rememberMe: false),
+        ).called(1);
+      },
+    );
+
+    test(
+      'should return ErrorResponse and NOT call SessionService when login throws an exception',
+      () async {
+        // Arrange
+        when(
+          mockRemoteDataSource.login(any),
+        ).thenThrow(Exception('Invalid credentials'));
+
+        // Act
+        final result = await repository.login(tLoginParams, false);
+
+        // Assert
+        expect(result, isA<ErrorResponse<LoginEntity>>());
+        verifyZeroInteractions(mockSessionService);
       },
     );
   });

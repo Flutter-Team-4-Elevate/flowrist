@@ -2,11 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../config/base_state/base_state.dart';
 
-enum ForgetPasswordStep {
-  email,
-  otp,
-  resetPassword,
-}
+enum ForgetPasswordStep { email, otp, resetPassword }
 
 enum ForgetPasswordOperation {
   none,
@@ -16,9 +12,7 @@ enum ForgetPasswordOperation {
   resetPassword,
 }
 
-class ForgetPasswordState
-    extends BaseState<dynamic>
-    with EquatableMixin {
+class ForgetPasswordState extends BaseState<dynamic> with Equatable {
   final ForgetPasswordStep step;
   final ForgetPasswordOperation operation;
   String otp;
@@ -33,19 +27,15 @@ class ForgetPasswordState
     this.otpToken = '',
     this.email,
     this.remainingSeconds = 30,
-    bool isLoading = false,
-    String? errorMessage,
-    dynamic data,
-  }) : super(
-    isLoading: isLoading,
-    errorMessage: errorMessage,
-    data: data,
-  );
+    super.isLoading = false,
+    super.errorMessage,
+    super.data,
+  });
 
   bool get canResend =>
-      remainingSeconds == 0 &&
-          operation != ForgetPasswordOperation.resendOtp;
+      remainingSeconds == 0 && operation != ForgetPasswordOperation.resendOtp;
 
+  @override
   ForgetPasswordState copyWith({
     ForgetPasswordStep? step,
     ForgetPasswordOperation? operation,
@@ -63,8 +53,7 @@ class ForgetPasswordState
       otp: otp ?? this.otp,
       otpToken: otpToken ?? this.otpToken,
       email: email ?? this.email,
-      remainingSeconds:
-      remainingSeconds ?? this.remainingSeconds,
+      remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       data: data ?? this.data,

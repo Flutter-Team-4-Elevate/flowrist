@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.elevate.t5.flowrist.flowrist"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {

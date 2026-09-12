@@ -51,3 +51,6 @@ app.*.map.json
 *.mocks.dart
 # FVM Version Cache
 .fvm/
+
+# Environment Variables
+.env

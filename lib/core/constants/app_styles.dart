@@ -33,6 +33,17 @@ abstract final class AppStyles {
     fontSize: 13,
     color: AppColors.blackBase,
   );
+  static final TextStyle regular13Grey = GoogleFonts.inter(
+    fontWeight: FontWeight.w400,
+    fontSize: 13,
+    color: AppColors.grey,
+  );
+  
+  static final TextStyle regular13W500 = GoogleFonts.inter(
+    fontWeight: FontWeight.w500,
+    fontSize: 13,
+    color: AppColors.blackBase,
+  );
 
   static final TextStyle regular14Roboto = GoogleFonts.roboto(
     fontWeight: FontWeight.w400,
@@ -44,6 +55,11 @@ abstract final class AppStyles {
     fontWeight: FontWeight.w400,
     fontSize: 14,
     color: AppColors.grey,
+  );
+  static final TextStyle regular14InterW500 = GoogleFonts.inter(
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: AppColors.blackBase,
   );
 
   static final TextStyle regular16 = GoogleFonts.inter(
@@ -62,6 +78,11 @@ abstract final class AppStyles {
     fontWeight: FontWeight.w500,
     fontSize: 16,
     color: AppColors.whiteBase,
+  );
+  static final TextStyle medium16InterBlack = GoogleFonts.inter(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+    color: AppColors.blackBase,
   );
   static final TextStyle medium16InterUnderline = GoogleFonts.inter(
     fontWeight: FontWeight.w500,
@@ -93,5 +114,55 @@ abstract final class AppStyles {
     fontSize: 12,
     color: AppColors.blackBase,
     decoration: TextDecoration.underline,
+  );
+
+  static final TextStyle bold20Inter = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 20,
+    color: AppColors.blackBase,
+  );
+
+  static final TextStyle regular14InterGreyHeight15 = GoogleFonts.inter(
+    fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: AppColors.grey,
+    height: 1.5,
+  );
+
+  static final TextStyle semiBold16Purple100 = GoogleFonts.inter(
+    fontWeight: FontWeight.w600,
+    fontSize: 16,
+    color: AppColors.purple100,
+  );
+
+  static final TextStyle regular12Purple70 = GoogleFonts.inter(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: AppColors.purple70,
+  );
+
+  static final TextStyle bold16Amber100 = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
+    color: AppColors.amber100,
+  );
+
+  static final TextStyle regular13Amber90Height14 = GoogleFonts.inter(
+    fontWeight: FontWeight.w400,
+    fontSize: 13,
+    color: AppColors.amber90,
+    height: 1.4,
+  );
+
+  static final TextStyle bold13Amber100Underline = GoogleFonts.inter(
+    fontWeight: FontWeight.w700,
+    fontSize: 13,
+    color: AppColors.amber100,
+    decoration: TextDecoration.underline,
+  );
+  static final TextStyle semiBold14 = GoogleFonts.inter(
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    color: AppColors.blackBase,
   );
 }

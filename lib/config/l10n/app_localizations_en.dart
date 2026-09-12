@@ -55,13 +55,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterPassword => 'Enter password';
 
   @override
-  String get confirmPassword => 'Confirm Password';
+  String get confirmPassword => 'Confirm password';
 
   @override
   String get phoneNumber => 'Phone number';
 
   @override
-  String get enterPhoneNumber => 'Enter phone number';
+  String get enterPhoneNumber => 'Enter the phone number';
 
   @override
   String get gender => 'Gender';
@@ -135,9 +135,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSuccessfully => 'Login Successfully';
 
   @override
-  String get email => 'Email';
-
-  @override
   String get emailHint => 'Enter your email';
 
   @override
@@ -155,6 +152,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get forgotPasswordDescription =>
       'Enter your email address and we will send you an OTP.';
+
+  @override
+  String get email => 'Email';
 
   @override
   String get enterYourEmail => 'Enter your email';
@@ -232,4 +232,211 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordResetSuccessfully => 'Password reset successfully';
+
+  @override
+  String get productDescription => 'Description';
+
+  @override
+  String get productIncludes => 'Includes';
+
+  @override
+  String get productInStock => 'In Stock';
+
+  @override
+  String get productOutOfStock => 'Out of Stock';
+
+  @override
+  String get productAvailableStock => 'Available Stock';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get egp => 'EGP';
+
+  @override
+  String get addToCart => 'Add to cart';
+
+  @override
+  String get noProductsFound => 'No products found';
+
+  @override
+  String get bestSeller => 'Best Seller';
+
+  @override
+  String get bestSellerSubtitle => 'Bloom with our exquisite best sellers';
+
+  @override
+  String get occasion => 'Occasion';
+
+  @override
+  String get flowery => 'Flowery';
+
+  @override
+  String get deliverTo => 'Deliver to';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get bestSellers => 'Best Sellers';
+
+  @override
+  String get items => 'items';
+
+  @override
+  String get availableStock => 'Available stock';
+
+  @override
+  String get yourCartIsEmpty => 'Your cart is empty';
+
+  @override
+  String get subTotal => 'Sub Total';
+
+  @override
+  String get deliveryFee => 'Delivery Fee';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get checkout => 'Checkout';
+
+  @override
+  String get selectAddress => 'Select Address';
+
+  @override
+  String get setAsDefault => 'Set as default';
+
+  @override
+  String get addNewaddress => 'Add new address';
+
+  @override
+  String get noAddressessaved => 'No addresses saved';
+
+  @override
+  String get youHaveNosaved => 'You have no saved address yet.';
+
+  @override
+  String get addOneTocomplete => 'Add one to complete your gifting experience.';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get locationPermissionNeeded => 'Location permission needed';
+
+  @override
+  String get allowAccessDescription =>
+      'Allow access to auto-fill your address.';
+
+  @override
+  String get allowAccess => 'Allow access';
+
+  @override
+  String get couldntResolveAddress => 'Couldn\'t resolve address';
+
+  @override
+  String get couldntResolveAddressDescription =>
+      'We found your coordinates but not a street address. Enter it manually below, or ';
+
+  @override
+  String get tryAgain => 'try again';
+
+  @override
+  String get findingLocation => 'Finding your location...';
+
+  @override
+  String get enterAddress => 'Enter the address';
+
+  @override
+  String get recipientName => 'Recipient name';
+
+  @override
+  String get enterRecipientName => 'Enter the recipient name';
+
+  @override
+  String get city => 'City';
+
+  @override
+  String get cairo => 'Cairo';
+
+  @override
+  String get area => 'Area';
+
+  @override
+  String get october => 'October';
+
+  @override
+  String get saveAddress => 'Save address';
+
+  @override
+  String get turnOnLocation => 'Turn on location';
+
+  @override
+  String get locationDisabledDescription =>
+      'Your device\'s location service is off. Turn it on so we can find your address automatically.';
+
+  @override
+  String get enableLocation => 'Enable location';
+
+  @override
+  String get enterAddressManually => 'Enter address manually';
+
+  @override
+  String get locationAccessBlocked => 'Location access blocked';
+
+  @override
+  String get locationBlockedDescription =>
+      'You\'ve turned off location for this app. Enable it in settings to use your current address.';
+
+  @override
+  String get openSettings => 'Open settings';
+
+  @override
+  String get permissionRequired => 'Permission Required';
+
+  @override
+  String get locationPermissionDeniedSettingsMessage =>
+      'The location permission is permanently denied. Please enable it in settings to use the address auto-detection.';
+
+  @override
+  String get mapConfigWarning => 'High-quality maps are unavailable';
+
+  @override
+  String get mapConfigWarningDescription =>
+      'Using basic map provider. Some map details may be missing.';
+
+  @override
+  String get addressSavedSuccessfully => 'Address saved successfully';
+
+  @override
+  String get selectCityAndArea => 'Please select city and area';
+
+  @override
+  String get searchForAnyProductYouWant => 'Search For Any Product You Want';
+
+  @override
+  String get sortBy => 'Sort by';
+
+  @override
+  String get lowestPrice => 'Lowest Price';
+
+  @override
+  String get highestPrice => 'Highest Price';
+
+  @override
+  String get newest => 'New';
+
+  @override
+  String get oldest => 'Old';
+
+  @override
+  String get filter => 'Filter';
+
+  @override
+  String get clear => 'Clear';
 }
