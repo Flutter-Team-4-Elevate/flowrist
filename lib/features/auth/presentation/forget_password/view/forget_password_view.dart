@@ -1,4 +1,5 @@
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/forget_password_otp_view.dart';
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/reset_password_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,8 +51,10 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
 
   @override
   Widget build(BuildContext context) {
+    AppLocalizations localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Forgot Password')),
+      appBar: AppBar(title: Text(localizations.forgetPasswordText)),
       body: BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
         listenWhen: (previous, current) => previous.step != current.step,
         listener: (context, state) {

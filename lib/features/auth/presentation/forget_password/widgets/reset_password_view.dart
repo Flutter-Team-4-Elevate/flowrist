@@ -1,5 +1,6 @@
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -31,7 +32,10 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
     super.dispose();
   }
 
-  String? _validatePassword(String? value, AppLocalizations localizations) {
+  String? _validatePassword(
+      String? value,
+      AppLocalizations localizations,
+      ) {
     if (value == null || value.isEmpty) {
       return localizations.enterNewPassword;
     }
@@ -50,7 +54,18 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Form(
+    return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
+      listener: (context, state) {
+        if (!state.isLoading &&
+        state.operation == ForgetPasswordOperation.resetPassword) {
+          if (state.errorMessage == null || state.errorMessage!.isEmpty) {
+            AppRouter.router.go(AppRoutes.login);
+          } else {
+
+          }
+        }
+      },
+      child:Form(
       key: _formKey,
       child: ListView(
         padding: const EdgeInsets.all(24),
@@ -80,8 +95,8 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               },
               icon: Icon(
                 _obscurePassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
+                    ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
               ),
             ),
           ),
@@ -113,8 +128,8 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               },
               icon: Icon(
                 _obscureConfirmPassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
+                    ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
               ),
             ),
           ),
@@ -142,7 +157,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                             ResetPasswordEvent(_passwordController.text),
                           );
                         },
-                  child: isLoading
+                    child: isLoading
                       ? const SizedBox(
                           width: 24,
                           height: 24,
@@ -153,7 +168,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               );
             },
           ),
-        ],
+        ],),
       ),
     );
   }
