@@ -64,16 +64,12 @@ class _AddAddressViewState extends State<AddAddressView>
           return;
         }
 
-        // Save failed
         if (saveState.errorMessage != null) {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(saveState.errorMessage!)));
 
           return;
-        }
-        if (saveState.data == true) {
-          context.pop(true);
         }
       },
       child: Scaffold(

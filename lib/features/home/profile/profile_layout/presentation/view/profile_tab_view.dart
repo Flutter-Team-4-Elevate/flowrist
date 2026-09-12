@@ -14,6 +14,8 @@ import 'package:flowrist/features/home/profile/profile_layout/presentation/view/
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_menu_item.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_section.dart';
+import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
+import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -123,7 +125,13 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
           horizontalPadding: itemPadding,
           icon: Icons.location_on_outlined,
           title: l10n.saveAddress,
-          onTap: () => context.push(AppRoutes.savedAddresses),
+          onTap: () async {
+            final addressesViewModel = context.read<AddressesViewModel>();
+            final result = await context.push(AppRoutes.savedAddresses);
+            if (result == true && mounted) {
+              addressesViewModel.doEvent(RefreshAddresses());
+            }
+          },
         ),
         ProfileMenuItem(
           horizontalPadding: itemPadding,
