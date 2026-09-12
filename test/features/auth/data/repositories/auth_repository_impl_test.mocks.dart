@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i8;
 
-import 'package:flowrist/config/storage/secure_storage_service.dart' as _i11;
+import 'package:flowrist/config/session/session_service.dart' as _i11;
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart'
     as _i7;
 import 'package:flowrist/features/auth/data/models/forget_password_response_dto.dart'
@@ -158,40 +158,73 @@ class MockAuthRemoteDataSource extends _i1.Mock
           as _i8.Future<_i6.ResetPasswordResponseDto>);
 }
 
-/// A class which mocks [SecureStorageService].
+/// A class which mocks [SessionService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockSecureStorageService extends _i1.Mock
-    implements _i11.SecureStorageService {
-  MockSecureStorageService() {
+class MockSessionService extends _i1.Mock implements _i11.SessionService {
+  MockSessionService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i8.Future<void> save(String? key, String? value) =>
+  _i8.Future<void> setRememberMe(bool? value) =>
       (super.noSuchMethod(
-            Invocation.method(#save, [key, value]),
+            Invocation.method(#setRememberMe, [value]),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )
           as _i8.Future<void>);
 
   @override
-  _i8.Future<void> delete(String? key) =>
+  _i8.Future<bool> isRemembered() =>
       (super.noSuchMethod(
-            Invocation.method(#delete, [key]),
+            Invocation.method(#isRemembered, []),
+            returnValue: _i8.Future<bool>.value(false),
+          )
+          as _i8.Future<bool>);
+
+  @override
+  _i8.Future<void> setGuestMode(bool? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setGuestMode, [value]),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )
           as _i8.Future<void>);
 
   @override
-  _i8.Future<String> get(String? key) =>
+  _i8.Future<bool> isGuest() =>
       (super.noSuchMethod(
-            Invocation.method(#get, [key]),
+            Invocation.method(#isGuest, []),
+            returnValue: _i8.Future<bool>.value(false),
+          )
+          as _i8.Future<bool>);
+
+  @override
+  _i8.Future<void> saveToken(String? token, {bool? rememberMe = false}) =>
+      (super.noSuchMethod(
+            Invocation.method(#saveToken, [token], {#rememberMe: rememberMe}),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<String> getToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getToken, []),
             returnValue: _i8.Future<String>.value(
-              _i12.dummyValue<String>(this, Invocation.method(#get, [key])),
+              _i12.dummyValue<String>(this, Invocation.method(#getToken, [])),
             ),
           )
           as _i8.Future<String>);
+
+  @override
+  _i8.Future<void> clearSession() =>
+      (super.noSuchMethod(
+            Invocation.method(#clearSession, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
 }
