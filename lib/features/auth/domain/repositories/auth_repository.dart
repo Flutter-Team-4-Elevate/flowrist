@@ -11,13 +11,14 @@ abstract interface class AuthRepository {
     required String email,
   });
 
-  Future<BaseResponse<void>> verifyOtp({
+  Future<BaseResponse<Map<String, dynamic>>> verifyOtp({
     required String email,
     required String otp,
   });
 
   Future<BaseResponse<void>> resetPassword({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   });
 }

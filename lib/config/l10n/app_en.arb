@@ -43,6 +43,7 @@
   "password": "Password",
   "passwordHint": "Enter your password",
   "forgotPassword": "Forgot Password?",
+  "forgetPasswordText": "Forgot Password",
   "forgotPasswordDescription": "Enter your email address and we will send you an OTP.",
   "email": "Email",
   "enterYourEmail": "Enter your email",

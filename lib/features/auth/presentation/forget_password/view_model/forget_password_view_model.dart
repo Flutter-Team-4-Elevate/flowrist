@@ -30,6 +30,7 @@ class ForgetPasswordBloc
     on<ResetPasswordEvent>(_onResetPassword);
     on<StartOtpTimerEvent>(_onStartOtpTimer);
     on<TickOtpTimerEvent>(_onTickOtpTimer);
+    on<OtpChangedEvent>(_onOtpChanged);
   }
 
   Future<void> _onCheckEmail(
@@ -131,21 +132,22 @@ class ForgetPasswordBloc
       ),
     );
 
-    final BaseResponse result = await _verifyOtpUseCase.execute(
+    final result = await _verifyOtpUseCase.execute(
       email: state.email!,
       otp: event.otp,
     );
 
-    if (result is SuccessResponse) {
+    if (result is SuccessResponse<Map<String, dynamic>>) {
       emit(
         state.copyWith(
           isLoading: false,
           step: ForgetPasswordStep.resetPassword,
           operation: ForgetPasswordOperation.verifyOtp,
+          otpToken: result.data!['otpToken'],
           errorMessage: null,
         ),
       );
-    } else if (result is ErrorResponse) {
+    } else if (result is ErrorResponse<Map<String, dynamic>>) {
       emit(
         state.copyWith(
           isLoading: false,
@@ -173,8 +175,9 @@ class ForgetPasswordBloc
     );
 
     final BaseResponse result = await _resetPasswordUseCase.execute(
-      email: state.email!,
-      newPassword: event.password,
+      otpToken: state.otpToken,
+      password: event.password,
+      confirmPassword: event.password,
     );
 
     if (result is SuccessResponse) {
@@ -224,6 +227,13 @@ class ForgetPasswordBloc
     }
 
     emit(state.copyWith(remainingSeconds: state.remainingSeconds - 1));
+  }
+
+  void _onOtpChanged(
+      OtpChangedEvent event,
+      Emitter<ForgetPasswordState> emit,
+      ) {
+    emit(state.copyWith(otp: event.otp));
   }
 
   @override

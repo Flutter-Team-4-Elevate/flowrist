@@ -4,6 +4,10 @@ import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart';
 import 'package:flowrist/features/auth/data/mapper/auth_mapper.dart';
 import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/verify_otp_response_dto.dart';
+import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/auth/data/request/login_request.dart';
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
 import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
@@ -69,13 +73,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<BaseResponse<void>> resetPassword({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   }) async {
     try {
       await _remoteDataSource.resetPassword(
-        email: email,
-        newPassword: newPassword,
+        otpToken: otpToken,
+        password: password,
+        confirmPassword: confirmPassword,
       );
 
       return SuccessResponse(null);
@@ -85,16 +91,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<BaseResponse<void>> verifyOtp({
+  Future<BaseResponse<Map<String, dynamic>>> verifyOtp({
     required String email,
     required String otp,
   }) async {
     try {
+      VerifyOtpResponseDto verifyOtpResponse =
       await _remoteDataSource.verifyOtp(email: email, otp: otp);
 
-      return SuccessResponse(null);
+      return SuccessResponse<Map<String, dynamic>>(verifyOtpResponse.data);
     } on Exception catch (exception) {
-      return ApiErrorHandler.handleException<void>(exception);
+      return ApiErrorHandler.handleException<Map<String, dynamic>>(exception);
     }
   }
 }

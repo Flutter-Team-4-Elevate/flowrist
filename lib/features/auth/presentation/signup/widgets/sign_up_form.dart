@@ -149,16 +149,10 @@ class SignUpFormState extends State<SignUpForm> {
     messenger.hideCurrentSnackBar();
 
     if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(state.errorMessage!),
-        ),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(state.errorMessage!)));
     } else if (state.data != null) {
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(localizations.registrationSuccessful),
-        ),
+        SnackBar(content: Text(localizations.registrationSuccessful)),
       );
       context.go(AppRoutes.login);
     }

@@ -33,8 +33,7 @@ class ForgetPasswordOtpView extends StatelessWidget {
           BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
             builder: (context, state) {
               return Text(
-                '${localizations.otpSentTo} '
-                    '${state.email ?? localizations.email}',
+                localizations.otpSentTo(state.email ?? ""),
                 textAlign: TextAlign.center,
               );
             },
@@ -46,6 +45,7 @@ class ForgetPasswordOtpView extends StatelessWidget {
             builder: (context, state) {
               return OtpInputField(
                 initialValue: state.otp,
+                keyboardType: TextInputType.visiblePassword,
                 onChanged: (value) {
                   context.read<ForgetPasswordBloc>().add(
                     OtpChangedEvent(value),
@@ -103,9 +103,7 @@ class ForgetPasswordOtpView extends StatelessWidget {
             builder: (context, state) {
               if (state.remainingSeconds > 0) {
                 return Text(
-                  '${localizations.resendOtpIn} '
-                      '${state.remainingSeconds} ',
-
+                  localizations.resendOtpIn(state.remainingSeconds),
                   textAlign: TextAlign.center,
                 );
               }

@@ -1,5 +1,6 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
+import 'package:flowrist/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
 import 'package:flowrist/features/auth/presentation/signup/view/signup_view.dart';
@@ -19,7 +20,9 @@ import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/addresses/presentation/view_model/add_address_view_model.dart';
+import '../../features/auth/presentation/forget_password/view/forget_password_view.dart';
 import '../../features/home/shared/product_details/presentation/view/products_details_screen.dart';
 
 abstract final class AppRoutes {
@@ -58,7 +61,6 @@ abstract final class AppRouter {
       // ==================================================
       // PRODUCT DETAILS
       // ==================================================
-
       GoRoute(
         path: AppRoutes.productDetails,
         parentNavigatorKey: _rootNavigatorKey,
@@ -118,6 +120,18 @@ abstract final class AppRouter {
         builder: (context, state) {
           return const SignUpView();
         },
+      ),
+
+      // FORGET PASSWORD
+      GoRoute(
+        path: AppRoutes.forgetPassword,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (context) => getIt<ForgetPasswordBloc>(),
+            child: const ForgetPasswordView(),
+          );
+        },
+        parentNavigatorKey: _rootNavigatorKey,
       ),
 
       // --------------------------------------------------

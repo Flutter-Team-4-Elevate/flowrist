@@ -158,7 +158,7 @@ class _LoginViewState extends State<LoginView> {
                             const Spacer(),
                             TextButton(
                               onPressed: () {
-                                context.go(AppRoutes.homeTab);
+                                context.go(AppRoutes.forgetPassword);
                               },
                               style: TextButton.styleFrom(
                                 padding: EdgeInsets.zero,
