@@ -40,11 +40,8 @@ class ProductDetailsRequestDto {
     required this.lastChangedBy,
   });
 
-  factory ProductDetailsRequestDto.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+  factory ProductDetailsRequestDto.fromJson(Map<String, dynamic> json) =>
       _$ProductDetailsRequestDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ProductDetailsRequestDtoToJson(this);
+  Map<String, dynamic> toJson() => _$ProductDetailsRequestDtoToJson(this);
 }

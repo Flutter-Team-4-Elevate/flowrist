@@ -26,9 +26,7 @@ void main() {
   );
 
   setUpAll(() {
-    provideDummy<BaseResponse<CartEntity>>(
-      SuccessResponse<CartEntity>(tCart),
-    );
+    provideDummy<BaseResponse<CartEntity>>(SuccessResponse<CartEntity>(tCart));
   });
 
   setUp(() {
@@ -43,9 +41,7 @@ void main() {
         // Arrange
         when(
           mockRepository.getCart(),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCart),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCart));
 
         // Act
         final result = await useCase();

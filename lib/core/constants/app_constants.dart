@@ -34,7 +34,8 @@ abstract final class AppConstants {
   static const String refreshDioName = 'refreshDio';
   static const String activeSessionsRoute = '/active-sessions';
   static const String sessionRevokedSuccessfully = 'sessionRevokedSuccessfully';
-  static const String allSessionsRevokedSuccessfully = 'allSessionsRevokedSuccessfully';
+  static const String allSessionsRevokedSuccessfully =
+      'allSessionsRevokedSuccessfully';
   static const String unknownDevice = 'Unknown Device';
   static const String currentDevice = 'This Device';
   static const String activeNow = 'Active Now';
@@ -46,6 +47,8 @@ abstract final class AppConstants {
   static const String languageKey = 'app_language';
   static const String title = 'title';
   static const String url = 'url';
-  static const String aboutUsUrl = 'https://elevate-flutter-team.github.io/flower_app_web_views/about.html';
-  static const String termsAndConditionsUrl = 'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html';
+  static const String aboutUsUrl =
+      'https://elevate-flutter-team.github.io/flower_app_web_views/about.html';
+  static const String termsAndConditionsUrl =
+      'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html';
 }

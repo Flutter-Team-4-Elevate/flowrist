@@ -53,7 +53,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     this._getGovernoratesUseCase,
     this._getCitiesUseCase,
     this._saveAddressUseCase,
-      this._updateAddressUseCase,
+    this._updateAddressUseCase,
     this._appConfig,
   ) : super(AddAddressState.initial()) {
     _checkMapConfig();
@@ -104,8 +104,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     }
   }
 
-  void _updateAddress(String addressId,
-      AddAddressRequestModel request,) async {
+  void _updateAddress(String addressId, AddAddressRequestModel request) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _updateAddressUseCase(addressId, request);
     switch (response) {

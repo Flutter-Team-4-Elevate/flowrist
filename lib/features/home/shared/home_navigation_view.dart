@@ -16,7 +16,7 @@ class HomeNavigationView extends StatefulWidget {
 }
 
 class _HomeNavigationViewState extends State<HomeNavigationView> {
-    @override
+  @override
   void initState() {
     super.initState();
 
@@ -24,8 +24,6 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
     //   _initializeAddress();
     // });
   }
-
-
 
   @override
   Widget build(BuildContext context) {

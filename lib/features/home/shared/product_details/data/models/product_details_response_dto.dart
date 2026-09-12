@@ -1,7 +1,6 @@
 import 'package:flowrist/features/home/shared/product_details/data/models/product_details_request_dto.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-
 part 'product_details_response_dto.g.dart';
 
 @JsonSerializable()
@@ -18,11 +17,8 @@ class ProductDetailsResponseDto {
     this.data,
   });
 
-  factory ProductDetailsResponseDto.fromJson(
-      Map<String, dynamic> json,
-      ) =>
+  factory ProductDetailsResponseDto.fromJson(Map<String, dynamic> json) =>
       _$ProductDetailsResponseDtoFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ProductDetailsResponseDtoToJson(this);
+  Map<String, dynamic> toJson() => _$ProductDetailsResponseDtoToJson(this);
 }

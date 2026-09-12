@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
- 
 
 abstract final class ApiErrorHandler {
   static ErrorResponse<T> handleException<T>(Exception exception) {

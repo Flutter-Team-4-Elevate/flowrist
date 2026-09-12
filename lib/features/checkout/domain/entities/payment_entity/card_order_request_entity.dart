@@ -20,11 +20,11 @@ class CardOrderRequestEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        cartId,
-        addressId,
-        isGift,
-        giftRecipient,
-        paymentMethod,
-        paymentGateway,
-      ];
+    cartId,
+    addressId,
+    isGift,
+    giftRecipient,
+    paymentMethod,
+    paymentGateway,
+  ];
 }

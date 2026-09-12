@@ -14,8 +14,10 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
   final GetAllUserAddressesUseCase _getAllUserAddressesUseCase;
   final DeleteAddressUseCase _deleteAddressUseCase;
 
-  SavedAddressesViewModel(this._getAllUserAddressesUseCase,
-      this._deleteAddressUseCase,) : super(SavedAddressesState.initial());
+  SavedAddressesViewModel(
+    this._getAllUserAddressesUseCase,
+    this._deleteAddressUseCase,
+  ) : super(SavedAddressesState.initial());
 
   Future<void> doEvent(SavedAddressesEvent event) async {
     switch (event) {
@@ -61,9 +63,7 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
     } catch (e) {
       emit(
         state.copyWith(
-          addressesState: BaseState<List<AddressEntity>>.error(
-            e.toString(),
-          ),
+          addressesState: BaseState<List<AddressEntity>>.error(e.toString()),
         ),
       );
     }
@@ -90,9 +90,7 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
             state.copyWith(
               deletingAddressId: () => null,
               deleteAddressState: BaseState<String?>.success(response.data),
-              addressesState: state.addressesState.copyWith(
-                data: updatedList,
-              ),
+              addressesState: state.addressesState.copyWith(data: updatedList),
             ),
           );
 
@@ -101,7 +99,8 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
             state.copyWith(
               deletingAddressId: () => null,
               deleteAddressState: BaseState<String?>.error(
-                  response.errorMessage),
+                response.errorMessage,
+              ),
             ),
           );
       }

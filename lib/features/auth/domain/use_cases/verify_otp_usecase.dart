@@ -12,9 +12,6 @@ class VerifyOtpUseCase {
     required String email,
     required String otp,
   }) {
-    return _repository.verifyOtp(
-      email: email,
-      otp: otp,
-    );
+    return _repository.verifyOtp(email: email, otp: otp);
   }
 }

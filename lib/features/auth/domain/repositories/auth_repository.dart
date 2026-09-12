@@ -7,9 +7,7 @@ import 'package:flowrist/features/auth/domain/params/login_params.dart';
 abstract interface class AuthRepository {
   Future<BaseResponse<UserEntity>> register(RegisterRequestDto request);
   Future<BaseResponse<LoginEntity>> login(LoginParams params, bool rememberMe);
-  Future<BaseResponse<void>> forgotPassword({
-    required String email,
-  });
+  Future<BaseResponse<void>> forgotPassword({required String email});
 
   Future<BaseResponse<void>> verifyOtp({
     required String email,

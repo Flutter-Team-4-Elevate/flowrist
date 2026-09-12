@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentWebView extends StatefulWidget {
-  const PaymentWebView({
-    super.key,
-    required this.paymentUrl,
-  });
+  const PaymentWebView({super.key, required this.paymentUrl});
 
   final String paymentUrl;
 
@@ -38,9 +35,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
       ..loadRequest(Uri.parse(widget.paymentUrl));
   }
 
-  NavigationDecision _handleNavigation(
-    NavigationRequest request,
-  ) {
+  NavigationDecision _handleNavigation(NavigationRequest request) {
     final uri = Uri.tryParse(request.url);
 
     if (uri == null) {
@@ -64,9 +59,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     return NavigationDecision.navigate;
   }
 
-  void _completePayment({
-    required bool success,
-  }) {
+  void _completePayment({required bool success}) {
     // Prevent multiple callbacks from the payment provider.
     if (_paymentHandled) {
       return;
@@ -81,9 +74,7 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     context.pop(success);
   }
 
-  void _handleWebResourceError(
-    WebResourceError error,
-  ) {
+  void _handleWebResourceError(WebResourceError error) {
     // Do not consider a WebView resource error a successful payment.
     // Only the configured success URL can complete the payment.
   }
@@ -105,14 +96,9 @@ class _PaymentWebViewState extends State<PaymentWebView> {
     return PopScope(
       canPop: !_paymentHandled,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(localizations.payment),
-        ),
-        body: WebViewWidget(
-          controller: _controller,
-        ),
+        appBar: AppBar(title: Text(localizations.payment)),
+        body: WebViewWidget(controller: _controller),
       ),
     );
   }
 }
- 

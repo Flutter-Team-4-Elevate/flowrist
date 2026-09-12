@@ -1,4 +1,3 @@
-
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/forget_password_otp_view.dart';
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/reset_password_view.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +11,10 @@ class ForgetPasswordView extends StatefulWidget {
   const ForgetPasswordView({super.key});
 
   @override
-  State<ForgetPasswordView> createState() =>
-      _ForgetPasswordViewState();
+  State<ForgetPasswordView> createState() => _ForgetPasswordViewState();
 }
 
-class _ForgetPasswordViewState
-    extends State<ForgetPasswordView> {
+class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   late final PageController _pageController;
 
   @override
@@ -54,13 +51,9 @@ class _ForgetPasswordViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Forgot Password'),
-      ),
-      body: BlocListener<ForgetPasswordBloc,
-          ForgetPasswordState>(
-        listenWhen: (previous, current) =>
-        previous.step != current.step,
+      appBar: AppBar(title: const Text('Forgot Password')),
+      body: BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
+        listenWhen: (previous, current) => previous.step != current.step,
         listener: (context, state) {
           _changePage(state.step);
         },

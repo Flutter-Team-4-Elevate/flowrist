@@ -27,13 +27,10 @@ class _OtpInputFieldState extends State<OtpInputField> {
 
     _controllers = List.generate(
       widget.length,
-          (index) => TextEditingController(),
+      (index) => TextEditingController(),
     );
 
-    _focusNodes = List.generate(
-      widget.length,
-          (index) => FocusNode(),
-    );
+    _focusNodes = List.generate(widget.length, (index) => FocusNode());
 
     _setInitialValue();
   }
@@ -63,8 +60,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
     final otp = value.replaceAll(RegExp(r'\D'), '');
 
     for (int i = 0; i < widget.length; i++) {
-      _controllers[i].text =
-      i < otp.length ? otp[i] : '';
+      _controllers[i].text = i < otp.length ? otp[i] : '';
     }
 
     _sendOtp();
@@ -110,48 +106,38 @@ class _OtpInputFieldState extends State<OtpInputField> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(
-        widget.length,
-            (index) {
-          return SizedBox(
-            width: 48,
-            height: 56,
-            child: KeyboardListener(
-              focusNode: FocusNode(),
-              onKeyEvent: (event) => _onKeyEvent(event, index),
-              child: TextField(
-                controller: _controllers[index],
-                focusNode: _focusNodes[index],
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                maxLength: 1,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+      children: List.generate(widget.length, (index) {
+        return SizedBox(
+          width: 48,
+          height: 56,
+          child: KeyboardListener(
+            focusNode: FocusNode(),
+            onKeyEvent: (event) => _onKeyEvent(event, index),
+            child: TextField(
+              controller: _controllers[index],
+              focusNode: _focusNodes[index],
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: InputDecoration(
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                decoration: InputDecoration(
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      width: 2,
-                    ),
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(width: 2),
                 ),
-                onChanged: (value) {
-                  _onChanged(value, index);
-                },
               ),
+              onChanged: (value) {
+                _onChanged(value, index);
+              },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 }

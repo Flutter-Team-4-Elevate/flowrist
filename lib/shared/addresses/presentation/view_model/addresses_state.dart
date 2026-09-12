@@ -20,11 +20,9 @@ class AddressesState {
     bool clearSelectedAddress = false,
   }) {
     return AddressesState(
-      addressesState:
-          addressesState ?? this.addressesState,
+      addressesState: addressesState ?? this.addressesState,
       setDefaultAddressState:
-          setDefaultAddressState ??
-              this.setDefaultAddressState,
+          setDefaultAddressState ?? this.setDefaultAddressState,
       selectedAddress: clearSelectedAddress
           ? null
           : selectedAddress ?? this.selectedAddress,

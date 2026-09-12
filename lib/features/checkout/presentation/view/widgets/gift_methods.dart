@@ -9,27 +9,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GiftMethods extends StatefulWidget {
-  const GiftMethods({
-    super.key,
-    required this.onChanged,
-  });
+  const GiftMethods({super.key, required this.onChanged});
 
   final void Function({
     required bool isGift,
     required String name,
     required String phone,
-  }) onChanged;
+  })
+  onChanged;
 
   @override
   State<GiftMethods> createState() => _GiftMethodsState();
 }
 
 class _GiftMethodsState extends State<GiftMethods> {
-  final TextEditingController _nameController =
-      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
-  final TextEditingController _phoneController =
-      TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   @override
   void dispose() {
@@ -38,9 +34,7 @@ class _GiftMethodsState extends State<GiftMethods> {
     super.dispose();
   }
 
-  void _notifyChanged({
-    required bool isGift,
-  }) {
+  void _notifyChanged({required bool isGift}) {
     widget.onChanged(
       isGift: isGift,
       name: _nameController.text.trim(),
@@ -49,8 +43,7 @@ class _GiftMethodsState extends State<GiftMethods> {
   }
 
   void _clearGiftFields() {
-    if (_nameController.text.isNotEmpty ||
-        _phoneController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty || _phoneController.text.isNotEmpty) {
       _nameController.clear();
       _phoneController.clear();
     }
@@ -62,12 +55,10 @@ class _GiftMethodsState extends State<GiftMethods> {
 
     return BlocBuilder<CheckoutCubit, CheckoutState>(
       buildWhen: (previous, current) =>
-          previous.selectedPaymentMethod !=
-              current.selectedPaymentMethod ||
+          previous.selectedPaymentMethod != current.selectedPaymentMethod ||
           previous.isGift != current.isGift,
       builder: (context, state) {
-        final isCashOnDelivery =
-            state.selectedPaymentMethod == Endpoints.cash;
+        final isCashOnDelivery = state.selectedPaymentMethod == Endpoints.cash;
 
         final isGift = state.isGift;
 
@@ -78,11 +69,7 @@ class _GiftMethodsState extends State<GiftMethods> {
             if (!mounted) return;
 
             context.read<CheckoutCubit>().doEvent(
-                UpdateGiftInfo(
-                isGift: false,
-                name: '',
-                phone: '',
-              ),
+              UpdateGiftInfo(isGift: false, name: '', phone: ''),
             );
 
             _clearGiftFields();
@@ -98,9 +85,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                   Switch(
                     inactiveTrackColor: AppColors.purple20,
                     activeTrackColor: AppColors.purpleBase,
-                    thumbColor: const WidgetStatePropertyAll(
-                      AppColors.white,
-                    ),
+                    thumbColor: const WidgetStatePropertyAll(AppColors.white),
                     value: isGift,
 
                     // Disable gift when Cash on Delivery is selected.
@@ -111,9 +96,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                               _clearGiftFields();
                             }
 
-                            _notifyChanged(
-                              isGift: value,
-                            );
+                            _notifyChanged(isGift: value);
                           },
                   ),
 
@@ -124,9 +107,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
-                      color: isCashOnDelivery
-                          ? Colors.grey
-                          : null,
+                      color: isCashOnDelivery ? Colors.grey : null,
                     ),
                   ),
                 ],
@@ -140,9 +121,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                   hint: localizations.enterTheName,
                   label: localizations.name,
                   onChanged: (_) {
-                    _notifyChanged(
-                      isGift: true,
-                    );
+                    _notifyChanged(isGift: true);
                   },
                 ),
 
@@ -153,9 +132,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                   hint: localizations.enterThePhoneNumber,
                   label: localizations.phoneNumber,
                   onChanged: (_) {
-                    _notifyChanged(
-                      isGift: true,
-                    );
+                    _notifyChanged(isGift: true);
                   },
                 ),
               ],

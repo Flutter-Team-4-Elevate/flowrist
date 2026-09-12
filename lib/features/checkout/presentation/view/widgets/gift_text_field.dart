@@ -31,10 +31,7 @@ class GiftTextField extends StatelessWidget {
         ),
         label: Text(
           label,
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            color: AppColors.grey,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.grey),
         ),
       ),
     );

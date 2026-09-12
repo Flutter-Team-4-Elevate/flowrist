@@ -102,21 +102,15 @@ void main() {
 
   setUpAll(() {
     provideDummy<BaseResponse<CardOrderEntity?>>(
-      SuccessResponse<CardOrderEntity?>(
-        null,
-      ),
+      SuccessResponse<CardOrderEntity?>(null),
     );
 
     provideDummy<BaseResponse<DeliveryFeeEntity>>(
-      SuccessResponse<DeliveryFeeEntity>(
-        deliveryFee,
-      ),
+      SuccessResponse<DeliveryFeeEntity>(deliveryFee),
     );
 
     provideDummy<BaseResponse<List<AddressEntity>>>(
-      SuccessResponse<List<AddressEntity>>(
-        [],
-      ),
+      SuccessResponse<List<AddressEntity>>([]),
     );
   });
 
@@ -142,10 +136,7 @@ void main() {
     // -----------------------------------------------------------------------
 
     test('initial state should be CheckoutState.initial()', () {
-      expect(
-        cubit.state,
-        CheckoutState.initial(),
-      );
+      expect(cubit.state, CheckoutState.initial());
     });
 
     // -----------------------------------------------------------------------
@@ -156,11 +147,7 @@ void main() {
       'should select payment method',
       build: () => cubit,
       act: (cubit) {
-        cubit.doEvent(
-          SelectPaymentMethod(
-            paymentMethod: 'Card',
-          ),
-        );
+        cubit.doEvent(SelectPaymentMethod(paymentMethod: 'Card'));
       },
       expect: () => [
         isA<CheckoutState>()
@@ -195,21 +182,9 @@ void main() {
       },
       expect: () => [
         isA<CheckoutState>()
-            .having(
-              (state) => state.isGift,
-              'isGift',
-              true,
-            )
-            .having(
-              (state) => state.giftName,
-              'giftName',
-              'Ahmed Mohamed',
-            )
-            .having(
-              (state) => state.giftPhone,
-              'giftPhone',
-              '01012345678',
-            ),
+            .having((state) => state.isGift, 'isGift', true)
+            .having((state) => state.giftName, 'giftName', 'Ahmed Mohamed')
+            .having((state) => state.giftPhone, 'giftPhone', '01012345678'),
       ],
     );
 
@@ -222,20 +197,12 @@ void main() {
       build: () {
         when(
           mockPlaceOrderUseCase(orderRequest),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CardOrderEntity?>(
-            cardOrder,
-          ),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CardOrderEntity?>(cardOrder));
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          PlaceOrder(
-            order: orderRequest,
-          ),
-        );
+        cubit.doEvent(PlaceOrder(order: orderRequest));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -261,9 +228,7 @@ void main() {
             ),
       ],
       verify: (_) {
-        verify(
-          mockPlaceOrderUseCase(orderRequest),
-        ).called(1);
+        verify(mockPlaceOrderUseCase(orderRequest)).called(1);
 
         verifyNoMoreInteractions(mockPlaceOrderUseCase);
       },
@@ -278,20 +243,12 @@ void main() {
       build: () {
         when(
           mockPlaceOrderUseCase(orderRequest),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CardOrderEntity?>(
-            null,
-          ),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CardOrderEntity?>(null));
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          PlaceOrder(
-            order: orderRequest,
-          ),
-        );
+        cubit.doEvent(PlaceOrder(order: orderRequest));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -317,9 +274,7 @@ void main() {
             ),
       ],
       verify: (_) {
-        verify(
-          mockPlaceOrderUseCase(orderRequest),
-        ).called(1);
+        verify(mockPlaceOrderUseCase(orderRequest)).called(1);
 
         verifyNoMoreInteractions(mockPlaceOrderUseCase);
       },
@@ -332,22 +287,14 @@ void main() {
     blocTest<CheckoutCubit, CheckoutState>(
       'should emit loading then error when place order fails',
       build: () {
-        when(
-          mockPlaceOrderUseCase(orderRequest),
-        ).thenAnswer(
-          (_) async => ErrorResponse<CardOrderEntity?>(
-            'Failed to place order',
-          ),
+        when(mockPlaceOrderUseCase(orderRequest)).thenAnswer(
+          (_) async => ErrorResponse<CardOrderEntity?>('Failed to place order'),
         );
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          PlaceOrder(
-            order: orderRequest,
-          ),
-        );
+        cubit.doEvent(PlaceOrder(order: orderRequest));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -373,9 +320,7 @@ void main() {
             ),
       ],
       verify: (_) {
-        verify(
-          mockPlaceOrderUseCase(orderRequest),
-        ).called(1);
+        verify(mockPlaceOrderUseCase(orderRequest)).called(1);
 
         verifyNoMoreInteractions(mockPlaceOrderUseCase);
       },
@@ -390,18 +335,12 @@ void main() {
       build: () {
         when(
           mockPlaceOrderUseCase(orderRequest),
-        ).thenThrow(
-          Exception('Something went wrong'),
-        );
+        ).thenThrow(Exception('Something went wrong'));
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          PlaceOrder(
-            order: orderRequest,
-          ),
-        );
+        cubit.doEvent(PlaceOrder(order: orderRequest));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -416,9 +355,7 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(
-          mockPlaceOrderUseCase(orderRequest),
-        ).called(1);
+        verify(mockPlaceOrderUseCase(orderRequest)).called(1);
 
         verifyNoMoreInteractions(mockPlaceOrderUseCase);
       },
@@ -432,25 +369,15 @@ void main() {
       'should emit loading then success when get delivery fee succeeds',
       build: () {
         when(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).thenAnswer(
-          (_) async => SuccessResponse<DeliveryFeeEntity>(
-            deliveryFee,
-          ),
+          (_) async => SuccessResponse<DeliveryFeeEntity>(deliveryFee),
         );
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          GetDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        );
+        cubit.doEvent(GetDeliveryFee(addressId: addressId, cartId: cartId));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -477,10 +404,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).called(1);
 
         verifyNoMoreInteractions(mockGetDeliveryFeeUseCase);
@@ -495,25 +419,16 @@ void main() {
       'should emit loading then error when get delivery fee fails',
       build: () {
         when(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).thenAnswer(
-          (_) async => ErrorResponse<DeliveryFeeEntity>(
-            'Failed to get delivery fee',
-          ),
+          (_) async =>
+              ErrorResponse<DeliveryFeeEntity>('Failed to get delivery fee'),
         );
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          GetDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        );
+        cubit.doEvent(GetDeliveryFee(addressId: addressId, cartId: cartId));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -540,10 +455,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).called(1);
 
         verifyNoMoreInteractions(mockGetDeliveryFeeUseCase);
@@ -558,25 +470,13 @@ void main() {
       'should emit loading then error when delivery fee response contains null data',
       build: () {
         when(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<DeliveryFeeEntity>(
-            null,
-          ),
-        );
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
+        ).thenAnswer((_) async => SuccessResponse<DeliveryFeeEntity>(null));
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          GetDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        );
+        cubit.doEvent(GetDeliveryFee(addressId: addressId, cartId: cartId));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -598,10 +498,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).called(1);
 
         verifyNoMoreInteractions(mockGetDeliveryFeeUseCase);
@@ -616,23 +513,13 @@ void main() {
       'should emit loading then error when get delivery fee throws exception',
       build: () {
         when(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).thenThrow(
-          Exception('Delivery service unavailable'),
-        );
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
+        ).thenThrow(Exception('Delivery service unavailable'));
 
         return cubit;
       },
       act: (cubit) {
-        cubit.doEvent(
-          GetDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        );
+        cubit.doEvent(GetDeliveryFee(addressId: addressId, cartId: cartId));
       },
       expect: () => [
         isA<CheckoutState>().having(
@@ -648,10 +535,7 @@ void main() {
       ],
       verify: (_) {
         verify(
-          mockGetDeliveryFeeUseCase(
-            addressId: addressId,
-            cartId: cartId,
-          ),
+          mockGetDeliveryFeeUseCase(addressId: addressId, cartId: cartId),
         ).called(1);
 
         verifyNoMoreInteractions(mockGetDeliveryFeeUseCase);
@@ -665,13 +549,9 @@ void main() {
     blocTest<CheckoutCubit, CheckoutState>(
       'should emit loading then success and select default address when get addresses succeeds',
       build: () {
-        when(
-          mockGetAllUserAddressesUseCase(),
-        ).thenAnswer(
-              (_) async =>
-              SuccessResponse<List<AddressEntity>>(
-                [address1, address2],
-              ),
+        when(mockGetAllUserAddressesUseCase()).thenAnswer(
+          (_) async =>
+              SuccessResponse<List<AddressEntity>>([address1, address2]),
         );
 
         return cubit;
@@ -679,34 +559,31 @@ void main() {
       act: (cubit) {
         cubit.doEvent(GetAddressesEvent());
       },
-      expect: () =>
-      [
+      expect: () => [
         isA<CheckoutState>().having(
-              (state) => state.addressesState.isLoading,
+          (state) => state.addressesState.isLoading,
           'addressesState.isLoading',
           true,
         ),
         isA<CheckoutState>()
             .having(
               (state) => state.addressesState.data,
-          'addressesState.data',
-          [address1, address2],
-        )
+              'addressesState.data',
+              [address1, address2],
+            )
             .having(
               (state) => state.addressesState.isLoading,
-          'addressesState.isLoading',
-          false,
-        )
+              'addressesState.isLoading',
+              false,
+            )
             .having(
               (state) => state.selectedAddressId,
-          'selectedAddressId',
-          'addr-2',
-        ),
+              'selectedAddressId',
+              'addr-2',
+            ),
       ],
       verify: (_) {
-        verify(
-          mockGetAllUserAddressesUseCase(),
-        ).called(1);
+        verify(mockGetAllUserAddressesUseCase()).called(1);
 
         verifyNoMoreInteractions(mockGetAllUserAddressesUseCase);
       },
@@ -719,13 +596,9 @@ void main() {
     blocTest<CheckoutCubit, CheckoutState>(
       'should emit loading then success and select first address when no default address exists',
       build: () {
-        when(
-          mockGetAllUserAddressesUseCase(),
-        ).thenAnswer(
-              (_) async =>
-              SuccessResponse<List<AddressEntity>>(
-                [address1, address3],
-              ),
+        when(mockGetAllUserAddressesUseCase()).thenAnswer(
+          (_) async =>
+              SuccessResponse<List<AddressEntity>>([address1, address3]),
         );
 
         return cubit;
@@ -733,34 +606,31 @@ void main() {
       act: (cubit) {
         cubit.doEvent(GetAddressesEvent());
       },
-      expect: () =>
-      [
+      expect: () => [
         isA<CheckoutState>().having(
-              (state) => state.addressesState.isLoading,
+          (state) => state.addressesState.isLoading,
           'addressesState.isLoading',
           true,
         ),
         isA<CheckoutState>()
             .having(
               (state) => state.addressesState.data,
-          'addressesState.data',
-          [address1, address3],
-        )
+              'addressesState.data',
+              [address1, address3],
+            )
             .having(
               (state) => state.addressesState.isLoading,
-          'addressesState.isLoading',
-          false,
-        )
+              'addressesState.isLoading',
+              false,
+            )
             .having(
               (state) => state.selectedAddressId,
-          'selectedAddressId',
-          'addr-1',
-        ),
+              'selectedAddressId',
+              'addr-1',
+            ),
       ],
       verify: (_) {
-        verify(
-          mockGetAllUserAddressesUseCase(),
-        ).called(1);
+        verify(mockGetAllUserAddressesUseCase()).called(1);
 
         verifyNoMoreInteractions(mockGetAllUserAddressesUseCase);
       },
@@ -773,13 +643,9 @@ void main() {
     blocTest<CheckoutCubit, CheckoutState>(
       'should emit loading then error when get addresses fails',
       build: () {
-        when(
-          mockGetAllUserAddressesUseCase(),
-        ).thenAnswer(
-              (_) async =>
-              ErrorResponse<List<AddressEntity>>(
-                'Failed to fetch addresses',
-              ),
+        when(mockGetAllUserAddressesUseCase()).thenAnswer(
+          (_) async =>
+              ErrorResponse<List<AddressEntity>>('Failed to fetch addresses'),
         );
 
         return cubit;
@@ -787,29 +653,26 @@ void main() {
       act: (cubit) {
         cubit.doEvent(GetAddressesEvent());
       },
-      expect: () =>
-      [
+      expect: () => [
         isA<CheckoutState>().having(
-              (state) => state.addressesState.isLoading,
+          (state) => state.addressesState.isLoading,
           'addressesState.isLoading',
           true,
         ),
         isA<CheckoutState>()
             .having(
               (state) => state.addressesState.errorMessage,
-          'addressesState.errorMessage',
-          'Failed to fetch addresses',
-        )
+              'addressesState.errorMessage',
+              'Failed to fetch addresses',
+            )
             .having(
               (state) => state.addressesState.isLoading,
-          'addressesState.isLoading',
-          false,
-        ),
+              'addressesState.isLoading',
+              false,
+            ),
       ],
       verify: (_) {
-        verify(
-          mockGetAllUserAddressesUseCase(),
-        ).called(1);
+        verify(mockGetAllUserAddressesUseCase()).called(1);
 
         verifyNoMoreInteractions(mockGetAllUserAddressesUseCase);
       },
@@ -824,32 +687,27 @@ void main() {
       build: () {
         when(
           mockGetAllUserAddressesUseCase(),
-        ).thenThrow(
-          Exception('Database error'),
-        );
+        ).thenThrow(Exception('Database error'));
 
         return cubit;
       },
       act: (cubit) {
         cubit.doEvent(GetAddressesEvent());
       },
-      expect: () =>
-      [
+      expect: () => [
         isA<CheckoutState>().having(
-              (state) => state.addressesState.isLoading,
+          (state) => state.addressesState.isLoading,
           'addressesState.isLoading',
           true,
         ),
         isA<CheckoutState>().having(
-              (state) => state.addressesState.errorMessage,
+          (state) => state.addressesState.errorMessage,
           'addressesState.errorMessage',
           'Exception: Database error',
         ),
       ],
       verify: (_) {
-        verify(
-          mockGetAllUserAddressesUseCase(),
-        ).called(1);
+        verify(mockGetAllUserAddressesUseCase()).called(1);
 
         verifyNoMoreInteractions(mockGetAllUserAddressesUseCase);
       },
@@ -871,9 +729,7 @@ void main() {
       act: (cubit) {
         cubit.reset();
       },
-      expect: () => [
-        CheckoutState.initial(),
-      ],
+      expect: () => [CheckoutState.initial()],
     );
   });
 }

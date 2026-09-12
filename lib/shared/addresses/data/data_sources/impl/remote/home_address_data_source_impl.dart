@@ -43,7 +43,7 @@ class AddressRemoteDataSourceImpl implements AddressesRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<String>> deleteAddress(String addressId,) async {
+  Future<BaseResponse<String>> deleteAddress(String addressId) async {
     try {
       final response = await _apiClient.deleteAddress(addressId);
 

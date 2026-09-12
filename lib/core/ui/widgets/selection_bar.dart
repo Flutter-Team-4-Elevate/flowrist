@@ -39,9 +39,7 @@ class SelectionBar extends StatelessWidget {
                 border: Border(
                   bottom: BorderSide(
                     width: 3,
-                    color: isSelected
-                        ? AppColors.purple60
-                        : AppColors.white70,
+                    color: isSelected ? AppColors.purple60 : AppColors.white70,
                   ),
                 ),
               ),

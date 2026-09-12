@@ -22,9 +22,7 @@ class HomePayloadModelFactory {
         return OccasionRailPayloadModel.fromJson(json);
 
       default:
-        throw UnsupportedError(
-          'Unknown home payload type: ${json['type']}',
-        );
+        throw UnsupportedError('Unknown home payload type: ${json['type']}');
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/data/data_sources/contract/remote/checkout_remote_data_source.dart';
 import 'package:flowrist/features/checkout/data/models/payment_model/card_order_model.dart';
 import 'package:flowrist/features/checkout/data/models/payment_model/card_order_response_model.dart';
@@ -37,21 +38,21 @@ void main() {
       ),
     ),
   );
+
   late MockCheckoutRemoteDataSource mockRemoteDataSource;
   late CheckoutRepositoryImpl repository;
 
   setUp(() {
     mockRemoteDataSource = MockCheckoutRemoteDataSource();
-
     repository = CheckoutRepositoryImpl(mockRemoteDataSource);
   });
 
   group('placeOrder', () {
-    final requestEntity = CardOrderRequestEntity(
+    final cardRequestEntity = CardOrderRequestEntity(
       cartId: 'cart-123',
       addressId: 'address-123',
       isGift: false,
-      paymentMethod: 'Card',
+      paymentMethod: Endpoints.card,
       paymentGateway: 'Stripe',
     );
 
@@ -85,7 +86,7 @@ void main() {
         );
 
         // Act
-        final result = await repository.placeOrder(requestEntity);
+        final result = await repository.placeOrder(cardRequestEntity);
 
         // Assert
         expect(result, isA<SuccessResponse>());
@@ -93,11 +94,8 @@ void main() {
         final successResult = result as SuccessResponse;
 
         expect(successResult.data, isNotNull);
-
         expect(successResult.data!.orderId, 'order-123');
-
         expect(successResult.data!.gateway, 'Stripe');
-
         expect(successResult.data!.amount, 100.0);
 
         verify(mockRemoteDataSource.placeOrder(any)).called(1);
@@ -112,9 +110,8 @@ void main() {
           cartId: 'cart-123',
           addressId: 'address-123',
           isGift: false,
-          paymentMethod: 'Cash', // 👈 تغيير طريقة الدفع إلى Cash / COD
-          paymentGateway:
-              'Cash', // أو اتركه فارغاً إذا كان الـ Gateway غير مطلوب للـ Cash
+          paymentMethod: Endpoints.cod,
+          paymentGateway: 'Cash',
         );
 
         final remoteResponse = CardOrderResponseModel(
@@ -129,9 +126,7 @@ void main() {
         );
 
         // Act
-        final result = await repository.placeOrder(
-          codRequestEntity, // 👈 استخدام الـ Request الخاص بالـ COD
-        );
+        final result = await repository.placeOrder(codRequestEntity);
 
         // Assert
         expect(result, isA<SuccessResponse>());
@@ -152,7 +147,7 @@ void main() {
       );
 
       // Act
-      final result = await repository.placeOrder(requestEntity);
+      final result = await repository.placeOrder(cardRequestEntity);
 
       // Assert
       expect(result, isA<ErrorResponse>());
@@ -199,11 +194,8 @@ void main() {
       final successResult = result as SuccessResponse<DeliveryFeeEntity>;
 
       expect(successResult.data, isNotNull);
-
       expect(successResult.data!.addressId, addressId);
-
       expect(successResult.data!.deliveryFee, 25.0);
-
       expect(successResult.data!.isServiceable, true);
 
       verify(

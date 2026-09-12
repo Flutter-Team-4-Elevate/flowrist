@@ -17,22 +17,25 @@ class OccasionCubit extends Cubit<OccasionState> {
     : super(OccasionState.initial());
 
   Future<void> doEvent(OccasionEvents event) async {
-  switch (event) {
-    case GetOccasionsEvent():
-      await _getOccasions(
-        targetOccasionId: event.targetOccasionId,
-        initialIndex: event.initialIndex,
-      );
+    switch (event) {
+      case GetOccasionsEvent():
+        await _getOccasions(
+          targetOccasionId: event.targetOccasionId,
+          initialIndex: event.initialIndex,
+        );
 
-    case GetProductsByOccasionEvent():
-      await _getProductsByOccasion(event.occasionId);
+      case GetProductsByOccasionEvent():
+        await _getProductsByOccasion(event.occasionId);
 
-    case SelectOccasionEvent():
-      await _selectOccasion(event.index);
+      case SelectOccasionEvent():
+        await _selectOccasion(event.index);
+    }
   }
-}
 
-Future<void> _getOccasions({String? targetOccasionId, int initialIndex = 0}) async {
+  Future<void> _getOccasions({
+    String? targetOccasionId,
+    int initialIndex = 0,
+  }) async {
     emit(
       state.copyWith(
         occasions: state.occasions.copyWith(
@@ -51,7 +54,9 @@ Future<void> _getOccasions({String? targetOccasionId, int initialIndex = 0}) asy
 
         // Find matching index if occasion ID was passed
         if (targetOccasionId != null && occasions.isNotEmpty) {
-          final foundIndex = occasions.indexWhere((e) => e.id == targetOccasionId);
+          final foundIndex = occasions.indexWhere(
+            (e) => e.id == targetOccasionId,
+          );
           if (foundIndex != -1) {
             targetIndex = foundIndex;
           }

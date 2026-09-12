@@ -4,10 +4,7 @@ class GetOccasionsEvent extends OccasionEvents {
   final String? targetOccasionId;
   final int initialIndex;
 
-  GetOccasionsEvent({
-    this.targetOccasionId,
-    this.initialIndex = 0,
-  });
+  GetOccasionsEvent({this.targetOccasionId, this.initialIndex = 0});
 }
 
 class GetProductsByOccasionEvent extends OccasionEvents {
@@ -15,7 +12,6 @@ class GetProductsByOccasionEvent extends OccasionEvents {
 
   GetProductsByOccasionEvent(this.occasionId);
 }
-
 
 class SelectOccasionEvent extends OccasionEvents {
   final int index;

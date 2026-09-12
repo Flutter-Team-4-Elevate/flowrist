@@ -7,16 +7,15 @@ import '../../../client/product_details_api_client.dart';
 import '../../contract/remote/product_details_remote_data_source.dart';
 
 @Injectable(as: ProductDetailsRemoteDataSource)
-class ProductRemoteDataSourceImpl
-    implements ProductDetailsRemoteDataSource {
+class ProductRemoteDataSourceImpl implements ProductDetailsRemoteDataSource {
   final ProductDetailsApiClient apiClient;
 
   ProductRemoteDataSourceImpl(this.apiClient);
 
   @override
   Future<BaseResponse<ProductDetailsRequestDto>> getProductDetails(
-      String productId,
-      ) async {
+    String productId,
+  ) async {
     try {
       final response = await apiClient.getProductDetails(productId);
 

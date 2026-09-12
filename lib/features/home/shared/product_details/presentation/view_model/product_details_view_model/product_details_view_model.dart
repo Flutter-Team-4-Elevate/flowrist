@@ -14,31 +14,22 @@ class ProductDetailsViewModel
   final GetProductDetailsUseCase getProductDetailsUseCase;
 
   ProductDetailsViewModel(this.getProductDetailsUseCase)
-      : super(BaseState<ProductDetailsRequestDto>.initial()) {
+    : super(BaseState<ProductDetailsRequestDto>.initial()) {
     on<GetProductDetailsEvent>(_getProductDetails);
   }
 
   Future<void> _getProductDetails(
-      GetProductDetailsEvent event,
-      Emitter<BaseState<ProductDetailsRequestDto>> emit,
-      ) async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        errorMessage: null,
-      ),
-    );
+    GetProductDetailsEvent event,
+    Emitter<BaseState<ProductDetailsRequestDto>> emit,
+  ) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await getProductDetailsUseCase(event.productId);
 
     switch (result) {
       case SuccessResponse<ProductDetailsRequestDto>():
         emit(
-          BaseState(
-            isLoading: false,
-            errorMessage: null,
-            data: result.data,
-          ),
+          BaseState(isLoading: false, errorMessage: null, data: result.data),
         );
 
       case ErrorResponse<ProductDetailsRequestDto>():

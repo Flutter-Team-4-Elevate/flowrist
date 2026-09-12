@@ -35,9 +35,7 @@ class EditProfileAvatar extends StatelessWidget {
               shape: BoxShape.circle,
               color: AppColors.white70,
             ),
-            child: ClipOval(
-              child: _buildAvatarImage(avatarDiameter),
-            ),
+            child: ClipOval(child: _buildAvatarImage(avatarDiameter)),
           ),
           Positioned(
             bottom: 0,
@@ -79,7 +77,7 @@ class EditProfileAvatar extends StatelessWidget {
         fit: BoxFit.cover,
       );
     }
-   
+
     if (_isValidUrl) {
       return Image.network(
         photoUrl,

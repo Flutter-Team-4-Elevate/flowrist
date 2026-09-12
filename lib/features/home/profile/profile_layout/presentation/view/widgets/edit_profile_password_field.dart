@@ -28,9 +28,7 @@ class EditProfilePasswordField extends StatelessWidget {
         onPressed: onChangePassword,
         child: Text(
           localizations.change,
-          style: AppStyles.medium16Inter.copyWith(
-            color: AppColors.purpleBase,
-          ),
+          style: AppStyles.medium16Inter.copyWith(color: AppColors.purpleBase),
         ),
       ),
       localizations: localizations,

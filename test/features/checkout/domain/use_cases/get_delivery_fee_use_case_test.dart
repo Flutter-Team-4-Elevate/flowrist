@@ -8,9 +8,7 @@ import 'package:mockito/mockito.dart';
 
 import 'get_delivery_fee_use_case_test.mocks.dart';
 
-@GenerateMocks([
-  CheckoutRepository,
-])
+@GenerateMocks([CheckoutRepository])
 void main() {
   late MockCheckoutRepository mockRepository;
   late GetDeliveryFeeUseCase useCase;
@@ -31,112 +29,72 @@ void main() {
   setUp(() {
     mockRepository = MockCheckoutRepository();
 
-    useCase = GetDeliveryFeeUseCase(
-      mockRepository,
-    );
+    useCase = GetDeliveryFeeUseCase(mockRepository);
   });
 
   group('GetDeliveryFeeUseCase', () {
     const addressId = 'address-123';
     const cartId = 'cart-123';
 
-    test(
-      'should return DeliveryFeeEntity when repository succeeds',
-      () async {
-        // Arrange
-        final deliveryFee = DeliveryFeeEntity(
-          addressId: addressId,
-          deliveryFee: 25.0,
-          estimatedDeliveryAt: DateTime(2026, 9, 5),
-          isServiceable: true,
-        );
+    test('should return DeliveryFeeEntity when repository succeeds', () async {
+      // Arrange
+      final deliveryFee = DeliveryFeeEntity(
+        addressId: addressId,
+        deliveryFee: 25.0,
+        estimatedDeliveryAt: DateTime(2026, 9, 5),
+        isServiceable: true,
+      );
 
-        when(
-          mockRepository.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<DeliveryFeeEntity>(
-            deliveryFee,
-          ),
-        );
+      when(
+        mockRepository.getDeliveryFee(addressId: addressId, cartId: cartId),
+      ).thenAnswer(
+        (_) async => SuccessResponse<DeliveryFeeEntity>(deliveryFee),
+      );
 
-        // Act
-        final result = await useCase(
-          addressId: addressId,
-          cartId: cartId,
-        );
+      // Act
+      final result = await useCase(addressId: addressId, cartId: cartId);
 
-        // Assert
-        expect(
-          result,
-          isA<SuccessResponse<DeliveryFeeEntity>>(),
-        );
+      // Assert
+      expect(result, isA<SuccessResponse<DeliveryFeeEntity>>());
 
-        final success =
-            result as SuccessResponse<DeliveryFeeEntity>;
+      final success = result as SuccessResponse<DeliveryFeeEntity>;
 
-        expect(success.data, isNotNull);
-        expect(success.data?.addressId, addressId);
-        expect(success.data?.deliveryFee, 25.0);
-        expect(success.data?.isServiceable, true);
+      expect(success.data, isNotNull);
+      expect(success.data?.addressId, addressId);
+      expect(success.data?.deliveryFee, 25.0);
+      expect(success.data?.isServiceable, true);
 
-        verify(
-          mockRepository.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).called(1);
+      verify(
+        mockRepository.getDeliveryFee(addressId: addressId, cartId: cartId),
+      ).called(1);
 
-        verifyNoMoreInteractions(mockRepository);
-      },
-    );
+      verifyNoMoreInteractions(mockRepository);
+    });
 
-    test(
-      'should return ErrorResponse when repository fails',
-      () async {
-        // Arrange
-        when(
-          mockRepository.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).thenAnswer(
-          (_) async => ErrorResponse<DeliveryFeeEntity>(
-            'Failed to get delivery fee',
-          ),
-        );
+    test('should return ErrorResponse when repository fails', () async {
+      // Arrange
+      when(
+        mockRepository.getDeliveryFee(addressId: addressId, cartId: cartId),
+      ).thenAnswer(
+        (_) async =>
+            ErrorResponse<DeliveryFeeEntity>('Failed to get delivery fee'),
+      );
 
-        // Act
-        final result = await useCase(
-          addressId: addressId,
-          cartId: cartId,
-        );
+      // Act
+      final result = await useCase(addressId: addressId, cartId: cartId);
 
-        // Assert
-        expect(
-          result,
-          isA<ErrorResponse<DeliveryFeeEntity>>(),
-        );
+      // Assert
+      expect(result, isA<ErrorResponse<DeliveryFeeEntity>>());
 
-        final error =
-            result as ErrorResponse<DeliveryFeeEntity>;
+      final error = result as ErrorResponse<DeliveryFeeEntity>;
 
-        expect(
-          error.errorMessage,
-          'Failed to get delivery fee',
-        );
+      expect(error.errorMessage, 'Failed to get delivery fee');
 
-        verify(
-          mockRepository.getDeliveryFee(
-            addressId: addressId,
-            cartId: cartId,
-          ),
-        ).called(1);
+      verify(
+        mockRepository.getDeliveryFee(addressId: addressId, cartId: cartId),
+      ).called(1);
 
-        verifyNoMoreInteractions(mockRepository);
-      },
-    );
+      verifyNoMoreInteractions(mockRepository);
+    });
   });
 }

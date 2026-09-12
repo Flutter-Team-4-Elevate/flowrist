@@ -6,18 +6,12 @@ import 'package:flutter/material.dart';
 class BannerSection extends StatelessWidget {
   final BannerPayloadEntity payload;
 
-  const BannerSection({
-    super.key,
-    required this.payload,
-  });
+  const BannerSection({super.key, required this.payload});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: AspectRatio(
@@ -45,10 +39,7 @@ class BannerSection extends StatelessWidget {
                 height: double.infinity,
                 color: AppColors.white50,
                 child: const Center(
-                  child: Icon(
-                    Icons.broken_image_outlined,
-                    size: 40,
-                  ),
+                  child: Icon(Icons.broken_image_outlined, size: 40),
                 ),
               );
             },

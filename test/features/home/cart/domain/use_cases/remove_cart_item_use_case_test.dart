@@ -26,9 +26,7 @@ void main() {
   );
 
   setUpAll(() {
-    provideDummy<BaseResponse<CartEntity>>(
-      SuccessResponse<CartEntity>(tCart),
-    );
+    provideDummy<BaseResponse<CartEntity>>(SuccessResponse<CartEntity>(tCart));
   });
 
   setUp(() {
@@ -43,9 +41,7 @@ void main() {
         // Arrange
         when(
           mockRepository.removeCartItem('item_1'),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCart),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCart));
 
         // Act
         final result = await useCase('item_1');
@@ -64,9 +60,7 @@ void main() {
         expect(data.total, equals(50));
         expect(data.hasChanges, isFalse);
 
-        verify(
-          mockRepository.removeCartItem('item_1'),
-        ).called(1);
+        verify(mockRepository.removeCartItem('item_1')).called(1);
 
         verifyNoMoreInteractions(mockRepository);
       },

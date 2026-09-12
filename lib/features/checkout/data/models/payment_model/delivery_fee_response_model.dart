@@ -22,13 +22,10 @@ class DeliveryFeeResponseModel {
     this.errors,
   });
 
-  factory DeliveryFeeResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory DeliveryFeeResponseModel.fromJson(Map<String, dynamic> json) =>
       _$DeliveryFeeResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$DeliveryFeeResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$DeliveryFeeResponseModelToJson(this);
 
   DeliveryFeeResponseEntity toEntity() {
     return DeliveryFeeResponseEntity(

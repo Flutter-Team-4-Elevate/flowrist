@@ -1,0 +1,69 @@
+workflows:
+  android-release:
+    name: Android Release Build
+    instance_type: mac_mini_m2
+
+    environment:
+      flutter: stable
+      java: 17
+      groups:
+        - google_play
+      vars:
+        ANDROID_SDK_ROOT: /usr/local/share/android-sdk
+
+    scripts:
+      - name: Check Flutter version
+        script: |
+          flutter --version
+
+      - name: Install Android SDK Platform 37
+        script: |
+          set -e
+
+          export ANDROID_SDK_ROOT=/usr/local/share/android-sdk
+
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+
+          echo "Searching for sdkmanager..."
+
+          SDKMANAGER=$(find "$ANDROID_SDK_ROOT" \
+            -type f \
+            -name sdkmanager \
+            2>/dev/null | head -n 1)
+
+          if [ -z "$SDKMANAGER" ]; then
+            echo "ERROR: sdkmanager was not found."
+            find "$ANDROID_SDK_ROOT" -maxdepth 5 -type f -name sdkmanager 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "Using sdkmanager: $SDKMANAGER"
+
+          "$SDKMANAGER" "platform-tools"
+          "$SDKMANAGER" "platforms;android-37"
+          "$SDKMANAGER" "build-tools;35.0.0"
+
+          yes | "$SDKMANAGER" --licenses || true
+
+          echo "Installed Android platforms:"
+          ls -la "$ANDROID_SDK_ROOT/platforms"
+
+          echo "Checking Android 37:"
+          if [ -d "$ANDROID_SDK_ROOT/platforms/android-37" ]; then
+            echo "Android 37 found successfully."
+          else
+            echo "ERROR: Android 37 was not installed correctly."
+            exit 1
+          fi
+
+      - name: Flutter clean
+        script: |
+          flutter clean
+          flutter pub get
+
+      - name: Build Android APK
+        script: |
+          flutter build apk --release
+
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk

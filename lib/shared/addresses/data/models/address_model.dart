@@ -54,8 +54,7 @@ class AddressModel {
   factory AddressModel.fromJson(Map<String, dynamic> json) =>
       _$AddressModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$AddressModelToJson(this);
+  Map<String, dynamic> toJson() => _$AddressModelToJson(this);
 
   AddressEntity toEntity() {
     return AddressEntity(

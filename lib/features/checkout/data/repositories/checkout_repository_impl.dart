@@ -17,81 +17,65 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
   CheckoutRepositoryImpl(this._remoteDataSource);
 
   @override
-@override
-Future<BaseResponse<CardOrderEntity?>> placeOrder(
-  CardOrderRequestEntity order,
-) async {
-  final request = CardOrderRequestModel.fromEntity(order);
+  @override
+  Future<BaseResponse<CardOrderEntity?>> placeOrder(
+    CardOrderRequestEntity order,
+  ) async {
+    final request = CardOrderRequestModel.fromEntity(order);
 
-  final response = await _remoteDataSource.placeOrder(request);
+    final response = await _remoteDataSource.placeOrder(request);
 
-  switch (response) {
-    case SuccessResponse<CardOrderResponseModel>():
-      final responseModel = response.data;
+    switch (response) {
+      case SuccessResponse<CardOrderResponseModel>():
+        final responseModel = response.data;
 
-      if (responseModel == null) {
-        return ErrorResponse<CardOrderEntity?>(
-          'Invalid order response',
-        );
-      }
-
-      final responseEntity = responseModel.toEntity();
-      final orderEntity = responseEntity.data;
-
-      // ----------------------------------------
-      // CASH ON DELIVERY
-      // ----------------------------------------
-      if (order.paymentMethod == Endpoints.cod) {
-        // Backend legitimately returns data: null for COD.
-        return SuccessResponse<CardOrderEntity?>(
-          null,
-        );
-      }
-
-      // ----------------------------------------
-      // CREDIT CARD
-      // ----------------------------------------
-      if (order.paymentMethod == Endpoints.card) {
-        if (orderEntity == null) {
-          return ErrorResponse<CardOrderEntity?>(
-            'Invalid order response',
-          );
+        if (responseModel == null) {
+          return ErrorResponse<CardOrderEntity?>('Invalid order response');
         }
 
-        final sessionUrl = orderEntity.sessionUrl.trim();
+        final responseEntity = responseModel.toEntity();
+        final orderEntity = responseEntity.data;
 
-        if (sessionUrl.isEmpty) {
-          return ErrorResponse<CardOrderEntity?>(
-            'Invalid payment URL',
-          );
+        // ----------------------------------------
+        // CASH ON DELIVERY
+        // ----------------------------------------
+        if (order.paymentMethod == Endpoints.cod) {
+          // Backend legitimately returns data: null for COD.
+          return SuccessResponse<CardOrderEntity?>(null);
         }
 
-        final uri = Uri.tryParse(sessionUrl);
+        // ----------------------------------------
+        // CREDIT CARD
+        // ----------------------------------------
+        if (order.paymentMethod == Endpoints.card) {
+          if (orderEntity == null) {
+            return ErrorResponse<CardOrderEntity?>('Invalid order response');
+          }
 
-        if (uri == null ||
-            !uri.hasScheme ||
-            (uri.scheme != 'http' && uri.scheme != 'https')) {
-          return ErrorResponse<CardOrderEntity?>(
-            'Invalid payment URL',
-          );
+          final sessionUrl = orderEntity.sessionUrl.trim();
+
+          if (sessionUrl.isEmpty) {
+            return ErrorResponse<CardOrderEntity?>('Invalid payment URL');
+          }
+
+          final uri = Uri.tryParse(sessionUrl);
+
+          if (uri == null ||
+              !uri.hasScheme ||
+              (uri.scheme != 'http' && uri.scheme != 'https')) {
+            return ErrorResponse<CardOrderEntity?>('Invalid payment URL');
+          }
+
+          return SuccessResponse<CardOrderEntity?>(orderEntity);
         }
 
-        return SuccessResponse<CardOrderEntity?>(
-          orderEntity,
-        );
-      }
+        // Unknown payment method.
+        return ErrorResponse<CardOrderEntity?>('Invalid payment method');
 
-      // Unknown payment method.
-      return ErrorResponse<CardOrderEntity?>(
-        'Invalid payment method',
-      );
-
-    case ErrorResponse<CardOrderResponseModel>():
-      return ErrorResponse<CardOrderEntity?>(
-        response.errorMessage,
-      );
+      case ErrorResponse<CardOrderResponseModel>():
+        return ErrorResponse<CardOrderEntity?>(response.errorMessage);
+    }
   }
-}
 
   @override
   Future<BaseResponse<DeliveryFeeEntity>> getDeliveryFee({
@@ -113,14 +97,10 @@ Future<BaseResponse<CardOrderEntity?>> placeOrder(
           );
         }
 
-        return SuccessResponse<DeliveryFeeEntity>(
-          model.toEntity(),
-        );
+        return SuccessResponse<DeliveryFeeEntity>(model.toEntity());
 
       case ErrorResponse<DeliveryFeeModel>():
-        return ErrorResponse<DeliveryFeeEntity>(
-          response.errorMessage,
-        );
+        return ErrorResponse<DeliveryFeeEntity>(response.errorMessage);
     }
   }
 }

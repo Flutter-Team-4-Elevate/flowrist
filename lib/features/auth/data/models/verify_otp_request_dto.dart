@@ -7,12 +7,7 @@ class VerifyOtpRequestDto {
   final String email;
   final String otp;
 
-  const VerifyOtpRequestDto({
-    required this.email,
-    required this.otp,
-  });
+  const VerifyOtpRequestDto({required this.email, required this.otp});
 
-
-  Map<String, dynamic> toJson() =>
-      _$VerifyOtpRequestDtoToJson(this);
+  Map<String, dynamic> toJson() => _$VerifyOtpRequestDtoToJson(this);
 }

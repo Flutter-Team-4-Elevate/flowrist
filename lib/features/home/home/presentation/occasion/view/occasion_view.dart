@@ -124,7 +124,8 @@ class _OccasionViewState extends State<OccasionView> {
                                 productId: product.id,
                                 title: product.name,
                                 price: product.price.toString(),
-                                oldPrice: product.discountPrice?.toString() ?? '',
+                                oldPrice:
+                                    product.discountPrice?.toString() ?? '',
                                 discount: product.discountPercentage != null
                                     ? '${product.discountPercentage!.toInt()}%'
                                     : '',

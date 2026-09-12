@@ -12,7 +12,5 @@ class ResetPasswordRequestDto {
     required this.newPassword,
   });
 
-
-  Map<String, dynamic> toJson() =>
-      _$ResetPasswordRequestDtoToJson(this);
+  Map<String, dynamic> toJson() => _$ResetPasswordRequestDtoToJson(this);
 }

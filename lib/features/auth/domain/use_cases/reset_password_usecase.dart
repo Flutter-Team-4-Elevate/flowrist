@@ -12,9 +12,6 @@ class ResetPasswordUseCase {
     required String email,
     required String newPassword,
   }) {
-    return _repository.resetPassword(
-      email: email,
-      newPassword: newPassword,
-    );
+    return _repository.resetPassword(email: email, newPassword: newPassword);
   }
 }
