@@ -34,7 +34,21 @@ class _OtpInputFieldState extends State<OtpInputField> {
 
     _focusNodes = List.generate(
       widget.length,
-          (index) => FocusNode(),
+          (index) =>
+          FocusNode(
+            onKeyEvent: (node, event) {
+              if (event is KeyDownEvent &&
+                  event.logicalKey == LogicalKeyboardKey.backspace &&
+                  _controllers[index].text.isEmpty &&
+                  index > 0) {
+                _focusNodes[index - 1].requestFocus();
+                _controllers[index - 1].clear();
+                _sendOtp();
+                return KeyEventResult.handled;
+              }
+              return KeyEventResult.ignored;
+            },
+          ),
     );
 
     _setInitialValue();
@@ -84,17 +98,6 @@ class _OtpInputFieldState extends State<OtpInputField> {
     widget.onChanged(otp);
   }
 
-  void _onKeyEvent(KeyEvent event, int index) {
-    if (event is KeyDownEvent &&
-        event.logicalKey == LogicalKeyboardKey.backspace &&
-        _controllers[index].text.isEmpty &&
-        index > 0) {
-      _focusNodes[index - 1].requestFocus();
-      _controllers[index - 1].clear();
-      _sendOtp();
-    }
-  }
-
   @override
   void dispose() {
     for (final controller in _controllers) {
@@ -118,35 +121,31 @@ class _OtpInputFieldState extends State<OtpInputField> {
           return SizedBox(
             width: 48,
             height: 56,
-            child: KeyboardListener(
-              focusNode: FocusNode(),
-              onKeyEvent: (event) => _onKeyEvent(event, index),
-              child: TextField(
-                controller: _controllers[index],
-                focusNode: _focusNodes[index],
-                keyboardType: widget.keyboardType,
-                textAlign: TextAlign.center,
-                maxLength: 1,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: InputDecoration(
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      width: 2,
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  _onChanged(value, index);
-                },
+            child: TextField(
+              controller: _controllers[index],
+              focusNode: _focusNodes[index],
+              keyboardType: widget.keyboardType,
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
+              decoration: InputDecoration(
+                counterText: '',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    width: 2,
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                _onChanged(value, index);
+              },
             ),
           );
         },
