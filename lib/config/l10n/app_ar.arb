@@ -195,5 +195,13 @@
   "allPricesIncludeTax": "جميع الأسعار تتضمن الضريبة",
   "connectionErrorMessage": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
   "noAddressSelected": "لم يتم تحديد أي عنوان",
-  "payment": "الدفع"
+  "payment": "الدفع",
+  "editProfile": "تعديل الملف الشخصي",
+  "change": "تغيير",
+  "update": "تحديث",
+  "profileUpdatedSuccessfully": "تم تحديث الملف الشخصي بنجاح",
+  "currentPassword": "كلمة المرور الحالية",
+  "confirmNewPassword": "تأكيد كلمة المرور",
+  "invalidPassword": "كلمة المرور غير صحيحة",
+  "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً."
 }

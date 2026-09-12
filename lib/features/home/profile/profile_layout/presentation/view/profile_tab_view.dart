@@ -8,6 +8,7 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_events.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_state.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/edit_profile_view.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/change_language_bottom_sheet.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/logout_dialog.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_app_bar.dart';
@@ -24,7 +25,7 @@ class ProfileTabView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => getIt<ProfileCubit>(),
+      create: (_) => getIt<ProfileCubit>()..doEvent(const GetProfileEvent()),
       child: const _ProfileTabViewContent(),
     );
   }
@@ -66,11 +67,7 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
                   physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
-                      ProfileHeaderSection(
-                        userName: "Nour",
-                        userEmail: "Nour_mohamed@gmail.com",
-                        onEditName: () {},
-                      ),
+                      _buildHeaderSection(context),
                       _buildOrdersAndAddresses(context, l10n, itemPadding),
                       _buildNotificationsSection(context, l10n, itemPadding),
                       _buildSettingsSection(context, l10n, itemPadding),
@@ -86,6 +83,35 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHeaderSection(BuildContext context) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      buildWhen: (prev, current) => prev.profileState != current.profileState,
+      builder: (context, state) {
+        final profile = state.profileState.data;
+
+        return ProfileHeaderSection(
+          userName: profile != null && profile.fullName.isNotEmpty
+              ? profile.fullName
+              : '',
+          userEmail: profile?.email ?? '',
+          onEditName: () {
+            if (profile != null) {
+              final profileCubit = context.read<ProfileCubit>();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: profileCubit,
+                    child: EditProfileView(userProfile: profile),
+                  ),
+                ),
+              );
+            }
+          },
+        );
+      },
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
 import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
@@ -24,6 +25,7 @@ import 'package:flowrist/features/home/home/presentation/occasion/cubit/occasion
 import 'package:flowrist/features/home/home/presentation/occasion/view/occasion_view.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/my_orders_view.dart';
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/order_details_view.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/profile_tab_view.dart';
 import 'package:flowrist/features/home/profile/session_management/presentation/cubit/sessions_cubit.dart';
 import 'package:flowrist/features/home/profile/session_management/presentation/view/active_sessions_view.dart';
@@ -75,6 +77,7 @@ abstract final class AppRoutes {
 
   static const savedAddresses = '/saved-addresses';
   static const webView = '/web-view';
+  static const resetPassword = '/reset-password';
 }
 
 abstract final class AppRouter {
@@ -169,24 +172,20 @@ abstract final class AppRouter {
           return const SplashView();
         },
       ),
-  GoRoute(
-  path: AppRoutes.paymentWebView,
-  builder: (context, state) {
-    final sessionUrl = state.extra;
+      GoRoute(
+        path: AppRoutes.paymentWebView,
+        builder: (context, state) {
+          final sessionUrl = state.extra;
 
-    if (sessionUrl is! String || sessionUrl.isEmpty) {
-      return const Scaffold(
-        body: Center(
-          child: Text('Payment URL is missing'),
-        ),
-      );
-    }
+          if (sessionUrl is! String || sessionUrl.isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Payment URL is missing')),
+            );
+          }
 
-    return PaymentWebView(
-      paymentUrl: sessionUrl,
-    );
-  },
-),
+          return PaymentWebView(paymentUrl: sessionUrl);
+        },
+      ),
 
       // --------------------------------------------------
       // Login
@@ -401,6 +400,20 @@ abstract final class AppRouter {
           return AppWebViewScreen(
             title: extra[AppConstants.title] ?? '',
             url: extra[AppConstants.url] ?? '',
+          );
+        },
+      ),
+
+      // --------------------------------------------------
+      // Reset Password Screen
+      // --------------------------------------------------
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          return BlocProvider.value(
+            value: getIt<ProfileCubit>(),
+            child: const ResetPasswordView(),
           );
         },
       ),

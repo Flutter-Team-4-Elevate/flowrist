@@ -41,30 +41,30 @@ class ProfileAppBar extends StatelessWidget {
                   size: 26,
                 ),
               ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    color: AppColors.red,
-                    shape: BoxShape.circle,
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  child: const Text(
-                    '3',
-                    style: TextStyle(
-                      color: AppColors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   right: 8,
+              //   top: 8,
+              //   child: Container(
+              //     padding: const EdgeInsets.all(4),
+              //     decoration: const BoxDecoration(
+              //       color: AppColors.red,
+              //       shape: BoxShape.circle,
+              //     ),
+              //     constraints: const BoxConstraints(
+              //       minWidth: 16,
+              //       minHeight: 16,
+              //     ),
+              //     child: const Text(
+              //       '3',
+              //       style: TextStyle(
+              //         color: AppColors.white,
+              //         fontSize: 10,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //       textAlign: TextAlign.center,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],
