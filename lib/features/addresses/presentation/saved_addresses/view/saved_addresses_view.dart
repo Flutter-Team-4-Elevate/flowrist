@@ -21,6 +21,8 @@ class SavedAddressesView extends StatefulWidget {
 }
 
 class _SavedAddressesViewState extends State<SavedAddressesView> {
+  bool _hasChanges = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,15 +31,23 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
   Future<void> _navigateToAddAddress() async {
     final result = await context.push(AppRoutes.addAddress);
-    if ((result == true || mounted) && mounted) {
-      context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
+    if (result == true) {
+      _hasChanges = true;
+      if (mounted) {
+        context.read<SavedAddressesViewModel>().doEvent(
+            GetSavedAddressesEvent());
+      }
     }
   }
 
   Future<void> _navigateToEditAddress(AddressEntity address) async {
     final result = await context.push(AppRoutes.addAddress, extra: address);
-    if ((result == true || mounted) && mounted) {
-      context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
+    if (result == true) {
+      _hasChanges = true;
+      if (mounted) {
+        context.read<SavedAddressesViewModel>().doEvent(
+            GetSavedAddressesEvent());
+      }
     }
   }
 
@@ -91,6 +101,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
             ),
           );
         } else if (deleteState.data != null) {
+          _hasChanges = true;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(deleteState.data!),
@@ -108,7 +119,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
           leading: IconButton(
             onPressed: () {
               if (mounted && context.canPop()) {
-                context.pop();
+                context.pop(_hasChanges);
               }
             },
             icon: const Icon(

@@ -74,7 +74,7 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(localizations.addressSavedSuccessfully)),
           );
-          Navigator.of(context).pop();
+          Navigator.of(context).pop(true);
         } else if (!state.saveAddressState.isLoading &&
             state.saveAddressState.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
