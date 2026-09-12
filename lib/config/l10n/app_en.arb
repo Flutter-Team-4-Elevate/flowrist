@@ -46,6 +46,7 @@
   "emptyValidationError": "This field is required",
 
   "forgotPassword": "Forgot Password?",
+  "forgetPasswordText": "Forgot Password",
   "forgotPasswordDescription": "Enter your email address and we will send you an OTP.",
 
   "email": "Email",
