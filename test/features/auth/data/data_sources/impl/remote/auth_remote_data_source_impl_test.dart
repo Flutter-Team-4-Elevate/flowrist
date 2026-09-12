@@ -1,17 +1,16 @@
+import 'package:flowrist/features/auth/data/client/auth_api_client.dart';
 import 'package:flowrist/features/auth/data/data_sources/impl/remote/auth_remote_data_source_impl.dart';
+import 'package:flowrist/features/auth/data/models/forget_password_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/forget_password_response_dto.dart';
+import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/register_response_dto.dart';
+import 'package:flowrist/features/auth/data/models/reset_password_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/reset_password_response_dto.dart';
+import 'package:flowrist/features/auth/data/models/verify_otp_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/verify_otp_response_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
-import 'package:flowrist/features/auth/data/client/auth_api_client.dart';
-import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
-import 'package:flowrist/features/auth/data/models/register_response_dto.dart';
-import 'package:flowrist/features/auth/data/models/forget_password_request_dto.dart';
-import 'package:flowrist/features/auth/data/models/forget_password_response_dto.dart';
-import 'package:flowrist/features/auth/data/models/verify_otp_request_dto.dart';
-import 'package:flowrist/features/auth/data/models/verify_otp_response_dto.dart';
-import 'package:flowrist/features/auth/data/models/reset_password_request_dto.dart';
-import 'package:flowrist/features/auth/data/models/reset_password_response_dto.dart';
 
 @GenerateMocks([AuthApiClient])
 import 'auth_remote_data_source_impl_test.mocks.dart';
@@ -76,6 +75,7 @@ void main() {
     const email = 'ali@example.com';
 
     const response = ForgetPasswordResponseDto(
+      status: true,
       message: 'OTP sent successfully',
     );
 
@@ -124,6 +124,7 @@ void main() {
     const otp = '123456';
 
     const response = VerifyOtpResponseDto(
+      status: true,
       message: 'OTP verified successfully',
     );
 
@@ -173,23 +174,26 @@ void main() {
   });
 
   group('resetPassword', () {
-    const email = 'ali@example.com';
-    const newPassword = 'NewPassword123!';
+    const otpToken = '123456';
+    const password = 'Password123!';
+    const confirmPassword = 'Password123!';
 
     const response = ResetPasswordResponseDto(
+      status: true,
       message: 'Password reset successfully',
     );
 
     test(
-      'should call apiClient.resetPassword with correct email and password',
+      'should call apiClient.resetPassword with correct parameters',
           () async {
         when(
           mockApiClient.resetPassword(any),
         ).thenAnswer((_) async => response);
 
         final result = await remoteDataSource.resetPassword(
-          email: email,
-          newPassword: newPassword,
+          otpToken: otpToken,
+          password: password,
+          confirmPassword: confirmPassword,
         );
 
         expect(result, equals(response));
@@ -198,8 +202,9 @@ void main() {
           mockApiClient.resetPassword(captureAny),
         ).captured.single as ResetPasswordRequestDto;
 
-        expect(captured.email, equals(email));
-        expect(captured.newPassword, equals(newPassword));
+        expect(captured.otpToken, equals(otpToken));
+        expect(captured.password, equals(password));
+        expect(captured.confirmPassword, equals(confirmPassword));
 
         verifyNoMoreInteractions(mockApiClient);
       },
@@ -214,8 +219,9 @@ void main() {
 
         expect(
               () => remoteDataSource.resetPassword(
-            email: email,
-            newPassword: newPassword,
+                otpToken: otpToken,
+                password: password,
+                confirmPassword: confirmPassword,
           ),
           throwsA(isA<Exception>()),
         );
