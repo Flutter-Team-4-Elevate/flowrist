@@ -32,7 +32,6 @@ class _OtpInputFieldState extends State<OtpInputField> {
       (index) => TextEditingController(),
     );
 
-    _focusNodes = List.generate(widget.length, (index) => FocusNode());
     _focusNodes = List.generate(
       widget.length,
           (index) =>

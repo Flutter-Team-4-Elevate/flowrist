@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../../config/base_response/base_response.dart';
@@ -229,10 +229,7 @@ class ForgetPasswordBloc
     emit(state.copyWith(remainingSeconds: state.remainingSeconds - 1));
   }
 
-  void _onOtpChanged(
-      OtpChangedEvent event,
-      Emitter<ForgetPasswordState> emit,
-      ) {
+  void _onOtpChanged(OtpChangedEvent event, Emitter<ForgetPasswordState> emit) {
     emit(state.copyWith(otp: event.otp));
   }
 
