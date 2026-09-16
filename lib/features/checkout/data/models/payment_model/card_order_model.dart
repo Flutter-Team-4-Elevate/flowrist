@@ -7,12 +7,12 @@ part 'card_order_model.g.dart';
 class CardOrderModel {
   final String orderId;
   final String status;
-  final String gateway;
-  final String sessionId;
-  final String sessionUrl;
-  final String successUrl;
-  final String cancelUrl;
-  final DateTime expiresAt;
+  final String? gateway;
+  final String? sessionId;
+  final String? sessionUrl;
+  final String? successUrl;
+  final String? cancelUrl;
+  final DateTime? expiresAt;
   final double amount;
   final String currency;
   final DateTime? estimatedDeliveryAt;
