@@ -54,3 +54,8 @@ app.*.map.json
 
 # Environment Variables
 .env
+# Ignore all JSON files
+*.json
+
+# Ignore all HTML files
+*.html

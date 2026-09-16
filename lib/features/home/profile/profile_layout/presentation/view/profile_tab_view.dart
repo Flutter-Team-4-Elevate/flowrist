@@ -14,6 +14,8 @@ import 'package:flowrist/features/home/profile/profile_layout/presentation/view/
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_menu_item.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_section.dart';
+import 'package:flowrist/shared/notifications/presentation/cubit/notification_cubit.dart';
+import 'package:flowrist/shared/notifications/presentation/cubit/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -140,40 +142,49 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
     AppLocalizations l10n,
     double itemPadding,
   ) {
-    return ProfileSection(
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: itemPadding),
-          horizontalTitleGap: 0,
-          leading: Transform.scale(
-            scale: 0.7,
-            alignment: AlignmentDirectional.centerStart,
-            child: ValueListenableBuilder<bool>(
-              valueListenable: _isNotificationEnabled,
-              builder: (context, isEnabled, _) {
-                return Switch(
-                  value: isEnabled,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  activeThumbColor: AppColors.white,
-                  activeTrackColor: AppColors.purpleBase,
-                  onChanged: (val) => _isNotificationEnabled.value = val,
-                );
-              },
+    return BlocProvider(
+      create: (_) => getIt<NotificationCubit>()
+    ..getNotificationStatus(),
+      child: ProfileSection(
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.symmetric(horizontal: itemPadding),
+            horizontalTitleGap: 0,
+            leading: Transform.scale(
+              scale: 0.7,
+              alignment: AlignmentDirectional.centerStart,
+              child: BlocBuilder<NotificationCubit, NotificationState>(
+                builder: (context, state) {
+                  return Switch(
+                    value: state.isEnabled,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    activeThumbColor: AppColors.white,
+                    activeTrackColor: AppColors.purpleBase,
+                    onChanged: state.isLoading
+                        ? null
+                        : (value) {
+                            context
+                                .read<NotificationCubit>()
+                                .updateNotificationStatus(value);
+                          },
+                  );
+                },
+              ),
+            ),
+            title: Text(
+              l10n.notification,
+              style: AppStyles.regular14Inter.copyWith(
+                color: AppColors.blackBase,
+              ),
+            ),
+            trailing: const Icon(
+              Icons.arrow_forward_ios,
+              color: AppColors.grey,
+              size: 16,
             ),
           ),
-          title: Text(
-            l10n.notification,
-            style: AppStyles.regular14Inter.copyWith(
-              color: AppColors.blackBase,
-            ),
-          ),
-          trailing: const Icon(
-            Icons.arrow_forward_ios,
-            color: AppColors.grey,
-            size: 16,
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/shared/notifications/data/models/update_fcm_token_request.dart';
+import 'package:flowrist/shared/notifications/data/models/update_notification_status_api_response.dart';
 import 'package:flowrist/shared/notifications/data/models/update_notification_status_request.dart';
+import 'package:flowrist/shared/notifications/data/models/update_notification_status_response_model.dart';
 import 'package:injectable/injectable.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -17,8 +19,9 @@ abstract class NotificationApiClient {
   Future<void> updateFcmToken(@Body() UpdateFcmTokenRequest request);
 
   @PUT(Endpoints.updateNotificationStatus)
-Future<void> updateNotificationStatus(
-  @Path('deviceId') String deviceId,
-  @Body() UpdateNotificationStatusRequest request,
-);
+  Future<UpdateNotificationStatusApiResponse>
+      updateNotificationStatus(
+    @Path(Endpoints.deviceId) String deviceId,
+    @Body() UpdateNotificationStatusRequest request,
+  );
 }

@@ -2,7 +2,7 @@ import 'package:flowrist/shared/notifications/data/models/update_fcm_token_reque
 import 'package:flowrist/shared/notifications/domain/repositories/notification_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@injectable
 class UpdateFcmTokenUseCase {
   final NotificationRepository _repository;
 
