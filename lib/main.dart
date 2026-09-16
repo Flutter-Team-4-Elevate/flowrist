@@ -27,15 +27,14 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await LocalNotificationService.init();
-
   await _loadEnvironmentVariables();
 
   configureDependencies();
 
   Bloc.observer = FlowristBlocObserver();
 
-  await PushNotificationsServices.init();
+  // Initialize local notifications + FCM listeners.
+  await getIt<PushNotificationsServices>().init();
 
   runApp(
     MultiBlocProvider(
@@ -43,8 +42,9 @@ Future<void> main() async {
         BlocProvider(create: (_) => getIt<CartCubit>()),
         BlocProvider(create: (_) => getIt<AddressesViewModel>()),
         BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
-          BlocProvider<HomeCubit>(
-      create: (_) => getIt<HomeCubit>()),
+        BlocProvider<HomeCubit>(
+          create: (_) => getIt<HomeCubit>(),
+        ),
       ],
       child: const FlowristApp(),
     ),

@@ -186,18 +186,8 @@ class _LoginViewState extends State<LoginView> {
                           child: AppButton(
                             text: localizations.login,
                             isLoading: state.login.isLoading,
-                            onPressed: () async {
+                            onPressed: () {
                               if (!_formKey.currentState!.validate()) {
-                                return;
-                              }
-
-                              final fcmToken =
-                                  await PushNotificationsServices.getFcmToken();
-
-                              final deviceId = await getIt<DeviceIdService>()
-                                  .getDeviceId();
-
-                              if (!context.mounted) {
                                 return;
                               }
 
@@ -205,8 +195,6 @@ class _LoginViewState extends State<LoginView> {
                                 LoginSubmitted(
                                   email: emailController.text.trim(),
                                   password: passwordController.text,
-                                  deviceId: deviceId,
-                                  fcmToken: fcmToken ?? '',
                                 ),
                               );
                             },

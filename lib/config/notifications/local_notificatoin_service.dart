@@ -1,75 +1,91 @@
 import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flowrist/config/notifications/notification_constant.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:injectable/injectable.dart';
 
+
+@lazySingleton
 class LocalNotificationService {
-  static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin;
 
-  static final StreamController<NotificationResponse> streamController =
+  final StreamController<NotificationResponse> _notificationController =
       StreamController<NotificationResponse>.broadcast();
 
-  static int _notificationId = 0;
+  int _notificationId = 0;
 
-  static void onTap(NotificationResponse notificationResponse) {
-    streamController.add(notificationResponse);
-  }
+  LocalNotificationService(this._plugin);
 
-  static Future<void> init() async {
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+  Stream<NotificationResponse> get onNotificationTap =>
+      _notificationController.stream;
 
-    const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings();
+  Future<void> init() async {
+    const androidSettings = AndroidInitializationSettings(
+      NotificationConstants.androidIcon,
+    );
 
-    const InitializationSettings settings = InitializationSettings(
+    const iosSettings = DarwinInitializationSettings();
+
+    const settings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(
-      onDidReceiveNotificationResponse: onTap,
+    await _plugin.initialize(
       settings: settings,
+      onDidReceiveNotificationResponse: _onTap,
     );
 
     await _createAndroidChannel();
   }
 
-  static Future<void> _createAndroidChannel() async {
-    const AndroidNotificationChannel channel = AndroidNotificationChannel(
-      'flowrist_notifications',
-      'Flowrist Notifications',
-      description: 'Flowrist app notifications',
+  void _onTap(NotificationResponse response) {
+    if (!_notificationController.isClosed) {
+      _notificationController.add(response);
+    }
+  }
+
+  Future<void> _createAndroidChannel() async {
+    const channel = AndroidNotificationChannel(
+      NotificationConstants.channelId,
+      NotificationConstants.channelName,
+      description: NotificationConstants.channelDescription,
       importance: Importance.max,
       playSound: true,
     );
 
-    await flutterLocalNotificationsPlugin
+    await _plugin
         .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
   }
 
-  static Future<void> showBasicNotification(RemoteMessage message) async {
-    const AndroidNotificationDetails android = AndroidNotificationDetails(
-      'flowrist_notifications',
-      'Flowrist Notifications',
-      channelDescription: 'Flowrist app notifications',
+  Future<void> showBasicNotification(RemoteMessage message) async {
+    const androidDetails = AndroidNotificationDetails(
+      NotificationConstants.channelId,
+      NotificationConstants.channelName,
+      channelDescription: NotificationConstants.channelDescription,
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
     );
 
-    const NotificationDetails details = NotificationDetails(android: android);
+    const notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
 
-    await flutterLocalNotificationsPlugin.show(
+    await _plugin.show(
       id: _notificationId++,
-      notificationDetails: details,
-      title: message.notification?.title ?? 'Flowrist',
+      notificationDetails: notificationDetails,
+      title: message.notification?.title ??
+          NotificationConstants.defaultTitle,
       body: message.notification?.body ?? '',
       payload: message.data.toString(),
     );
+  }
+
+  Future<void> dispose() async {
+    await _notificationController.close();
   }
 }

@@ -1,12 +1,16 @@
-import 'package:injectable/injectable.dart';
+import 'package:flowrist/config/device_id/uuid.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:uuid/uuid.dart';
+import 'package:injectable/injectable.dart';
 
 @lazySingleton
 class DeviceIdService {
   final FlutterSecureStorage _storage;
+  final UuidGenerator _uuidGenerator;
 
-  DeviceIdService(this._storage);
+  DeviceIdService(
+    this._storage,
+    this._uuidGenerator,
+  );
 
   static const String _deviceIdKey = 'device_id';
 
@@ -14,7 +18,7 @@ class DeviceIdService {
     var deviceId = await _storage.read(key: _deviceIdKey);
 
     if (deviceId == null || deviceId.isEmpty) {
-      deviceId = const Uuid().v4();
+      deviceId = _uuidGenerator.generate();
 
       await _storage.write(
         key: _deviceIdKey,

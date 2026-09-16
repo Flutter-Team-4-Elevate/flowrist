@@ -52,36 +52,30 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
     });
   }
 
-  Future<void> _setAsDefault() async {
-    final viewModel = context.read<AddressesViewModel>();
+Future<void> _setAsDefault() async {
+  final viewModel = context.read<AddressesViewModel>();
 
-    final selectedAddress = _getSelectedAddress(viewModel.state);
+  final selectedAddress = _getSelectedAddress(viewModel.state);
 
-    if (selectedAddress == null) {
-      return;
-    }
-
-    await viewModel.doEvent(SetDefaultAddress(selectedAddress.id));
-
-    if (!mounted) {
-      return;
-    }
-
-    final currentState = viewModel.state;
-
-    // Do not update the actual address if the API failed.
-    if (currentState.setDefaultAddressState.errorMessage != null) {
-      return;
-    }
-
-    viewModel.selectAddress(selectedAddress);
-
-    if (!mounted) {
-      return;
-    }
-
-    Navigator.of(context).pop();
+  if (selectedAddress == null) {
+    return;
   }
+
+  await viewModel.doEvent(
+    SetDefaultAddress(selectedAddress.id),
+  );
+
+  if (!mounted) return;
+
+  // If API failed, don't close the sheet.
+  if (viewModel.state.setDefaultAddressState.errorMessage != null) {
+    return;
+  }
+
+  // The ViewModel's _setDefaultAddress() should already update
+  // selectedAddress after the API succeeds.
+  Navigator.of(context).pop();
+}
 
   @override
   Widget build(BuildContext context) {

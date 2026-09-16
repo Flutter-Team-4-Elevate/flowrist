@@ -4,7 +4,7 @@ import 'package:flowrist/shared/notifications/domain/entities/update_notificatio
 import 'package:flowrist/shared/notifications/domain/repositories/notification_repository.dart';
 import 'package:injectable/injectable.dart';
 
-@lazySingleton
+@injectable
 class UpdateNotificationStatusUseCase {
   final NotificationRepository _repository;
 
