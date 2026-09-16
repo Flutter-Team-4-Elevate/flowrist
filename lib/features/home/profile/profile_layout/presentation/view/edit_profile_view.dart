@@ -39,6 +39,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   late final TextEditingController _phoneController;
   late final TextEditingController _passwordPlaceholderController;
   late Gender _selectedGender;
+  late UserProfileEntity _currentUserProfile;
 
   File? _selectedImageFile;
   final ValueNotifier<bool> _isButtonEnabled = ValueNotifier<bool>(false);
@@ -46,6 +47,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   @override
   void initState() {
     super.initState();
+    _currentUserProfile = widget.userProfile;
     _initControllers();
   }
 
@@ -71,12 +73,17 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   void _checkFormChanges() {
+    final currentFirst = _currentUserProfile.firstName;
+    final currentLast = _currentUserProfile.lastName;
+    final currentPhone = _currentUserProfile.phoneNumber;
+    final currentGender = _currentUserProfile.gender;
+
     final hasChanged =
         _selectedImageFile != null ||
-        _firstNameController.text.trim() != widget.userProfile.firstName ||
-        _lastNameController.text.trim() != widget.userProfile.lastName ||
-        _phoneController.text.trim() != widget.userProfile.phoneNumber ||
-        _selectedGender.value != widget.userProfile.gender;
+        _firstNameController.text.trim() != currentFirst ||
+        _lastNameController.text.trim() != currentLast ||
+        _phoneController.text.trim() != currentPhone ||
+        _selectedGender.value != currentGender;
 
     _isButtonEnabled.value = hasChanged;
   }
@@ -262,6 +269,12 @@ class _EditProfileViewState extends State<EditProfileView> {
           ),
         );
       } else if (updateState.data != null) {
+        setState(() {
+          _currentUserProfile = updateState.data!;
+          _selectedImageFile = null;
+        });
+        _checkFormChanges();
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(l10n.profileUpdatedSuccessfully),

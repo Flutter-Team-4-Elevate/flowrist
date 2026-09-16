@@ -35,7 +35,8 @@ abstract class DioModule {
         request: true,
         requestHeader: true,
         requestBody: true,
-        responseBody: true,responseHeader: false,
+        responseBody: true,
+        responseHeader: false,
         error: true,
       ),
     );

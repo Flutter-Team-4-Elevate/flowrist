@@ -1,7 +1,7 @@
 abstract final class Endpoints {
   static const baseUrl = 'http://10.0.2.2:5000/';
   static const register = 'api/identity/auth/register';
-static const login = 'api/identity/auth/login';
+  static const login = 'api/identity/auth/login';
   static const refreshToken = 'api/identity/auth/refresh-token';
   static const sessions = 'api/identity/auth/sessions';
   static String deleteSession(String sessionId) =>
@@ -20,7 +20,8 @@ static const login = 'api/identity/auth/login';
       'api/address-cart/users/me/addresses/{addressId}/default';
   static const String forgetPassword = 'api/identity/auth/forget-password';
   static const String verifyOTP = 'api/identity/auth/otp-verification';
-  static const String resetPassword = 'api/identity/auth/reset-password';static const String productDetails = '/api/catalog/products';
+  static const String resetPassword = 'api/identity/auth/reset-password';
+  static const String productDetails = '/api/catalog/products';
   static const String cart = 'api/address-cart/cart';
   static const String cartItems = 'api/address-cart/cart/items';
   static const String governorates = 'api/address-cart/locations/governorates';

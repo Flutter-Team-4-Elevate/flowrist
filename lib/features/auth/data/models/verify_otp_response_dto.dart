@@ -8,11 +8,7 @@ class VerifyOtpResponseDto {
   final String? message;
   final dynamic data;
 
-  const VerifyOtpResponseDto({
-    required this.status,
-    this.message,
-    this.data,
-  });
+  const VerifyOtpResponseDto({required this.status, this.message, this.data});
 
   factory VerifyOtpResponseDto.fromJson(Map<String, dynamic> json) =>
       _$VerifyOtpResponseDtoFromJson(json);

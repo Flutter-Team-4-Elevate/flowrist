@@ -57,6 +57,8 @@ void main() {
     hasChanges: false,
   );
 
+  final tItemsMap = {'prod_1': tCartItem};
+
   setUp(() {
     provideDummy<BaseResponse<CartEntity>>(
       SuccessResponse<CartEntity>(tCartEntity),
@@ -69,7 +71,6 @@ void main() {
     mockRemoveCartItemUseCase = MockRemoveCartItemUseCase();
     mockSessionService = MockSessionService();
 
-    // القيمة الافتراضية: المستخدم ليس Guest
     when(mockSessionService.isGuest()).thenAnswer((_) async => false);
 
     cartCubit = CartCubit(
@@ -127,6 +128,7 @@ void main() {
             errorMessage: null,
             data: tCartEntity,
           ),
+          itemsMap: tItemsMap,
         ),
       ],
       verify: (_) {
@@ -176,6 +178,7 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
       ),
       build: () => cartCubit,
       act: (cubit) => cubit.doEvent(ClearCartEvent()),
@@ -214,6 +217,7 @@ void main() {
             errorMessage: null,
             data: tCartEntity,
           ),
+          itemsMap: tItemsMap,
         ),
       ],
       verify: (_) {
@@ -265,6 +269,7 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
       ),
       build: () {
         when(
@@ -296,6 +301,7 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
       ),
       build: () {
         when(mockRemoveCartItemUseCase('item_1')).thenAnswer(
@@ -343,6 +349,7 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
       ),
       build: () {
         when(
@@ -359,6 +366,7 @@ void main() {
             errorMessage: null,
             data: tCartEntity,
           ),
+          itemsMap: tItemsMap,
         ),
         CartState.initial().copyWith(
           loadingItemIds: {},
@@ -367,6 +375,7 @@ void main() {
             errorMessage: null,
             data: tEmptyCart,
           ),
+          itemsMap: const {},
         ),
       ],
       verify: (_) {
