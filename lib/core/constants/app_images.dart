@@ -3,4 +3,5 @@ abstract final class AppImages {
   static const String appLogo = '$_imagesPath/app_logo.svg';
   static const String launcher = '$_imagesPath/launcher.svg';
   static const String cardDefultImage = '$_imagesPath/default.png';
+  static const String noInternetConnection = '$_imagesPath/No_internet_connection.png';
 }

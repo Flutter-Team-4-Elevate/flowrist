@@ -58,7 +58,7 @@ Future<BaseResponse<CardOrderEntity?>> placeOrder(
           );
         }
 
-        final sessionUrl = orderEntity.sessionUrl.trim();
+        final sessionUrl = orderEntity.sessionUrl!.trim();
 
         if (sessionUrl.isEmpty) {
           return ErrorResponse<CardOrderEntity?>(

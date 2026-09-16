@@ -6,6 +6,7 @@ import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/core/ui/theme/app_theme.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
+import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_cubit.dart';
 import 'package:flowrist/flowrist_bloc_observer.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
@@ -32,6 +33,8 @@ void main() async {
         BlocProvider(
           create: (_) => getIt<AddressesViewModel>(),
         ),
+          BlocProvider<HomeCubit>(
+      create: (_) => getIt<HomeCubit>()),
       ],
       child: const FlowristApp(),
     ),
