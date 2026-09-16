@@ -31,6 +31,8 @@ void main() {
     hasChanges: false,
   );
 
+  final tItemsMap = {'prod_1': tCartItem};
+
   group('CartState', () {
     test('initial state has correct default values', () {
       final state = CartState.initial();
@@ -38,6 +40,7 @@ void main() {
       expect(state.cart.isLoading, isFalse);
       expect(state.cart.errorMessage, isNull);
       expect(state.cart.data, isNull);
+      expect(state.itemsMap, isEmpty);
       expect(state.addingProductIds, isEmpty);
       expect(state.loadingItemIds, isEmpty);
     });
@@ -55,11 +58,13 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
         addingProductIds: {'prod_1'},
         loadingItemIds: {'item_1'},
       );
 
       expect(updatedState.cart.data, equals(tCartEntity));
+      expect(updatedState.itemsMap, containsPair('prod_1', tCartItem));
       expect(updatedState.addingProductIds, contains('prod_1'));
       expect(updatedState.loadingItemIds, contains('item_1'));
     });
@@ -71,6 +76,7 @@ void main() {
           errorMessage: null,
           data: tCartEntity,
         ),
+        itemsMap: tItemsMap,
         addingProductIds: {'prod_1'},
         loadingItemIds: {'item_1'},
       );
