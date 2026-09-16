@@ -1,3 +1,5 @@
+import 'package:flowrist/core/constants/endpoints.dart';
+import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/checkout/data/data_sources/contract/remote/checkout_remote_data_source.dart';
@@ -104,7 +106,7 @@ void main() {
       },
     );
 
-    test(
+       test(
       'should return SuccessResponse with null data for COD order',
       () async {
         // Arrange
@@ -112,9 +114,8 @@ void main() {
           cartId: 'cart-123',
           addressId: 'address-123',
           isGift: false,
-          paymentMethod: 'Cash', // 👈 تغيير طريقة الدفع إلى Cash / COD
-          paymentGateway:
-              'Cash', // أو اتركه فارغاً إذا كان الـ Gateway غير مطلوب للـ Cash
+          paymentMethod: Endpoints.cod,
+          paymentGateway: Endpoints.cod,
         );
 
         final remoteResponse = CardOrderResponseModel(
@@ -124,23 +125,36 @@ void main() {
           data: null,
         );
 
-        when(mockRemoteDataSource.placeOrder(any)).thenAnswer(
-          (_) async => SuccessResponse<CardOrderResponseModel>(remoteResponse),
+        when(
+          mockRemoteDataSource.placeOrder(any),
+        ).thenAnswer(
+          (_) async => SuccessResponse<CardOrderResponseModel>(
+            remoteResponse,
+          ),
         );
 
         // Act
         final result = await repository.placeOrder(
-          codRequestEntity, // 👈 استخدام الـ Request الخاص بالـ COD
+          codRequestEntity,
         );
 
         // Assert
-        expect(result, isA<SuccessResponse>());
+        expect(
+          result,
+          isA<SuccessResponse<CardOrderEntity?>>(),
+        );
 
-        final successResult = result as SuccessResponse;
+        final successResult =
+            result as SuccessResponse<CardOrderEntity?>;
 
-        expect(successResult.data, isNull);
+        expect(
+          successResult.data,
+          isNull,
+        );
 
-        verify(mockRemoteDataSource.placeOrder(any)).called(1);
+        verify(
+          mockRemoteDataSource.placeOrder(any),
+        ).called(1);
       },
     );
 

@@ -16,7 +16,6 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
 
   CheckoutRepositoryImpl(this._remoteDataSource);
 
-  @override
 @override
 Future<BaseResponse<CardOrderEntity?>> placeOrder(
   CardOrderRequestEntity order,

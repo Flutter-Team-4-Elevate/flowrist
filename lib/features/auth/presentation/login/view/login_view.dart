@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:flowrist/config/device_id/device_id_services.dart';
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_router.dart';

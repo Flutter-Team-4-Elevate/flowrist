@@ -4,7 +4,7 @@ import 'dart:developer';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowrist/config/device_id/device_id_services.dart';
-import 'package:flowrist/config/notifications/local_notificatoin_service.dart';
+import 'package:flowrist/config/notifications/local_notification_service.dart';
 import 'package:flowrist/firebase_options.dart';
 import 'package:flowrist/shared/notifications/domain/use_cases/update_fcmtoken_use_case.dart';
 import 'package:injectable/injectable.dart';

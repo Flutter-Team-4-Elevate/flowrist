@@ -100,7 +100,7 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
             },
             builder: (context, state) {
               final count =
-                  state!.cart.data?.totalQuantity ?? 0;
+                  state.cart.data?.totalQuantity ?? 0;
 
               return Badge(
                 isLabelVisible: count > 0,

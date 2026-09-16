@@ -1,10 +1,13 @@
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/device_id/device_id_services.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart';
 import 'package:flowrist/features/auth/data/models/login_response.dart';
 import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
 import 'package:flowrist/features/auth/data/models/register_response_dto.dart';
 import 'package:flowrist/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:flowrist/features/auth/data/request/login_request.dart';
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
 import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
 import 'package:flowrist/features/auth/domain/params/login_params.dart';
@@ -12,18 +15,34 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-@GenerateMocks([AuthRemoteDataSource, SessionService])
 import 'auth_repository_impl_test.mocks.dart';
 
+@GenerateMocks([
+  AuthRemoteDataSource,
+  SessionService,
+  DeviceIdService,
+  PushNotificationsServices,
+])
 void main() {
   late MockAuthRemoteDataSource mockRemoteDataSource;
   late MockSessionService mockSessionService;
+  late MockDeviceIdService mockDeviceIdService;
+  late MockPushNotificationsServices mockPushNotificationsServices;
+
   late AuthRepositoryImpl repository;
 
   setUp(() {
     mockRemoteDataSource = MockAuthRemoteDataSource();
     mockSessionService = MockSessionService();
-    repository = AuthRepositoryImpl(mockRemoteDataSource, mockSessionService);
+    mockDeviceIdService = MockDeviceIdService();
+    mockPushNotificationsServices = MockPushNotificationsServices();
+
+    repository = AuthRepositoryImpl(
+      mockRemoteDataSource,
+      mockSessionService,
+      mockDeviceIdService,
+      mockPushNotificationsServices,
+    );
   });
 
   const tRequestDto = RegisterRequestDto(
@@ -51,10 +70,8 @@ void main() {
   );
 
   const tLoginParams = LoginParams(
-    deviceId: "",
     email: 'ali@example.com',
     password: 'Password123!',
-    fcmToken: '',
   );
 
   final tLoginResponse = LoginResponse(
@@ -92,9 +109,13 @@ void main() {
 
         // Assert
         expect(result, isA<SuccessResponse<UserEntity>>());
+
         final successData = (result as SuccessResponse<UserEntity>).data;
+
         expect(successData?.id, equals('123'));
+
         verify(mockRemoteDataSource.register(tRequestDto)).called(1);
+
         verifyNoMoreInteractions(mockRemoteDataSource);
       },
     );
@@ -112,13 +133,57 @@ void main() {
 
         // Assert
         expect(result, isNot(isA<SuccessResponse<UserEntity>>()));
+
         verify(mockRemoteDataSource.register(tRequestDto)).called(1);
+
         verifyNoMoreInteractions(mockRemoteDataSource);
       },
     );
   });
 
   group('AuthRepositoryImpl - Login Tests', () {
+    setUp(() {
+      // These are required because AuthRepositoryImpl
+      // gets them internally now.
+
+      when(
+        mockDeviceIdService.getDeviceId(),
+      ).thenAnswer((_) async => 'test-device-id');
+
+      when(
+        mockPushNotificationsServices.getFcmToken(),
+      ).thenAnswer((_) async => 'test-fcm-token');
+    });
+
+    test('should get deviceId and FCM token before login', () async {
+      // Arrange
+      when(
+        mockRemoteDataSource.login(any),
+      ).thenAnswer((_) async => tLoginResponse);
+
+      when(mockSessionService.setRememberMe(any)).thenAnswer((_) async {});
+
+      when(mockSessionService.setGuestMode(any)).thenAnswer((_) async {});
+
+      when(
+        mockSessionService.saveTokens(
+          token: anyNamed('token'),
+          refreshToken: anyNamed('refreshToken'),
+          rememberMe: anyNamed('rememberMe'),
+        ),
+      ).thenAnswer((_) async {});
+
+      // Act
+      await repository.login(tLoginParams, true);
+
+      // Assert
+      verify(mockDeviceIdService.getDeviceId()).called(1);
+
+      verify(mockPushNotificationsServices.getFcmToken()).called(1);
+
+      verify(mockRemoteDataSource.login(any)).called(1);
+    });
+
     test(
       'should save session state and tokens with rememberMe=true on successful login',
       () async {
@@ -126,27 +191,39 @@ void main() {
         when(
           mockRemoteDataSource.login(any),
         ).thenAnswer((_) async => tLoginResponse);
-        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
-        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
+
+        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async {});
+
+        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async {});
+
         when(
           mockSessionService.saveTokens(
             token: anyNamed('token'),
             refreshToken: anyNamed('refreshToken'),
             rememberMe: anyNamed('rememberMe'),
           ),
-        ).thenAnswer((_) async => {});
+        ).thenAnswer((_) async {});
 
         // Act
         final result = await repository.login(tLoginParams, true);
 
         // Assert
         expect(result, isA<SuccessResponse<LoginEntity>>());
+
         final loginData = (result as SuccessResponse<LoginEntity>).data;
+
         expect(loginData?.token, equals('jwt_token_123'));
+
         expect(loginData?.refreshToken, equals('refresh_token_123'));
 
+        verify(mockDeviceIdService.getDeviceId()).called(1);
+
+        verify(mockPushNotificationsServices.getFcmToken()).called(1);
+
         verify(mockSessionService.setRememberMe(true)).called(1);
+
         verify(mockSessionService.setGuestMode(false)).called(1);
+
         verify(
           mockSessionService.saveTokens(
             token: 'jwt_token_123',
@@ -164,23 +241,29 @@ void main() {
         when(
           mockRemoteDataSource.login(any),
         ).thenAnswer((_) async => tLoginResponse);
-        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async => {});
-        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async => {});
+
+        when(mockSessionService.setRememberMe(any)).thenAnswer((_) async {});
+
+        when(mockSessionService.setGuestMode(any)).thenAnswer((_) async {});
+
         when(
           mockSessionService.saveTokens(
             token: anyNamed('token'),
             refreshToken: anyNamed('refreshToken'),
             rememberMe: anyNamed('rememberMe'),
           ),
-        ).thenAnswer((_) async => {});
+        ).thenAnswer((_) async {});
 
         // Act
         final result = await repository.login(tLoginParams, false);
 
         // Assert
         expect(result, isA<SuccessResponse<LoginEntity>>());
+
         verify(mockSessionService.setRememberMe(false)).called(1);
+
         verify(mockSessionService.setGuestMode(false)).called(1);
+
         verify(
           mockSessionService.saveTokens(
             token: 'jwt_token_123',
@@ -192,7 +275,7 @@ void main() {
     );
 
     test(
-      'should return ErrorResponse and NOT call SessionService when login throws an exception',
+      'should return ErrorResponse and not call SessionService when login throws an exception',
       () async {
         // Arrange
         when(
@@ -204,8 +287,46 @@ void main() {
 
         // Assert
         expect(result, isA<ErrorResponse<LoginEntity>>());
+
         verifyZeroInteractions(mockSessionService);
       },
     );
+
+    test('should send deviceId and FCM token to remote data source', () async {
+      // Arrange
+      when(
+        mockRemoteDataSource.login(any),
+      ).thenAnswer((_) async => tLoginResponse);
+
+      when(mockSessionService.setRememberMe(any)).thenAnswer((_) async {});
+
+      when(mockSessionService.setGuestMode(any)).thenAnswer((_) async {});
+
+      when(
+        mockSessionService.saveTokens(
+          token: anyNamed('token'),
+          refreshToken: anyNamed('refreshToken'),
+          rememberMe: anyNamed('rememberMe'),
+        ),
+      ).thenAnswer((_) async {});
+
+      // Act
+      await repository.login(tLoginParams, true);
+
+      // Assert
+      final captured = verify(
+        mockRemoteDataSource.login(captureAny),
+      ).captured.single;
+
+      final request = captured as LoginRequest;
+
+      expect(request.email, equals('ali@example.com'));
+
+      expect(request.password, equals('Password123!'));
+
+      expect(request.deviceId, equals('test-device-id'));
+
+      expect(request.fcmToken, equals('test-fcm-token'));
+    });
   });
 }
