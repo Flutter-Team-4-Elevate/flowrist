@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 abstract final class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color whiteBase = Color(0xFFf9f9f9);
@@ -41,6 +43,7 @@ abstract final class AppColors {
 
   static const Color grey = Color(0xFF535353);
   static const Color red = Color(0xFFCC1010);
+  static const Color red60 = Color(0xFFE53935);
   static const Color green = Color(0xFF0CB359);
   static const Color lightPink = Color(0xFFF9ECF0);
   static const Color lemon = Color(0xFFC8D444);

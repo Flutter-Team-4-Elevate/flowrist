@@ -1,12 +1,15 @@
 import 'package:flowrist/config/api_error_handler/api_error_handler.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/device_id/device_id_services.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart';
 import 'package:flowrist/features/auth/data/mapper/auth_mapper.dart';
 import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
+import 'package:flowrist/features/auth/data/models/verify_otp_response_dto.dart';
+import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
 import 'package:flowrist/features/auth/data/request/login_request.dart';
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
-import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
 import 'package:flowrist/features/auth/domain/params/login_params.dart';
 import 'package:flowrist/features/auth/domain/repositories/auth_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -15,14 +18,23 @@ import 'package:injectable/injectable.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
   final SessionService _sessionService;
+  final DeviceIdService _deviceIdService;
+  final PushNotificationsServices _pushNotificationsServices;
 
-  AuthRepositoryImpl(this._remoteDataSource, this._sessionService);
+  AuthRepositoryImpl(
+    this._remoteDataSource,
+    this._sessionService,
+    this._deviceIdService,
+    this._pushNotificationsServices,
+  );
 
   @override
   Future<BaseResponse<UserEntity>> register(RegisterRequestDto request) async {
     try {
       final responseDto = await _remoteDataSource.register(request);
+
       final entity = AuthMapper.toUserEntity(responseDto);
+
       return SuccessResponse<UserEntity>(entity);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException<UserEntity>(e);
@@ -35,18 +47,28 @@ class AuthRepositoryImpl implements AuthRepository {
     bool rememberMe,
   ) async {
     try {
+      final deviceId = await _deviceIdService.getDeviceId();
+
+      final fcmToken = await _pushNotificationsServices.getFcmToken();
+
       final request = LoginRequest(
         email: params.email,
         password: params.password,
-        fcmToken: params.fcmToken,
+        fcmToken: fcmToken ?? '',
+        deviceId: deviceId,
       );
+
       final response = await _remoteDataSource.login(request);
+
       final loginEntity = response.toEntity();
 
       await _sessionService.setRememberMe(rememberMe);
+
       await _sessionService.setGuestMode(false);
-      await _sessionService.saveToken(
-        loginEntity.token,
+
+      await _sessionService.saveTokens(
+        token: loginEntity.token,
+        refreshToken: loginEntity.refreshToken,
         rememberMe: rememberMe,
       );
 
@@ -69,13 +91,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<BaseResponse<void>> resetPassword({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   }) async {
     try {
       await _remoteDataSource.resetPassword(
-        email: email,
-        newPassword: newPassword,
+        otpToken: otpToken,
+        password: password,
+        confirmPassword: confirmPassword,
       );
 
       return SuccessResponse(null);
@@ -85,16 +109,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<BaseResponse<void>> verifyOtp({
+  Future<BaseResponse<Map<String, dynamic>>> verifyOtp({
     required String email,
     required String otp,
   }) async {
     try {
-      await _remoteDataSource.verifyOtp(email: email, otp: otp);
+      VerifyOtpResponseDto verifyOtpResponse = await _remoteDataSource
+          .verifyOtp(email: email, otp: otp);
 
-      return SuccessResponse(null);
+      return SuccessResponse<Map<String, dynamic>>(verifyOtpResponse.data);
     } on Exception catch (exception) {
-      return ApiErrorHandler.handleException<void>(exception);
+      return ApiErrorHandler.handleException<Map<String, dynamic>>(exception);
     }
   }
 }

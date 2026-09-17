@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/session/session_service.dart';
+import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
+import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
@@ -56,11 +60,7 @@ class LoginCubit extends Cubit<LoginState> {
       ),
     );
 
-    final params = LoginParams(
-      email: event.email,
-      password: event.password,
-      fcmToken: '',
-    );
+    final params = LoginParams(email: event.email, password: event.password);
 
     final result = await _loginUseCase(params, state.rememberMe);
 
@@ -88,10 +88,15 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   Future<void> _continueAsGuest() async {
-    await _sessionService.setGuestMode(true);
-    await _sessionService.setRememberMe(false);
-
-    _uiEventController.add(GuestLoginSuccess());
+    try {
+      await _sessionService.setGuestMode(true);
+      await _sessionService.setRememberMe(false);
+      getIt<CartCubit>().doEvent(ClearCartEvent());
+    } catch (e) {
+      debugPrint("SessionService error: $e");
+    } finally {
+      _uiEventController.add(GuestLoginSuccess());
+    }
   }
 
   @override

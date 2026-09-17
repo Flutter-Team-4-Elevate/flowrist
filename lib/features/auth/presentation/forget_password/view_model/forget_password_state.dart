@@ -12,10 +12,12 @@ enum ForgetPasswordOperation {
   resetPassword,
 }
 
+// ignore: must_be_immutable
 class ForgetPasswordState extends BaseState<dynamic> with Equatable {
   final ForgetPasswordStep step;
   final ForgetPasswordOperation operation;
   final String otp;
+  final String otpToken;
   final String? email;
   final int remainingSeconds;
 
@@ -23,6 +25,7 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
     this.step = ForgetPasswordStep.email,
     this.operation = ForgetPasswordOperation.none,
     this.otp = '',
+    this.otpToken = '',
     this.email,
     this.remainingSeconds = 30,
     super.isLoading = false,
@@ -38,6 +41,7 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
     ForgetPasswordStep? step,
     ForgetPasswordOperation? operation,
     String? otp,
+    String? otpToken,
     String? email,
     int? remainingSeconds,
     bool? isLoading,
@@ -48,6 +52,7 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
       step: step ?? this.step,
       operation: operation ?? this.operation,
       otp: otp ?? this.otp,
+      otpToken: otpToken ?? this.otpToken,
       email: email ?? this.email,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isLoading: isLoading ?? this.isLoading,
@@ -61,6 +66,7 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
     step,
     operation,
     otp,
+    otpToken,
     email,
     remainingSeconds,
     isLoading,

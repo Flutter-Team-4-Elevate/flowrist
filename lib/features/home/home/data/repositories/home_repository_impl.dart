@@ -19,7 +19,7 @@ class HomeRepositoryImpl implements HomeRepository {
     switch (response) {
       case SuccessResponse<List<HomeResponseModel>>():
         return SuccessResponse(
-          response.data?.map((e) => e.toEntity()).toList()??[],
+          response.data?.map((e) => e.toEntity()).toList() ?? [],
         );
       case ErrorResponse<List<HomeResponseModel>>():
         return ErrorResponse(response.errorMessage);

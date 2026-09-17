@@ -24,4 +24,10 @@ abstract class AddAddressApiClient {
 
   @POST(Endpoints.saveAddress)
   Future<void> saveAddress(@Body() AddAddressRequestModel request);
+
+  @PUT(Endpoints.updateAddress)
+  Future<void> updateAddress(
+    @Path('addressId') String addressId,
+    @Body() AddAddressRequestModel request,
+  );
 }
