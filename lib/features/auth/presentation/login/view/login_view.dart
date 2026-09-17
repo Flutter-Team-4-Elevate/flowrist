@@ -87,7 +87,7 @@ class _LoginViewState extends State<LoginView> {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text(localizations.login)),
       body: SafeArea(
         child: ListView(
           children: [
@@ -117,7 +117,7 @@ class _LoginViewState extends State<LoginView> {
                       builder: (context, isObscure, child) {
                         return AppTextField(
                           label: localizations.password,
-                          hint: localizations.enterPassword,
+                          hint: localizations.passwordHint,
                           controller: passwordController,
                           obscureText: isObscure,
                           suffixIcon: IconButton(
