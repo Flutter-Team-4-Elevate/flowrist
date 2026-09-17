@@ -4,11 +4,10 @@ import 'package:flowrist/shared/notifications/data/models/update_notification_st
 import 'package:flowrist/shared/notifications/domain/entities/update_notification_status_entity.dart';
 
 abstract interface class NotificationRepository {
-  Future<void> updateFcmToken(
-    UpdateFcmTokenRequest request,
-  );
+  Future<void> updateFcmToken(UpdateFcmTokenRequest request);
 
-   Future<BaseResponse<UpdateNotificationStatusEntity>> updateNotificationStatus({
+  Future<BaseResponse<UpdateNotificationStatusEntity>>
+  updateNotificationStatus({
     required String deviceId,
     required UpdateNotificationStatusRequest request,
   });

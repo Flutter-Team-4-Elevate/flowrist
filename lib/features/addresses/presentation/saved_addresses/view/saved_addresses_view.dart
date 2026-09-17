@@ -21,6 +21,8 @@ class SavedAddressesView extends StatefulWidget {
 }
 
 class _SavedAddressesViewState extends State<SavedAddressesView> {
+  bool _hasChanges = false;
+
   @override
   void initState() {
     super.initState();
@@ -29,15 +31,25 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
   Future<void> _navigateToAddAddress() async {
     final result = await context.push(AppRoutes.addAddress);
-    if ((result == true || mounted) && mounted) {
-      context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
+    if (result == true) {
+      _hasChanges = true;
+      if (mounted) {
+        context.read<SavedAddressesViewModel>().doEvent(
+          GetSavedAddressesEvent(),
+        );
+      }
     }
   }
 
   Future<void> _navigateToEditAddress(AddressEntity address) async {
     final result = await context.push(AppRoutes.addAddress, extra: address);
-    if ((result == true || mounted) && mounted) {
-      context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
+    if (result == true) {
+      _hasChanges = true;
+      if (mounted) {
+        context.read<SavedAddressesViewModel>().doEvent(
+          GetSavedAddressesEvent(),
+        );
+      }
     }
   }
 
@@ -47,9 +59,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete Address'),
-          content: const Text(
-            'Are you sure you want to delete this address?',
-          ),
+          content: const Text('Are you sure you want to delete this address?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -67,9 +77,9 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       },
     ).then((confirmed) {
       if (confirmed == true && mounted) {
-        context
-            .read<SavedAddressesViewModel>()
-            .doEvent(DeleteAddressEvent(addressId));
+        context.read<SavedAddressesViewModel>().doEvent(
+          DeleteAddressEvent(addressId),
+        );
       }
     });
   }
@@ -80,7 +90,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
     return BlocListener<SavedAddressesViewModel, SavedAddressesState>(
       listenWhen: (previous, current) =>
-      previous.deleteAddressState != current.deleteAddressState,
+          previous.deleteAddressState != current.deleteAddressState,
       listener: (context, state) {
         final deleteState = state.deleteAddressState;
         if (deleteState.errorMessage != null) {
@@ -91,6 +101,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
             ),
           );
         } else if (deleteState.data != null) {
+          _hasChanges = true;
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(deleteState.data!),
@@ -108,7 +119,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
           leading: IconButton(
             onPressed: () {
               if (mounted && context.canPop()) {
-                context.pop();
+                context.pop(_hasChanges);
               }
             },
             icon: const Icon(
@@ -190,21 +201,22 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                 );
               },
               child: ListView(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 children: [
                   ...addresses.map(
-                        (address) =>
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: SavedAddressItemCard(
-                            address: address,
-                            isDeleting: state.deletingAddressId == address.id,
-                            onDelete: () =>
-                                _showDeleteConfirmationDialog(address.id),
-                            onEdit: () => _navigateToEditAddress(address),
-                          ),
-                        ),
+                    (address) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SavedAddressItemCard(
+                        address: address,
+                        isDeleting: state.deletingAddressId == address.id,
+                        onDelete: () =>
+                            _showDeleteConfirmationDialog(address.id),
+                        onEdit: () => _navigateToEditAddress(address),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   AppButton(

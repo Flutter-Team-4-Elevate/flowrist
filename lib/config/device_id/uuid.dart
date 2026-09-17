@@ -18,4 +18,3 @@ class UuidGeneratorImpl implements UuidGenerator {
   @override
   String generate() => const Uuid().v4();
 }
-

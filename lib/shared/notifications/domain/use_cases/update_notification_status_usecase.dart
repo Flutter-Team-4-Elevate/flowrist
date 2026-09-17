@@ -14,9 +14,7 @@ class UpdateNotificationStatusUseCase {
     required String deviceId,
     required bool enabled,
   }) async {
-    final request = UpdateNotificationStatusRequest(
-      enabled: enabled,
-    );
+    final request = UpdateNotificationStatusRequest(enabled: enabled);
 
     return await _repository.updateNotificationStatus(
       deviceId: deviceId,

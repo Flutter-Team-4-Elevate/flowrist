@@ -47,12 +47,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ResetPasswordResponseDto> resetPassword({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   }) {
     final request = ResetPasswordRequestDto(
-      email: email,
-      newPassword: newPassword,
+      otpToken: otpToken,
+      password: password,
+      confirmPassword: confirmPassword,
     );
 
     return _apiClient.resetPassword(request);

@@ -16,33 +16,19 @@ class NotificationCubit extends Cubit<NotificationState> {
     this._getNotificationStatusUseCase,
   ) : super(const NotificationState());
 
-  final UpdateNotificationStatusUseCase
-      _updateNotificationStatusUseCase;
+  final UpdateNotificationStatusUseCase _updateNotificationStatusUseCase;
 
-  final GetNotificationStatusUseCase
-      _getNotificationStatusUseCase;
+  final GetNotificationStatusUseCase _getNotificationStatusUseCase;
 
   Future<void> getNotificationStatus() async {
-    emit(
-      state.copyWith(
-        isLoading: true,
-        clearError: true,
-      ),
-    );
+    emit(state.copyWith(isLoading: true, clearError: true));
 
     try {
       final enabled = await _getNotificationStatusUseCase();
 
-      emit(
-        state.copyWith(
-          isEnabled: enabled,
-          isLoading: false,
-        ),
-      );
+      emit(state.copyWith(isEnabled: enabled, isLoading: false));
     } catch (e) {
-      debugPrint(
-        'Failed to get notification status: $e',
-      );
+      debugPrint('Failed to get notification status: $e');
 
       emit(
         state.copyWith(
@@ -56,31 +42,19 @@ class NotificationCubit extends Cubit<NotificationState> {
   Future<void> updateNotificationStatus(bool enabled) async {
     final previousValue = state.isEnabled;
 
-    emit(
-      state.copyWith(
-        isLoading: true,
-        clearError: true,
-      ),
-    );
+    emit(state.copyWith(isLoading: true, clearError: true));
 
     try {
-      final deviceId =
-          await getIt<DeviceIdService>().getDeviceId();
+      final deviceId = await getIt<DeviceIdService>().getDeviceId();
 
-      final response =
-          await _updateNotificationStatusUseCase.call(
+      final response = await _updateNotificationStatusUseCase.call(
         deviceId: deviceId,
         enabled: enabled,
       );
 
       switch (response) {
         case SuccessResponse():
-          emit(
-            state.copyWith(
-              isEnabled: enabled,
-              isLoading: false,
-            ),
-          );
+          emit(state.copyWith(isEnabled: enabled, isLoading: false));
 
         case ErrorResponse():
           emit(
@@ -92,9 +66,7 @@ class NotificationCubit extends Cubit<NotificationState> {
           );
       }
     } catch (e) {
-      debugPrint(
-        'Failed to update notification status: $e',
-      );
+      debugPrint('Failed to update notification status: $e');
 
       emit(
         state.copyWith(

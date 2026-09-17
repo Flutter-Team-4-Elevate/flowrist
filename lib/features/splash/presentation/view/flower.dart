@@ -10,8 +10,7 @@ class FlowerView extends StatefulWidget {
   State<FlowerView> createState() => _FlowerViewState();
 }
 
-class _FlowerViewState extends State<FlowerView>
-    with TickerProviderStateMixin {
+class _FlowerViewState extends State<FlowerView> with TickerProviderStateMixin {
   late final AnimationController _flowerController;
   late final AnimationController _textController;
 
@@ -87,10 +86,7 @@ class _FlowerViewState extends State<FlowerView>
                     AppColors.black.withValues(alpha: .7),
                     Colors.transparent,
                   ],
-                  stops: const [
-                    0.3,
-                    0.9,
-                  ],
+                  stops: const [0.3, 0.9],
                 ).createShader(rect);
               },
               blendMode: BlendMode.dstIn,
@@ -108,10 +104,7 @@ class _FlowerViewState extends State<FlowerView>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  AppImages.flowerddd,
-                  width: 120,
-                ),
+                SvgPicture.asset(AppImages.flowerddd, width: 120),
 
                 const SizedBox(height: 16),
 

@@ -24,7 +24,7 @@ class CategoryRailSection extends StatelessWidget {
           title: localizations.categories,
           onViewAll: () {
             // context.push(AppRoutes.categoriesTab);
-             StatefulNavigationShell.of(context).goBranch(1);
+            StatefulNavigationShell.of(context).goBranch(1);
             // Navigator.push(context, MaterialPageRoute(builder: (context)=>CategoriesTabView()));
           },
         ),

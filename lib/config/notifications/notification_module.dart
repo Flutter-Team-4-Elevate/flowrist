@@ -5,8 +5,7 @@ import 'package:injectable/injectable.dart';
 @module
 abstract class NotificationModule {
   @lazySingleton
-  FirebaseMessaging get firebaseMessaging =>
-      FirebaseMessaging.instance;
+  FirebaseMessaging get firebaseMessaging => FirebaseMessaging.instance;
 
   @lazySingleton
   FlutterLocalNotificationsPlugin get localNotificationsPlugin =>

@@ -16,8 +16,7 @@ class ForgetPasswordEmailView extends StatefulWidget {
       _ForgetPasswordEmailPageState();
 }
 
-class _ForgetPasswordEmailPageState
-    extends State<ForgetPasswordEmailView> {
+class _ForgetPasswordEmailPageState extends State<ForgetPasswordEmailView> {
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
@@ -41,17 +40,12 @@ class _ForgetPasswordEmailPageState
 
           Text(
             localizations.forgotPassword,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 12),
 
-          Text(
-            localizations.forgotPasswordDescription,
-          ),
+          Text(localizations.forgotPasswordDescription),
 
           const SizedBox(height: 40),
 
@@ -71,8 +65,7 @@ class _ForgetPasswordEmailPageState
             builder: (context, state) {
               final isLoading =
                   state.isLoading &&
-                      state.operation ==
-                          ForgetPasswordOperation.checkEmail;
+                  state.operation == ForgetPasswordOperation.checkEmail;
 
               return SizedBox(
                 width: double.infinity,
@@ -81,24 +74,20 @@ class _ForgetPasswordEmailPageState
                   onPressed: isLoading
                       ? null
                       : () {
-                    if (!_formKey.currentState!.validate()) {
-                      return;
-                    }
+                          if (!_formKey.currentState!.validate()) {
+                            return;
+                          }
 
-                    context.read<ForgetPasswordBloc>().add(
-                      CheckEmailEvent(
-                        _emailController.text.trim(),
-                      ),
-                    );
-                  },
+                          context.read<ForgetPasswordBloc>().add(
+                            CheckEmailEvent(_emailController.text.trim()),
+                          );
+                        },
                   child: isLoading
                       ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  )
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : Text(localizations.sendOtp),
                 ),
               );

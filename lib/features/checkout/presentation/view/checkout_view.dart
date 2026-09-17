@@ -35,18 +35,13 @@ class _CheckoutViewState extends State<CheckoutView> {
 
     _getDeliveryFee();
 
-    context.read<CheckoutCubit>().doEvent(
-          GetAddressesEvent(),
-        );
+    context.read<CheckoutCubit>().doEvent(GetAddressesEvent());
   }
 
   void _getDeliveryFee() {
     context.read<CheckoutCubit>().doEvent(
-          GetDeliveryFee(
-            addressId: widget.addressId,
-            cartId: widget.cartId,
-          ),
-        );
+      GetDeliveryFee(addressId: widget.addressId, cartId: widget.cartId),
+    );
   }
 
   @override
@@ -74,14 +69,10 @@ class _CheckoutViewState extends State<CheckoutView> {
                       floating: false,
                       pinned: false,
                       titleSpacing: 0,
-                      title: Text(
-                        localizations.checkout,
-                      ),
+                      title: Text(localizations.checkout),
                       leading: IconButton(
                         onPressed: context.pop,
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                        ),
+                        icon: const Icon(Icons.arrow_back_ios),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -112,19 +103,20 @@ class _CheckoutViewState extends State<CheckoutView> {
                           const SizedBox(height: 25),
 
                           GiftMethods(
-                            onChanged: ({
-                              required bool isGift,
-                              required String name,
-                              required String phone,
-                            }) {
-                              context.read<CheckoutCubit>().doEvent(
+                            onChanged:
+                                ({
+                                  required bool isGift,
+                                  required String name,
+                                  required String phone,
+                                }) {
+                                  context.read<CheckoutCubit>().doEvent(
                                     UpdateGiftInfo(
                                       isGift: isGift,
                                       name: name,
                                       phone: phone,
                                     ),
                                   );
-                            },
+                                },
                           ),
 
                           const SizedBox(height: 25),
@@ -155,12 +147,8 @@ class _CheckoutViewState extends State<CheckoutView> {
               Positioned.fill(
                 child: AbsorbPointer(
                   child: Container(
-                    color: Colors.black.withValues(
-                      alpha: 0.35,
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    color: Colors.black.withValues(alpha: 0.35),
+                    child: const Center(child: CircularProgressIndicator()),
                   ),
                 ),
               ),
@@ -182,17 +170,12 @@ class _DeliveryTimeSection extends StatelessWidget {
             current.deliveryFeeState.errorMessage;
       },
       listener: (context, state) {
-        final errorMessage =
-            state.deliveryFeeState.errorMessage;
+        final errorMessage = state.deliveryFeeState.errorMessage;
 
         if (errorMessage != null) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(errorMessage),
-              ),
-            );
+            ..showSnackBar(SnackBar(content: Text(errorMessage)));
         }
       },
       child: BlocBuilder<CheckoutCubit, CheckoutState>(
@@ -201,12 +184,10 @@ class _DeliveryTimeSection extends StatelessWidget {
               current.deliveryFeeState.data;
         },
         builder: (context, state) {
-          final deliveryFee =
-              state.deliveryFeeState.data;
+          final deliveryFee = state.deliveryFeeState.data;
 
           return DeliveryTime(
-            estimatedDeliveryAt:
-                deliveryFee?.estimatedDeliveryAt,
+            estimatedDeliveryAt: deliveryFee?.estimatedDeliveryAt,
           );
         },
       ),
@@ -226,4 +207,3 @@ class _SectionDivider extends StatelessWidget {
     );
   }
 }
- 

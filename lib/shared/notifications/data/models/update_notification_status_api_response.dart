@@ -19,8 +19,7 @@ class UpdateNotificationStatusApiResponse {
 
   factory UpdateNotificationStatusApiResponse.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$UpdateNotificationStatusApiResponseFromJson(json);
+  ) => _$UpdateNotificationStatusApiResponseFromJson(json);
 
   Map<String, dynamic> toJson() =>
       _$UpdateNotificationStatusApiResponseToJson(this);

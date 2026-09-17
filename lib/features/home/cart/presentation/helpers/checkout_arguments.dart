@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 
 class CheckoutArguments extends Equatable {
@@ -6,7 +5,11 @@ class CheckoutArguments extends Equatable {
   final String addressId;
   final double subTotal;
 
-  const CheckoutArguments({required this.cartId, required this.addressId, required this.subTotal});
+  const CheckoutArguments({
+    required this.cartId,
+    required this.addressId,
+    required this.subTotal,
+  });
 
   @override
   List<Object?> get props => [cartId, addressId];

@@ -14,10 +14,7 @@ import 'package:go_router/go_router.dart';
 class HomeNavigationView extends StatefulWidget {
   final StatefulNavigationShell tabViewShell;
 
-  const HomeNavigationView({
-    super.key,
-    required this.tabViewShell,
-  });
+  const HomeNavigationView({super.key, required this.tabViewShell});
 
   @override
   State<HomeNavigationView> createState() => _HomeNavigationViewState();
@@ -90,27 +87,21 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
         BottomNavigationBarItem(
           icon: BlocBuilder<CartCubit, CartState>(
             buildWhen: (previous, current) {
-              final previousCount =
-                  previous.cart.data?.totalQuantity ?? 0;
+              final previousCount = previous.cart.data?.totalQuantity ?? 0;
 
-              final currentCount =
-                  current.cart.data?.totalQuantity ?? 0;
+              final currentCount = current.cart.data?.totalQuantity ?? 0;
 
               return previousCount != currentCount;
             },
             builder: (context, state) {
-              final count =
-                  state.cart.data?.totalQuantity ?? 0;
+              final count = state.cart.data?.totalQuantity ?? 0;
 
               return Badge(
                 isLabelVisible: count > 0,
                 label: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
                   transitionBuilder: (child, animation) {
-                    return ScaleTransition(
-                      scale: animation,
-                      child: child,
-                    );
+                    return ScaleTransition(scale: animation, child: child);
                   },
                   child: Text(
                     '$count',
@@ -121,18 +112,14 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
                     ),
                   ),
                 ),
-                child: const Icon(
-                  Icons.shopping_cart_outlined,
-                ),
+                child: const Icon(Icons.shopping_cart_outlined),
               );
             },
           ),
           label: localization.cart,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(
-            Icons.person_outline_outlined,
-          ),
+          icon: const Icon(Icons.person_outline_outlined),
           label: localization.profile,
         ),
       ],

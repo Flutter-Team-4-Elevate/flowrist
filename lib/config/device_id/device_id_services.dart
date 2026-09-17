@@ -7,10 +7,7 @@ class DeviceIdService {
   final FlutterSecureStorage _storage;
   final UuidGenerator _uuidGenerator;
 
-  DeviceIdService(
-    this._storage,
-    this._uuidGenerator,
-  );
+  DeviceIdService(this._storage, this._uuidGenerator);
 
   static const String _deviceIdKey = 'device_id';
 
@@ -20,10 +17,7 @@ class DeviceIdService {
     if (deviceId == null || deviceId.isEmpty) {
       deviceId = _uuidGenerator.generate();
 
-      await _storage.write(
-        key: _deviceIdKey,
-        value: deviceId,
-      );
+      await _storage.write(key: _deviceIdKey, value: deviceId);
     }
 
     return deviceId;

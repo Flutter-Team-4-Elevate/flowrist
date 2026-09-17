@@ -22,9 +22,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await _loadEnvironmentVariables();
 
@@ -41,9 +39,7 @@ Future<void> main() async {
         BlocProvider(create: (_) => getIt<CartCubit>()),
         BlocProvider(create: (_) => getIt<AddressesViewModel>()),
         BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
-        BlocProvider<HomeCubit>(
-          create: (_) => getIt<HomeCubit>(),
-        ),
+        BlocProvider<HomeCubit>(create: (_) => getIt<HomeCubit>()),
       ],
       child: const FlowristApp(),
     ),

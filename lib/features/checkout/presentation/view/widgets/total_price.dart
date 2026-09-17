@@ -86,7 +86,6 @@ class TotalPrice extends StatelessWidget {
 
         final total = subTotal + deliveryFee;
 
-       
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

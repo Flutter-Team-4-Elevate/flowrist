@@ -1,11 +1,8 @@
- 
 import 'package:flowrist/features/home/home/data/factories/home_payload_model_factory.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../domain/entities/home_entities/home_layout_entity.dart';
 import 'home_payload_model.dart';
- 
- 
 
 part 'home_response_model.g.dart';
 
@@ -17,10 +14,7 @@ class HomeResponseModel {
   final int order;
   final bool isEnabled;
 
-  @JsonKey(
-    fromJson: _payloadFromJson,
-    includeToJson: false,
-  )
+  @JsonKey(fromJson: _payloadFromJson, includeToJson: false)
   final HomePayloadModel payload;
 
   const HomeResponseModel({
@@ -32,13 +26,10 @@ class HomeResponseModel {
     required this.payload,
   });
 
-  factory HomeResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory HomeResponseModel.fromJson(Map<String, dynamic> json) =>
       _$HomeResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$HomeResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$HomeResponseModelToJson(this);
 
   static HomePayloadModel _payloadFromJson(Object? json) {
     return const HomePayloadModelFactory().fromJson(

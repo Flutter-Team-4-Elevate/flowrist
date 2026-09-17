@@ -6,7 +6,8 @@ import 'package:flowrist/shared/notifications/data/models/update_notification_st
 abstract interface class NotificationRemoteDataSource {
   Future<void> updateFcmToken(UpdateFcmTokenRequest request);
 
-  Future<BaseResponse<UpdateNotificationStatusResponseModel>>updateNotificationStatus({
+  Future<BaseResponse<UpdateNotificationStatusResponseModel>>
+  updateNotificationStatus({
     required String deviceId,
     required UpdateNotificationStatusRequest request,
   });

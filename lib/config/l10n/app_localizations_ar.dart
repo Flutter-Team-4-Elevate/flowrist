@@ -145,6 +145,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword => 'نسيت كلمة المرور؟';
 
   @override
+  String get forgetPasswordText => 'نسيت كلمة المرور';
+
+  @override
   String get forgotPasswordDescription =>
       'أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق (OTP).';
 
@@ -619,4 +622,29 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get payment => 'الدفع';
+
+  @override
+  String get editProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get update => 'تحديث';
+
+  @override
+  String get profileUpdatedSuccessfully => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get confirmNewPassword => 'تأكيد كلمة المرور';
+
+  @override
+  String get invalidPassword => 'كلمة المرور غير صحيحة';
+
+  @override
+  String get passwordChangedSuccess =>
+      'تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً.';
 }

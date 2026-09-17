@@ -42,11 +42,7 @@ class PushNotificationsServices {
 
       return _fcmToken;
     } catch (error, stackTrace) {
-      log(
-        'Failed to get FCM token',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      log('Failed to get FCM token', error: error, stackTrace: stackTrace);
 
       return null;
     }
@@ -68,9 +64,7 @@ class PushNotificationsServices {
 
       _listenToForegroundMessages();
 
-      FirebaseMessaging.onBackgroundMessage(
-        handleBackgroundMessage,
-      );
+      FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
     } catch (error, stackTrace) {
       log(
         'Failed to initialize push notifications',
@@ -100,10 +94,8 @@ class PushNotificationsServices {
       _permissionRequestedThisSession = true;
 
       final isAuthorized =
-          settings.authorizationStatus ==
-              AuthorizationStatus.authorized ||
-          settings.authorizationStatus ==
-              AuthorizationStatus.provisional;
+          settings.authorizationStatus == AuthorizationStatus.authorized ||
+          settings.authorizationStatus == AuthorizationStatus.provisional;
 
       if (isAuthorized) {
         await _syncCurrentToken();
@@ -130,10 +122,7 @@ class PushNotificationsServices {
 
     final deviceId = await _deviceIdService.getDeviceId();
 
-    await _updateFcmTokenUseCase.call(
-      deviceId: deviceId,
-      fcmToken: token,
-    );
+    await _updateFcmTokenUseCase.call(deviceId: deviceId, fcmToken: token);
   }
 
   void _listenToTokenRefresh() {
@@ -171,9 +160,7 @@ class PushNotificationsServices {
   void _listenToForegroundMessages() {
     _foregroundSubscription ??= FirebaseMessaging.onMessage.listen(
       (remoteMessage) async {
-        await _localNotificationService.showBasicNotification(
-          remoteMessage,
-        );
+        await _localNotificationService.showBasicNotification(remoteMessage);
       },
       onError: (Object error, StackTrace stackTrace) {
         log(

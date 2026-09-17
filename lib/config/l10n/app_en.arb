@@ -43,6 +43,7 @@
   "password": "Password",
   "passwordHint": "Enter your password",
   "forgotPassword": "Forgot Password?",
+  "forgetPasswordText": "Forgot Password",
   "forgotPasswordDescription": "Enter your email address and we will send you an OTP.",
   "email": "Email",
   "enterYourEmail": "Enter your email",
@@ -195,5 +196,13 @@
   "allPricesIncludeTax": "All prices include tax",
   "connectionErrorMessage": "Please check your internet connection and try again.",
   "noAddressSelected": "No address selected",
-  "payment": "Payment"
+  "payment": "Payment",
+  "editProfile": "Edit profile",
+  "change": "Change",
+  "update": "Update",
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "currentPassword": "Current password",
+  "confirmNewPassword": "Confirm password",
+  "invalidPassword": "Invalid password",
+  "passwordChangedSuccess": "Password changed successfully. Please log in again."
 }

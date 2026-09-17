@@ -146,6 +146,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forgotPassword => 'Forgot Password?';
 
   @override
+  String get forgetPasswordText => 'Forgot Password';
+
+  @override
   String get forgotPasswordDescription =>
       'Enter your email address and we will send you an OTP.';
 
@@ -622,4 +625,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get payment => 'Payment';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get confirmNewPassword => 'Confirm password';
+
+  @override
+  String get invalidPassword => 'Invalid password';
+
+  @override
+  String get passwordChangedSuccess =>
+      'Password changed successfully. Please log in again.';
 }

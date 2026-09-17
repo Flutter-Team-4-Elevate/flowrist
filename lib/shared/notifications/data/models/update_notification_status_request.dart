@@ -6,13 +6,9 @@ part 'update_notification_status_request.g.dart';
 class UpdateNotificationStatusRequest {
   final bool enabled;
 
-  const UpdateNotificationStatusRequest({
-    required this.enabled,
-  });
+  const UpdateNotificationStatusRequest({required this.enabled});
 
-  factory UpdateNotificationStatusRequest.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory UpdateNotificationStatusRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateNotificationStatusRequestFromJson(json);
 
   Map<String, dynamic> toJson() =>

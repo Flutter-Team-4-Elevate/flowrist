@@ -14,8 +14,7 @@ class UpdateNotificationStatusResponseModel {
 
   factory UpdateNotificationStatusResponseModel.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      _$UpdateNotificationStatusResponseModelFromJson(json);
+  ) => _$UpdateNotificationStatusResponseModelFromJson(json);
 
   Map<String, dynamic> toJson() =>
       _$UpdateNotificationStatusResponseModelToJson(this);

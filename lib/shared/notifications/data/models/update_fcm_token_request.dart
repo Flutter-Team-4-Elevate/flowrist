@@ -7,16 +7,10 @@ class UpdateFcmTokenRequest {
   final String deviceId;
   final String fcmToken;
 
-  const UpdateFcmTokenRequest({
-    required this.deviceId,
-    required this.fcmToken,
-  });
+  const UpdateFcmTokenRequest({required this.deviceId, required this.fcmToken});
 
-  factory UpdateFcmTokenRequest.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory UpdateFcmTokenRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateFcmTokenRequestFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$UpdateFcmTokenRequestToJson(this);
+  Map<String, dynamic> toJson() => _$UpdateFcmTokenRequestToJson(this);
 }

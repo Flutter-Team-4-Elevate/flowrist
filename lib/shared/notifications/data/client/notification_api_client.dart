@@ -18,8 +18,7 @@ abstract class NotificationApiClient {
   Future<void> updateFcmToken(@Body() UpdateFcmTokenRequest request);
 
   @PUT(Endpoints.updateNotificationStatus)
-  Future<UpdateNotificationStatusApiResponse>
-      updateNotificationStatus(
+  Future<UpdateNotificationStatusApiResponse> updateNotificationStatus(
     @Path(Endpoints.deviceId) String deviceId,
     @Body() UpdateNotificationStatusRequest request,
   );

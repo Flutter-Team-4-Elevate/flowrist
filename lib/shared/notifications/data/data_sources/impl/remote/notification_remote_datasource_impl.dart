@@ -8,43 +8,39 @@ import 'package:flowrist/shared/notifications/data/models/update_notification_st
 import 'package:injectable/injectable.dart';
 
 @Injectable(as: NotificationRemoteDataSource)
-class NotificationRemoteDataSourceImpl
-    implements NotificationRemoteDataSource {
+class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final NotificationApiClient _apiService;
 
   NotificationRemoteDataSourceImpl(this._apiService);
 
   @override
-  Future<void> updateFcmToken(
-    UpdateFcmTokenRequest request,
-  ) async {
+  Future<void> updateFcmToken(UpdateFcmTokenRequest request) async {
     await _apiService.updateFcmToken(request);
   }
 
-@override
-Future<BaseResponse<UpdateNotificationStatusResponseModel>>
-    updateNotificationStatus({
-  required String deviceId,
-  required UpdateNotificationStatusRequest request,
-}) async {
-  try {
-    final response = await _apiService.updateNotificationStatus(
-      deviceId,
-      request,
-    );
-
-    if (!response.status || response.data == null) {
-      return ErrorResponse<UpdateNotificationStatusResponseModel>(
-        response.message,
+  @override
+  Future<BaseResponse<UpdateNotificationStatusResponseModel>>
+  updateNotificationStatus({
+    required String deviceId,
+    required UpdateNotificationStatusRequest request,
+  }) async {
+    try {
+      final response = await _apiService.updateNotificationStatus(
+        deviceId,
+        request,
       );
+
+      if (!response.status || response.data == null) {
+        return ErrorResponse<UpdateNotificationStatusResponseModel>(
+          response.message,
+        );
+      }
+
+      return SuccessResponse<UpdateNotificationStatusResponseModel>(
+        response.data!,
+      );
+    } on Exception catch (e) {
+      return ApiErrorHandler.handleException(e);
     }
-
-    return SuccessResponse<UpdateNotificationStatusResponseModel>(
-      response.data!,
-    );
-  } on Exception catch (e) {
-    return ApiErrorHandler.handleException(e);
   }
-}
-
 }

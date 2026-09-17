@@ -5,7 +5,6 @@ import 'package:flowrist/config/notifications/notification_constant.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
-
 @lazySingleton
 class LocalNotificationService {
   final FlutterLocalNotificationsPlugin _plugin;
@@ -57,7 +56,8 @@ class LocalNotificationService {
 
     await _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
   }
 
@@ -71,15 +71,12 @@ class LocalNotificationService {
       playSound: true,
     );
 
-    const notificationDetails = NotificationDetails(
-      android: androidDetails,
-    );
+    const notificationDetails = NotificationDetails(android: androidDetails);
 
     await _plugin.show(
       id: _notificationId++,
       notificationDetails: notificationDetails,
-      title: message.notification?.title ??
-          NotificationConstants.defaultTitle,
+      title: message.notification?.title ?? NotificationConstants.defaultTitle,
       body: message.notification?.body ?? '',
       payload: message.data.toString(),
     );

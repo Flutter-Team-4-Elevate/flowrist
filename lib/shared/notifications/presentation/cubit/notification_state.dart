@@ -20,15 +20,10 @@ class NotificationState extends Equatable {
     return NotificationState(
       isEnabled: isEnabled ?? this.isEnabled,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage:
-          clearError ? null : errorMessage ?? this.errorMessage,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 
   @override
-  List<Object?> get props => [
-        isEnabled,
-        isLoading,
-        errorMessage,
-      ];
+  List<Object?> get props => [isEnabled, isLoading, errorMessage];
 }

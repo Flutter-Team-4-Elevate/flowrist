@@ -15,10 +15,5 @@ class DeliveryFeeResponseEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-        status,
-        code,
-        message,
-        data,
-      ];
+  List<Object?> get props => [status, code, message, data];
 }

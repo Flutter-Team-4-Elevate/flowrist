@@ -13,17 +13,12 @@ class GiftRecipientModel {
     required this.recipientPhone,
   });
 
-  factory GiftRecipientModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory GiftRecipientModel.fromJson(Map<String, dynamic> json) =>
       _$GiftRecipientModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$GiftRecipientModelToJson(this);
+  Map<String, dynamic> toJson() => _$GiftRecipientModelToJson(this);
 
-  factory GiftRecipientModel.fromEntity(
-    GiftRecipientEntity entity,
-  ) {
+  factory GiftRecipientModel.fromEntity(GiftRecipientEntity entity) {
     return GiftRecipientModel(
       recipientName: entity.recipientName,
       recipientPhone: entity.recipientPhone,

@@ -1,8 +1,7 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flowrist/config/network/auth_interceptor.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
-import 'package:flowrist/config/network/auth_interceptor.dart';
 import 'package:injectable/injectable.dart';
 
 @module
@@ -36,15 +35,12 @@ abstract class DioModule {
         request: true,
         requestHeader: true,
         requestBody: true,
-        responseHeader: false,
         responseBody: true,
+        responseHeader: false,
         error: true,
-        logPrint: (obj) => log(obj.toString()),
       ),
     );
 
     return dio;
   }
 }
-
-

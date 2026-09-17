@@ -14,21 +14,16 @@ class NotificationRepositoryImpl implements NotificationRepository {
   final NotificationRemoteDataSource _remoteDataSource;
   final SecureStorageService _secureStorage;
 
-  NotificationRepositoryImpl(
-    this._remoteDataSource,
-    this._secureStorage,
-  );
+  NotificationRepositoryImpl(this._remoteDataSource, this._secureStorage);
 
   @override
-  Future<void> updateFcmToken(
-    UpdateFcmTokenRequest request,
-  ) async {
+  Future<void> updateFcmToken(UpdateFcmTokenRequest request) async {
     await _remoteDataSource.updateFcmToken(request);
   }
 
   @override
   Future<BaseResponse<UpdateNotificationStatusEntity>>
-      updateNotificationStatus({
+  updateNotificationStatus({
     required String deviceId,
     required UpdateNotificationStatusRequest request,
   }) async {
@@ -42,9 +37,7 @@ class NotificationRepositoryImpl implements NotificationRepository {
         final entity = response.data?.toEntity();
 
         if (entity == null) {
-          return ErrorResponse(
-            'Notification status data is empty',
-          );
+          return ErrorResponse('Notification status data is empty');
         }
 
         await _secureStorage.save(
@@ -55,17 +48,13 @@ class NotificationRepositoryImpl implements NotificationRepository {
         return SuccessResponse(entity);
 
       case ErrorResponse<UpdateNotificationStatusResponseModel>():
-        return ErrorResponse(
-          response.errorMessage,
-        );
+        return ErrorResponse(response.errorMessage);
     }
   }
 
   @override
   Future<bool> getNotificationStatus() async {
-    final value = await _secureStorage.get(
-      Endpoints.notificationsEnabled,
-    );
+    final value = await _secureStorage.get(Endpoints.notificationsEnabled);
 
     if (value.isEmpty) {
       return true;
