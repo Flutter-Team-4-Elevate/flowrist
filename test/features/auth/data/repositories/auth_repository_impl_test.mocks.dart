@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i8;
 
 import 'package:flowrist/config/device_id/device_id_services.dart' as _i13;
