@@ -4,12 +4,14 @@ import 'package:flutter/services.dart';
 class OtpInputField extends StatefulWidget {
   final int length;
   final String initialValue;
+  final TextInputType keyboardType;
   final ValueChanged<String> onChanged;
 
   const OtpInputField({
     super.key,
     this.length = 6,
     this.initialValue = '',
+    this.keyboardType = TextInputType.number,
     required this.onChanged,
   });
 
@@ -27,12 +29,25 @@ class _OtpInputFieldState extends State<OtpInputField> {
 
     _controllers = List.generate(
       widget.length,
-          (index) => TextEditingController(),
+      (index) => TextEditingController(),
     );
 
     _focusNodes = List.generate(
       widget.length,
-          (index) => FocusNode(),
+      (index) => FocusNode(
+        onKeyEvent: (node, event) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.backspace &&
+              _controllers[index].text.isEmpty &&
+              index > 0) {
+            _focusNodes[index - 1].requestFocus();
+            _controllers[index - 1].clear();
+            _sendOtp();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+      ),
     );
 
     _setInitialValue();
@@ -63,8 +78,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
     final otp = value.replaceAll(RegExp(r'\D'), '');
 
     for (int i = 0; i < widget.length; i++) {
-      _controllers[i].text =
-      i < otp.length ? otp[i] : '';
+      _controllers[i].text = i < otp.length ? otp[i] : '';
     }
 
     _sendOtp();
@@ -80,17 +94,6 @@ class _OtpInputFieldState extends State<OtpInputField> {
     }).join();
 
     widget.onChanged(otp);
-  }
-
-  void _onKeyEvent(KeyEvent event, int index) {
-    if (event is KeyDownEvent &&
-        event.logicalKey == LogicalKeyboardKey.backspace &&
-        _controllers[index].text.isEmpty &&
-        index > 0) {
-      _focusNodes[index - 1].requestFocus();
-      _controllers[index - 1].clear();
-      _sendOtp();
-    }
   }
 
   @override
@@ -110,48 +113,33 @@ class _OtpInputFieldState extends State<OtpInputField> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(
-        widget.length,
-            (index) {
-          return SizedBox(
-            width: 48,
-            height: 56,
-            child: KeyboardListener(
-              focusNode: FocusNode(),
-              onKeyEvent: (event) => _onKeyEvent(event, index),
-              child: TextField(
-                controller: _controllers[index],
-                focusNode: _focusNodes[index],
-                keyboardType: TextInputType.number,
-                textAlign: TextAlign.center,
-                maxLength: 1,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                decoration: InputDecoration(
-                  counterText: '',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(
-                      width: 2,
-                    ),
-                  ),
-                ),
-                onChanged: (value) {
-                  _onChanged(value, index);
-                },
+      children: List.generate(widget.length, (index) {
+        return SizedBox(
+          width: 48,
+          height: 56,
+          child: TextField(
+            controller: _controllers[index],
+            focusNode: _focusNodes[index],
+            keyboardType: widget.keyboardType,
+            textAlign: TextAlign.center,
+            maxLength: 1,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              counterText: '',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(width: 2),
               ),
             ),
-          );
-        },
-      ),
+            onChanged: (value) {
+              _onChanged(value, index);
+            },
+          ),
+        );
+      }),
     );
   }
 }

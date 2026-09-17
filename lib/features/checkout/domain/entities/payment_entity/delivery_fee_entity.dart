@@ -15,9 +15,9 @@ class DeliveryFeeEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        addressId,
-        isServiceable,
-        deliveryFee,
-        estimatedDeliveryAt,
-      ];
+    addressId,
+    isServiceable,
+    deliveryFee,
+    estimatedDeliveryAt,
+  ];
 }

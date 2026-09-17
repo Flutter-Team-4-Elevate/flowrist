@@ -7,7 +7,7 @@ class LogoutUseCase {
   final ProfileRepository _repository;
 
   LogoutUseCase(this._repository);
-  
+
   Future<BaseResponse<void>> call() async {
     return await _repository.logout();
   }

@@ -9,8 +9,7 @@ import 'package:injectable/injectable.dart';
 import 'package:uuid/uuid.dart';
 
 @Injectable(as: CheckoutRemoteDataSource)
-class CheckoutRemoteDataSourceImpl
-    implements CheckoutRemoteDataSource {
+class CheckoutRemoteDataSourceImpl implements CheckoutRemoteDataSource {
   final CheckoutApiClient _apiClient;
 
   CheckoutRemoteDataSourceImpl(this._apiClient);
@@ -27,9 +26,7 @@ class CheckoutRemoteDataSourceImpl
         idempotencyKey,
       );
 
-      return SuccessResponse<CardOrderResponseModel>(
-        response,
-      );
+      return SuccessResponse<CardOrderResponseModel>(response);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException(e);
     }
@@ -49,14 +46,10 @@ class CheckoutRemoteDataSourceImpl
       final deliveryFee = response.data;
 
       if (deliveryFee == null) {
-        return ErrorResponse<DeliveryFeeModel>(
-          response.message,
-        );
+        return ErrorResponse<DeliveryFeeModel>(response.message);
       }
 
-      return SuccessResponse<DeliveryFeeModel>(
-        deliveryFee,
-      );
+      return SuccessResponse<DeliveryFeeModel>(deliveryFee);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException(e);
     }

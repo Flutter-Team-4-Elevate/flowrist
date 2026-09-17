@@ -9,5 +9,5 @@ abstract interface class AddressesRepository {
     String addressId,
   );
 
-  Future<BaseResponse<String>> deleteAddress(String addressId,);
+  Future<BaseResponse<String>> deleteAddress(String addressId);
 }

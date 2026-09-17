@@ -15,13 +15,10 @@ class DefaultAddressResponseModel {
     required this.updatedAt,
   });
 
-  factory DefaultAddressResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory DefaultAddressResponseModel.fromJson(Map<String, dynamic> json) =>
       _$DefaultAddressResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$DefaultAddressResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$DefaultAddressResponseModelToJson(this);
 
   DefaultAddressEntity toEntity() {
     return DefaultAddressEntity(

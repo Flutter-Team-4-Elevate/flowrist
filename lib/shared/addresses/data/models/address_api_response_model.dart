@@ -21,11 +21,8 @@ class AddressApiResponseModel {
     this.errors,
   });
 
-  factory AddressApiResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory AddressApiResponseModel.fromJson(Map<String, dynamic> json) =>
       _$AddressApiResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$AddressApiResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$AddressApiResponseModelToJson(this);
 }

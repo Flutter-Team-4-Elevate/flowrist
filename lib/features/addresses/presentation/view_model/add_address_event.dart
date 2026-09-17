@@ -55,10 +55,7 @@ class UpdateAddressEvent extends AddAddressEvent {
   final String addressId;
   final AddAddressRequestModel request;
 
-  UpdateAddressEvent({
-    required this.addressId,
-    required this.request,
-  });
+  UpdateAddressEvent({required this.addressId, required this.request});
 }
 
 class InitializeForEditEvent extends AddAddressEvent {

@@ -9,9 +9,7 @@ import 'package:mockito/mockito.dart';
 
 import 'place_order_use_case_test.mocks.dart';
 
-@GenerateMocks([
-  CheckoutRepository,
-])
+@GenerateMocks([CheckoutRepository])
 void main() {
   late MockCheckoutRepository mockCheckoutRepository;
   late PlaceOrderUseCase placeOrderUseCase;
@@ -25,9 +23,7 @@ void main() {
   setUp(() {
     mockCheckoutRepository = MockCheckoutRepository();
 
-    placeOrderUseCase = PlaceOrderUseCase(
-      mockCheckoutRepository,
-    );
+    placeOrderUseCase = PlaceOrderUseCase(mockCheckoutRepository);
   });
 
   group('PlaceOrderUseCase', () {
@@ -60,108 +56,72 @@ void main() {
 
         when(
           mockCheckoutRepository.placeOrder(request),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CardOrderEntity?>(
-            order,
-          ),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CardOrderEntity?>(order));
 
         // Act
         final result = await placeOrderUseCase(request);
 
         // Assert
-        expect(
-          result,
-          isA<SuccessResponse<CardOrderEntity?>>(),
-        );
+        expect(result, isA<SuccessResponse<CardOrderEntity?>>());
 
         final success = result as SuccessResponse<CardOrderEntity?>;
 
         expect(success.data, isNotNull);
         expect(success.data?.orderId, 'order_123');
 
-        verify(
-          mockCheckoutRepository.placeOrder(request),
-        ).called(1);
+        verify(mockCheckoutRepository.placeOrder(request)).called(1);
 
         verifyNoMoreInteractions(mockCheckoutRepository);
       },
     );
 
-    test(
-      'should return success with null data for COD order',
-      () async {
-        // Arrange
-        final codRequest = CardOrderRequestEntity(
-          cartId: 'cart_123',
-          addressId: 'address_123',
-          isGift: false,
-          giftRecipient: null,
-          paymentMethod: 'Cod',
-          paymentGateway: null,
-        );
+    test('should return success with null data for COD order', () async {
+      // Arrange
+      final codRequest = CardOrderRequestEntity(
+        cartId: 'cart_123',
+        addressId: 'address_123',
+        isGift: false,
+        giftRecipient: null,
+        paymentMethod: 'Cod',
+        paymentGateway: null,
+      );
 
-        when(
-          mockCheckoutRepository.placeOrder(codRequest),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CardOrderEntity?>(
-            null,
-          ),
-        );
+      when(
+        mockCheckoutRepository.placeOrder(codRequest),
+      ).thenAnswer((_) async => SuccessResponse<CardOrderEntity?>(null));
 
-        // Act
-        final result = await placeOrderUseCase(codRequest);
+      // Act
+      final result = await placeOrderUseCase(codRequest);
 
-        // Assert
-        expect(
-          result,
-          isA<SuccessResponse<CardOrderEntity?>>(),
-        );
+      // Assert
+      expect(result, isA<SuccessResponse<CardOrderEntity?>>());
 
-        final success = result as SuccessResponse<CardOrderEntity?>;
+      final success = result as SuccessResponse<CardOrderEntity?>;
 
-        expect(success.data, isNull);
+      expect(success.data, isNull);
 
-        verify(
-          mockCheckoutRepository.placeOrder(codRequest),
-        ).called(1);
-      },
-    );
+      verify(mockCheckoutRepository.placeOrder(codRequest)).called(1);
+    });
 
-    test(
-      'should return ErrorResponse when repository fails',
-      () async {
-        // Arrange
-        when(
-          mockCheckoutRepository.placeOrder(request),
-        ).thenAnswer(
-          (_) async => ErrorResponse<CardOrderEntity?>(
-            'Failed to place order',
-          ),
-        );
+    test('should return ErrorResponse when repository fails', () async {
+      // Arrange
+      when(mockCheckoutRepository.placeOrder(request)).thenAnswer(
+        (_) async => ErrorResponse<CardOrderEntity?>('Failed to place order'),
+      );
 
-        // Act
-        final result = await placeOrderUseCase(request);
+      // Act
+      final result = await placeOrderUseCase(request);
 
-        // Assert
-        expect(
-          result,
-          isA<ErrorResponse<CardOrderEntity?>>(),
-        );
+      // Assert
+      expect(result, isA<ErrorResponse<CardOrderEntity?>>());
 
-        final error = result as ErrorResponse<CardOrderEntity?>;
+      final error = result as ErrorResponse<CardOrderEntity?>;
 
-        expect(
-          error.errorMessage,
-          'Failed to place order',
-        );
+      expect(error.errorMessage, 'Failed to place order');
 
-        verify(
-          mockCheckoutRepository.placeOrder(request),
-        ).called(1);
+      verify(mockCheckoutRepository.placeOrder(request)).called(1);
 
-        verifyNoMoreInteractions(mockCheckoutRepository);
-      },
-    );
+      verifyNoMoreInteractions(mockCheckoutRepository);
+    });
   });
 }

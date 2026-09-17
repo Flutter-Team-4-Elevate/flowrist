@@ -16,13 +16,10 @@ class BannerPayloadModel extends HomePayloadModel {
     required this.clickAction,
   });
 
-  factory BannerPayloadModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory BannerPayloadModel.fromJson(Map<String, dynamic> json) =>
       _$BannerPayloadModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$BannerPayloadModelToJson(this);
+  Map<String, dynamic> toJson() => _$BannerPayloadModelToJson(this);
 
   @override
   BannerPayloadEntity toEntity() {

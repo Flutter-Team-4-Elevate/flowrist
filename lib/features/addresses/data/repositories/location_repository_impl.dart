@@ -105,4 +105,3 @@ class LocationRepositoryImpl implements LocationRepository {
     }
   }
 }
-

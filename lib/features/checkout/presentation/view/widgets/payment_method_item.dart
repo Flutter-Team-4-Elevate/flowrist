@@ -27,15 +27,12 @@ class PaymentMethodItem extends StatelessWidget {
             border: Border.all(
               color: isSelected
                   ? AppColors.purpleBase
-                  : AppColors.white90.withValues(
-                      alpha: 0.45,
-                    ),
+                  : AppColors.white90.withValues(alpha: 0.45),
             ),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
@@ -49,9 +46,7 @@ class PaymentMethodItem extends StatelessWidget {
                 onChanged: (_) {
                   onTap?.call();
                 },
-                child: const Radio<bool>(
-                  value: true,
-                ),
+                child: const Radio<bool>(value: true),
               ),
             ],
           ),

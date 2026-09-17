@@ -63,23 +63,15 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
 
     await viewModel.doEvent(SetDefaultAddress(selectedAddress.id));
 
-    if (!mounted) {
+    if (!mounted) return;
+
+    // If API failed, don't close the sheet.
+    if (viewModel.state.setDefaultAddressState.errorMessage != null) {
       return;
     }
 
-    final currentState = viewModel.state;
-
-    // Do not update the actual address if the API failed.
-    if (currentState.setDefaultAddressState.errorMessage != null) {
-      return;
-    }
-
-    viewModel.selectAddress(selectedAddress);
-
-    if (!mounted) {
-      return;
-    }
-
+    // The ViewModel's _setDefaultAddress() should already update
+    // selectedAddress after the API succeeds.
     Navigator.of(context).pop();
   }
 
@@ -200,58 +192,52 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
     );
   }
 
-Widget _buildAddressList(AddressesState state) {
-  final addresses = state.addressesState.data ?? [];
+  Widget _buildAddressList(AddressesState state) {
+    final addresses = state.addressesState.data ?? [];
 
-  if (addresses.isEmpty) {
-    return const SizedBox.shrink();
-  }
+    if (addresses.isEmpty) {
+      return const SizedBox.shrink();
+    }
 
-  final selectedId =
-      _temporarySelectedAddressId ?? state.selectedAddress?.id;
+    final selectedId = _temporarySelectedAddressId ?? state.selectedAddress?.id;
 
-  const double itemHeight = 80;
-  const double separatorHeight = 12;
-  const double bottomSpace = 20;
-  const int maxVisibleItems = 5;
+    const double itemHeight = 80;
+    const double separatorHeight = 12;
+    const double bottomSpace = 20;
+    const int maxVisibleItems = 5;
 
-  final visibleItemCount =
-      addresses.length.clamp(1, maxVisibleItems);
+    final visibleItemCount = addresses.length.clamp(1, maxVisibleItems);
 
-  final listHeight =
-      (visibleItemCount * itemHeight) +
-      ((visibleItemCount - 1) * separatorHeight) +
-      bottomSpace;
+    final listHeight =
+        (visibleItemCount * itemHeight) +
+        ((visibleItemCount - 1) * separatorHeight) +
+        bottomSpace;
 
-  return SizedBox(
-    height: listHeight,
-    child: ListView.separated(
-      padding: const EdgeInsets.only(
-        bottom: bottomSpace,
+    return SizedBox(
+      height: listHeight,
+      child: ListView.separated(
+        padding: const EdgeInsets.only(bottom: bottomSpace),
+        itemCount: addresses.length,
+        physics: addresses.length > maxVisibleItems
+            ? const BouncingScrollPhysics()
+            : const NeverScrollableScrollPhysics(),
+        separatorBuilder: (_, _) {
+          return const SizedBox(height: separatorHeight);
+        },
+        itemBuilder: (context, index) {
+          final address = addresses[index];
+
+          return AddressItem(
+            address: address,
+            isSelected: address.id == selectedId,
+            onTap: () {
+              _selectAddress(address);
+            },
+          );
+        },
       ),
-      itemCount: addresses.length,
-      physics: addresses.length > maxVisibleItems
-          ? const BouncingScrollPhysics()
-          : const NeverScrollableScrollPhysics(),
-      separatorBuilder: (_, _) {
-        return const SizedBox(
-          height: separatorHeight,
-        );
-      },
-      itemBuilder: (context, index) {
-        final address = addresses[index];
-
-        return AddressItem(
-          address: address,
-          isSelected: address.id == selectedId,
-          onTap: () {
-            _selectAddress(address);
-          },
-        );
-      },
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildAddressActions(AddressesState state) {
     final selectedAddress = _getSelectedAddress(state);

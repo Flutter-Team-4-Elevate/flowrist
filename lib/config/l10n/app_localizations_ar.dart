@@ -145,6 +145,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPassword => 'نسيت كلمة المرور؟';
 
   @override
+  String get forgetPasswordText => 'نسيت كلمة المرور';
+
+  @override
   String get forgotPasswordDescription =>
       'أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق (OTP).';
 

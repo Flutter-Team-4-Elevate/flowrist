@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
@@ -7,6 +9,8 @@ import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/core/ui/theme/app_theme.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
+import 'package:flowrist/firebase_options.dart';
+import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_cubit.dart';
 import 'package:flowrist/flowrist_bloc_observer.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
 import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
@@ -15,8 +19,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   await _loadEnvironmentVariables();
 
@@ -24,12 +30,16 @@ void main() async {
 
   Bloc.observer = FlowristBlocObserver();
 
+  // Initialize local notifications + FCM listeners.
+  await getIt<PushNotificationsServices>().init();
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => getIt<CartCubit>()),
         BlocProvider(create: (_) => getIt<AddressesViewModel>()),
         BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
+        BlocProvider<HomeCubit>(create: (_) => getIt<HomeCubit>()),
       ],
       child: const FlowristApp(),
     ),

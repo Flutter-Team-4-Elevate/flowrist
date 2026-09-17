@@ -10,9 +10,7 @@ class PlaceOrderUseCase {
 
   PlaceOrderUseCase(this._repository);
 
-  Future<BaseResponse<CardOrderEntity?>> call(
-    CardOrderRequestEntity request,
-  ) {
+  Future<BaseResponse<CardOrderEntity?>> call(CardOrderRequestEntity request) {
     return _repository.placeOrder(request);
   }
 }

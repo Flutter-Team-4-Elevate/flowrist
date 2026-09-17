@@ -10,8 +10,5 @@ class GiftRecipientEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-        recipientName,
-        recipientPhone,
-      ];
+  List<Object?> get props => [recipientName, recipientPhone];
 }

@@ -35,7 +35,8 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       _hasChanges = true;
       if (mounted) {
         context.read<SavedAddressesViewModel>().doEvent(
-            GetSavedAddressesEvent());
+          GetSavedAddressesEvent(),
+        );
       }
     }
   }
@@ -46,7 +47,8 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       _hasChanges = true;
       if (mounted) {
         context.read<SavedAddressesViewModel>().doEvent(
-            GetSavedAddressesEvent());
+          GetSavedAddressesEvent(),
+        );
       }
     }
   }
@@ -57,9 +59,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete Address'),
-          content: const Text(
-            'Are you sure you want to delete this address?',
-          ),
+          content: const Text('Are you sure you want to delete this address?'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -77,9 +77,9 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
       },
     ).then((confirmed) {
       if (confirmed == true && mounted) {
-        context
-            .read<SavedAddressesViewModel>()
-            .doEvent(DeleteAddressEvent(addressId));
+        context.read<SavedAddressesViewModel>().doEvent(
+          DeleteAddressEvent(addressId),
+        );
       }
     });
   }
@@ -90,7 +90,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
     return BlocListener<SavedAddressesViewModel, SavedAddressesState>(
       listenWhen: (previous, current) =>
-      previous.deleteAddressState != current.deleteAddressState,
+          previous.deleteAddressState != current.deleteAddressState,
       listener: (context, state) {
         final deleteState = state.deleteAddressState;
         if (deleteState.errorMessage != null) {
@@ -201,21 +201,22 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                 );
               },
               child: ListView(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 children: [
                   ...addresses.map(
-                        (address) =>
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: SavedAddressItemCard(
-                            address: address,
-                            isDeleting: state.deletingAddressId == address.id,
-                            onDelete: () =>
-                                _showDeleteConfirmationDialog(address.id),
-                            onEdit: () => _navigateToEditAddress(address),
-                          ),
-                        ),
+                    (address) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: SavedAddressItemCard(
+                        address: address,
+                        isDeleting: state.deletingAddressId == address.id,
+                        onDelete: () =>
+                            _showDeleteConfirmationDialog(address.id),
+                        onEdit: () => _navigateToEditAddress(address),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   AppButton(

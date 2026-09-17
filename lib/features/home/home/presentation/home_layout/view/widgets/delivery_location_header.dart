@@ -10,9 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class DeliveryLocationHeader extends StatelessWidget {
-  const DeliveryLocationHeader({
-    super.key,
-  });
+  const DeliveryLocationHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,33 +22,22 @@ class DeliveryLocationHeader extends StatelessWidget {
 
         return Row(
           children: [
-            const Icon(
-              FloweryIcons.location,
-              size: 20,
-            ),
+            const Icon(FloweryIcons.location, size: 20),
 
             const SizedBox(width: 2),
 
-            Expanded(
-              child: _buildLocationText(
-                selectedAddress,
-                localizations,
-              ),
-            ),
+            Expanded(child: _buildLocationText(selectedAddress, localizations)),
 
             Transform.rotate(
               angle: 3.14 / 2,
               child: IconButton(
                 onPressed:
                     state.addressesState.isLoading ||
-                            state.addressesState.errorMessage !=
-                                null
-                        ? null
-                        : () {
-                            _showAddressBottomSheet(
-                              context,
-                            );
-                          },
+                        state.addressesState.errorMessage != null
+                    ? null
+                    : () {
+                        _showAddressBottomSheet(context);
+                      },
                 icon: Icon(
                   Icons.arrow_forward_ios,
                   size: 20,
@@ -73,9 +60,7 @@ class DeliveryLocationHeader extends StatelessWidget {
         localizations.deliverTo,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppStyles.medium18Inter.copyWith(
-          fontSize: 14,
-        ),
+        style: AppStyles.medium18Inter.copyWith(fontSize: 14),
       );
     }
 
@@ -84,15 +69,11 @@ class DeliveryLocationHeader extends StatelessWidget {
       '${address.area}-${address.addressLine}',
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: AppStyles.medium18Inter.copyWith(
-        fontSize: 14,
-      ),
+      style: AppStyles.medium18Inter.copyWith(fontSize: 14),
     );
   }
 
-  Future<void> _showAddressBottomSheet(
-    BuildContext context,
-  ) async {
+  Future<void> _showAddressBottomSheet(BuildContext context) async {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,

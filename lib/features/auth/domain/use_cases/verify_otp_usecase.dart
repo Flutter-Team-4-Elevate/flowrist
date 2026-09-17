@@ -8,13 +8,10 @@ class VerifyOtpUseCase {
 
   VerifyOtpUseCase(this._repository);
 
-  Future<BaseResponse<void>> execute({
+  Future<BaseResponse<Map<String, dynamic>>> execute({
     required String email,
     required String otp,
   }) {
-    return _repository.verifyOtp(
-      email: email,
-      otp: otp,
-    );
+    return _repository.verifyOtp(email: email, otp: otp);
   }
 }

@@ -28,9 +28,9 @@ class _AddAddressViewState extends State<AddAddressView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     if (widget.addressToEdit != null) {
-      context
-          .read<AddAddressViewModel>()
-          .doEvent(InitializeForEditEvent(widget.addressToEdit!));
+      context.read<AddAddressViewModel>().doEvent(
+        InitializeForEditEvent(widget.addressToEdit!),
+      );
     } else {
       context.read<AddAddressViewModel>().doEvent(CheckLocationPermission());
     }
@@ -55,7 +55,8 @@ class _AddAddressViewState extends State<AddAddressView>
     final localizations = AppLocalizations.of(context)!;
 
     return BlocListener<AddAddressViewModel, AddAddressState>(
-      listenWhen: (previous, current) => previous.saveAddressState != current.saveAddressState,
+      listenWhen: (previous, current) =>
+          previous.saveAddressState != current.saveAddressState,
       listener: (context, state) {
         final saveState = state.saveAddressState;
 
