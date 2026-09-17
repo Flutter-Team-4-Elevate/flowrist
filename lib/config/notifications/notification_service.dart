@@ -61,10 +61,12 @@ class PushNotificationsServices {
       await getFcmToken();
 
       _listenToTokenRefresh();
-
       _listenToForegroundMessages();
 
       FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+
+      // Request notification permission when the app starts.
+      await requestPermission();
     } catch (error, stackTrace) {
       log(
         'Failed to initialize push notifications',

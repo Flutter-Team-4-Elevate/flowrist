@@ -37,54 +37,119 @@ class TotalPrice extends StatelessWidget {
       listener: (context, state) async {
         final placeOrderState = state.placeOrderState;
 
-        // Repository/Cubit failure.
+        // =========================================================
+        // 1. API / REPOSITORY ERROR
+        // =========================================================
+
         if (placeOrderState.errorMessage != null) {
           if (!context.mounted) return;
 
-          _showMessage(context, placeOrderState.errorMessage!);
+          _showMessage(
+            context,
+            placeOrderState.errorMessage!,
+          );
 
           return;
         }
 
-        // ----------------------------------------
-        // CASH ON DELIVERY
-        // ----------------------------------------
-        if (state.selectedPaymentMethod == Endpoints.cash) {
+        // =========================================================
+        // 2. CASH ON DELIVERY
+        // =========================================================
+        //
+        // IMPORTANT:
+        // COD does NOT need sessionUrl.
+        //
+        // Backend response:
+        //
+        // {
+        //   "orderId": "...",
+        //   "orderNumber": "...",
+        //   "status": "PLACED",
+        //   "paymentStatus": "PENDING",
+        //   "paymentMethod": "COD",
+        //   "subtotal": 33.98,
+        //   "deliveryFee": 25.0,
+        //   "total": 58.98
+        // }
+        //
+        // Therefore we handle COD before checking sessionUrl.
+        // =========================================================
+
+        final isCash =
+            state.selectedPaymentMethod == Endpoints.cash;
+
+        if (isCash) {
           await _handleOrderSuccess(context);
           return;
         }
 
-        // ----------------------------------------
-        // CREDIT CARD
-        // ----------------------------------------
+        // =========================================================
+        // 3. CREDIT CARD
+        // =========================================================
+
         final order = placeOrderState.data;
 
         if (order == null) {
           if (!context.mounted) return;
 
-          _showMessage(context, 'Invalid order response');
+          _showMessage(
+            context,
+            'Invalid card order response.',
+          );
 
           return;
         }
 
+        final sessionUrl = order.sessionUrl;
+
+        if (sessionUrl == null || sessionUrl.trim().isEmpty) {
+          if (!context.mounted) return;
+
+          _showMessage(
+            context,
+            'Payment session URL is missing.',
+          );
+
+          return;
+        }
+
+        // =========================================================
+        // 4. OPEN PAYMENT WEBVIEW
+        // =========================================================
+
         final paymentResult = await context.push<bool>(
           AppRoutes.paymentWebView,
-          extra: order.sessionUrl,
+          extra: sessionUrl,
         );
 
         if (!context.mounted) return;
+
+        // =========================================================
+        // 5. PAYMENT SUCCESS
+        // =========================================================
 
         if (paymentResult == true) {
           await _handleOrderSuccess(context);
           return;
         }
 
-        _showMessage(context, 'Payment failed. Please try again.');
+        // =========================================================
+        // 6. PAYMENT FAILED / CANCELLED
+        // =========================================================
+
+        _showMessage(
+          context,
+          'Payment failed. Please try again.',
+        );
       },
       builder: (context, state) {
-        final deliveryFee = state.deliveryFeeState.data?.deliveryFee ?? 0.0;
+        final deliveryFee =
+            state.deliveryFeeState.data?.deliveryFee ?? 0.0;
 
         final total = subTotal + deliveryFee;
+
+        final isLoading =
+            state.placeOrderState.isLoading;
 
         return Padding(
           padding: const EdgeInsets.all(16),
@@ -92,30 +157,52 @@ class TotalPrice extends StatelessWidget {
             children: [
               SubTotal(
                 title: localizations.subTotal,
-                price: '${localizations.egp}${subTotal.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${subTotal.toStringAsFixed(2)}',
               ),
+
               const SizedBox(height: 8),
+
               SubTotal(
                 title: localizations.deliveryFee,
-                price: '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${deliveryFee.toStringAsFixed(2)}',
               ),
-              const Divider(height: 30, thickness: 1),
+
+              const Divider(
+                height: 30,
+                thickness: 1,
+              ),
+
               SubTotal(
                 title: localizations.total,
-                price: '${localizations.egp}${total.toStringAsFixed(2)}',
+                price:
+                    '${localizations.egp}${total.toStringAsFixed(2)}',
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                 ),
               ),
+
               const SizedBox(height: 40),
 
-              // Only loading indicator in checkout.
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => _placeOrder(context),
-                  child: Text(localizations.placeOrder),
+                  onPressed: isLoading
+                      ? null
+                      : () => _placeOrder(context),
+                  child: isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : Text(
+                          localizations.placeOrder,
+                        ),
                 ),
               ),
             ],
@@ -125,30 +212,60 @@ class TotalPrice extends StatelessWidget {
     );
   }
 
-  Future<void> _handleOrderSuccess(BuildContext context) async {
+  Future<void> _handleOrderSuccess(
+    BuildContext context,
+  ) async {
     final cartCubit = context.read<CartCubit>();
 
-    await cartCubit.doEvent(GetCartEvent());
+    // Refresh cart after successful order.
+    await cartCubit.doEvent(
+      GetCartEvent(),
+    );
 
     if (!context.mounted) return;
 
     final cartState = cartCubit.state.cart;
 
-    if (cartState.errorMessage != null) {
-      _showMessage(context, cartState.errorMessage!);
+    // =========================================================
+    // CART IS EMPTY
+    // =========================================================
+    //
+    // After successful order your API returns:
+    //
+    // items: []
+    //
+    // Therefore go directly to success screen.
+    // =========================================================
+
+    if (cartState.data != null &&
+        cartState.data!.items.isEmpty) {
+      context.go(
+        AppRoutes.successOrder,
+      );
+
       return;
     }
 
-    // Cart was successfully cleared after placing the order.
-    if (cartState.data == null || cartState.data!.items.isEmpty) {
-      context.go(AppRoutes.successOrder);
+    // =========================================================
+    // CART DATA IS NULL
+    // =========================================================
+
+    if (cartState.data == null) {
+      _showMessage(
+        context,
+        'Order placed successfully, but the cart could not be refreshed.',
+      );
+
       return;
     }
 
-    // Unexpected case: order succeeded but cart is still not empty.
+    // =========================================================
+    // CART STILL HAS ITEMS
+    // =========================================================
+
     _showMessage(
       context,
-      'Order placed successfully, but cart could not be refreshed.',
+      'Order placed successfully, but the cart is not empty.',
     );
   }
 
@@ -156,53 +273,135 @@ class TotalPrice extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     final cubit = context.read<CheckoutCubit>();
-
     final state = cubit.state;
 
-    final selectedPaymentMethod = state.selectedPaymentMethod;
+    final selectedPaymentMethod =
+        state.selectedPaymentMethod;
+
+    // =========================================================
+    // PAYMENT METHOD REQUIRED
+    // =========================================================
 
     if (selectedPaymentMethod == null) {
-      _showMessage(context, localizations.pleaseselectapaymentmethod);
+      _showMessage(
+        context,
+        localizations.pleaseselectapaymentmethod,
+      );
 
       return;
     }
 
-    if (state.isGift) {
+    // =========================================================
+    // PAYMENT TYPE
+    // =========================================================
+
+    final isCard =
+        selectedPaymentMethod == Endpoints.creditCard;
+
+    final isCash =
+        selectedPaymentMethod == Endpoints.cash;
+
+    // =========================================================
+    // GIFT
+    // =========================================================
+    //
+    // Gift is ONLY allowed with credit card.
+    //
+    // Even if state.isGift somehow remains true,
+    // COD will send isGift=false.
+    // =========================================================
+
+    final isGift = isCard && state.isGift;
+
+    // =========================================================
+    // VALIDATE GIFT
+    // =========================================================
+
+    if (isGift) {
       if (state.giftName.trim().isEmpty) {
-        _showMessage(context, localizations.pleaseenterrecipientname);
+        _showMessage(
+          context,
+          localizations.pleaseenterrecipientname,
+        );
 
         return;
       }
 
       if (state.giftPhone.trim().isEmpty) {
-        _showMessage(context, localizations.pleaseenterrecipientphone);
+        _showMessage(
+          context,
+          localizations.pleaseenterrecipientphone,
+        );
 
         return;
       }
     }
 
-    final isCard = selectedPaymentMethod == Endpoints.creditCard;
+    // =========================================================
+    // REQUEST
+    // =========================================================
 
     final request = CardOrderRequestEntity(
       cartId: cartId,
       addressId: addressId,
-      isGift: state.isGift,
-      giftRecipient: state.isGift
+
+      // COD => false
+      // Card + gift => true
+      isGift: isGift,
+
+      giftRecipient: isGift
           ? GiftRecipientEntity(
               recipientName: state.giftName.trim(),
               recipientPhone: state.giftPhone.trim(),
             )
           : null,
-      paymentMethod: isCard ? Endpoints.card : Endpoints.cod,
-      paymentGateway: isCard ? Endpoints.stripe : null,
+
+      paymentMethod: isCard
+          ? Endpoints.card
+          : Endpoints.cod,
+
+      paymentGateway: isCard
+          ? Endpoints.stripe
+          : null,
     );
 
-    cubit.doEvent(PlaceOrder(order: request));
+    // =========================================================
+    // DEBUG
+    // =========================================================
+
+    debugPrint('========== PLACE ORDER ==========');
+    debugPrint('cartId: ${request.cartId}');
+    debugPrint('addressId: ${request.addressId}');
+    debugPrint('paymentMethod: ${request.paymentMethod}');
+    debugPrint('paymentGateway: ${request.paymentGateway}');
+    debugPrint('isGift: ${request.isGift}');
+    debugPrint(
+      'giftRecipient: ${request.giftRecipient}',
+    );
+    debugPrint('=================================');
+
+    // =========================================================
+    // PLACE ORDER
+    // =========================================================
+
+    cubit.doEvent(
+      PlaceOrder(
+        order: request,
+      ),
+    );
   }
 
-  void _showMessage(BuildContext context, String message) {
+  void _showMessage(
+    BuildContext context,
+    String message,
+  ) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+        ),
+      );
   }
 }
+ 

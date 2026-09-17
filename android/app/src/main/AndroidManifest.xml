@@ -9,7 +9,7 @@
 
     <!-- Background location required for Android 10+ -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
-
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="flowrist"
         android:name="${applicationName}"
