@@ -52,23 +52,22 @@ class CardOrderEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        orderId,
-        status,
-        orderNumber,
-        paymentStatus,
-        paymentMethod,
-        subtotal,
-        deliveryFee,
-        total,
-        gateway,
-        sessionId,
-        sessionUrl,
-        successUrl,
-        cancelUrl,
-        expiresAt,
-        amount,
-        currency,
-        estimatedDeliveryAt,
-      ];
+    orderId,
+    status,
+    orderNumber,
+    paymentStatus,
+    paymentMethod,
+    subtotal,
+    deliveryFee,
+    total,
+    gateway,
+    sessionId,
+    sessionUrl,
+    successUrl,
+    cancelUrl,
+    expiresAt,
+    amount,
+    currency,
+    estimatedDeliveryAt,
+  ];
 }
- 

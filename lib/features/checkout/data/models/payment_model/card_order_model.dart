@@ -50,13 +50,10 @@ class CardOrderModel {
     this.estimatedDeliveryAt,
   });
 
-  factory CardOrderModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory CardOrderModel.fromJson(Map<String, dynamic> json) =>
       _$CardOrderModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$CardOrderModelToJson(this);
+  Map<String, dynamic> toJson() => _$CardOrderModelToJson(this);
 
   CardOrderEntity toEntity() {
     return CardOrderEntity(
@@ -82,4 +79,3 @@ class CardOrderModel {
     );
   }
 }
- 

@@ -9,16 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class GiftMethods extends StatefulWidget {
-  const GiftMethods({
-    super.key,
-    required this.onChanged,
-  });
+  const GiftMethods({super.key, required this.onChanged});
 
   final void Function({
     required bool isGift,
     required String name,
     required String phone,
-  }) onChanged;
+  })
+  onChanged;
 
   @override
   State<GiftMethods> createState() => _GiftMethodsState();
@@ -35,9 +33,7 @@ class _GiftMethodsState extends State<GiftMethods> {
     super.dispose();
   }
 
-  void _notifyChanged({
-    required bool isGift,
-  }) {
+  void _notifyChanged({required bool isGift}) {
     widget.onChanged(
       isGift: isGift,
       name: _nameController.text.trim(),
@@ -51,18 +47,13 @@ class _GiftMethodsState extends State<GiftMethods> {
   }
 
   void _disableGift(BuildContext context) {
-    if (_nameController.text.isNotEmpty ||
-        _phoneController.text.isNotEmpty) {
+    if (_nameController.text.isNotEmpty || _phoneController.text.isNotEmpty) {
       _clearGiftFields();
     }
 
     context.read<CheckoutCubit>().doEvent(
-          UpdateGiftInfo(
-            isGift: false,
-            name: '',
-            phone: '',
-          ),
-        );
+      UpdateGiftInfo(isGift: false, name: '', phone: ''),
+    );
   }
 
   @override
@@ -71,11 +62,9 @@ class _GiftMethodsState extends State<GiftMethods> {
 
     return BlocListener<CheckoutCubit, CheckoutState>(
       listenWhen: (previous, current) =>
-          previous.selectedPaymentMethod !=
-          current.selectedPaymentMethod,
+          previous.selectedPaymentMethod != current.selectedPaymentMethod,
       listener: (context, state) {
-        final isCashOnDelivery =
-            state.selectedPaymentMethod == Endpoints.cash;
+        final isCashOnDelivery = state.selectedPaymentMethod == Endpoints.cash;
 
         if (isCashOnDelivery && state.isGift) {
           _disableGift(context);
@@ -87,8 +76,7 @@ class _GiftMethodsState extends State<GiftMethods> {
       },
       child: BlocBuilder<CheckoutCubit, CheckoutState>(
         buildWhen: (previous, current) =>
-            previous.selectedPaymentMethod !=
-                current.selectedPaymentMethod ||
+            previous.selectedPaymentMethod != current.selectedPaymentMethod ||
             previous.isGift != current.isGift,
         builder: (context, state) {
           final isCashOnDelivery =
@@ -105,9 +93,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                     Switch(
                       inactiveTrackColor: AppColors.purple20,
                       activeTrackColor: AppColors.purpleBase,
-                      thumbColor: const WidgetStatePropertyAll(
-                        AppColors.white,
-                      ),
+                      thumbColor: const WidgetStatePropertyAll(AppColors.white),
                       value: isCashOnDelivery ? false : isGift,
 
                       // Gift is not available for COD.
@@ -129,9 +115,7 @@ class _GiftMethodsState extends State<GiftMethods> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w500,
-                        color: isCashOnDelivery
-                            ? Colors.grey
-                            : null,
+                        color: isCashOnDelivery ? Colors.grey : null,
                       ),
                     ),
                   ],
@@ -168,4 +152,3 @@ class _GiftMethodsState extends State<GiftMethods> {
     );
   }
 }
- 
