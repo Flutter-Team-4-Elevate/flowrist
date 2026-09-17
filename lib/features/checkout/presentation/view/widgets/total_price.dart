@@ -298,8 +298,6 @@ class TotalPrice extends StatelessWidget {
     final isCard =
         selectedPaymentMethod == Endpoints.creditCard;
 
-    final isCash =
-        selectedPaymentMethod == Endpoints.cash;
 
     // =========================================================
     // GIFT
