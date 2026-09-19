@@ -53,7 +53,7 @@ class _SplashViewState extends State<SplashView> {
       if (!mounted) return;
 
       context.go(AppRoutes.login);
-    }
+    } 
   }
 
   @override
