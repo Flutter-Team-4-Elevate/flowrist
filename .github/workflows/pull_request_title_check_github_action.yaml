@@ -1,0 +1,45 @@
+name:  PR Title Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+
+permissions:
+  pull-requests: read
+
+jobs:
+  pr-title-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Checking PR title: $PR_TITLE"
+
+          if [[ ! "$PR_TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\([a-zA-Z0-9_-]+\))?!?:\ .+ ]]; then
+            echo ""
+            echo "❌ Invalid PR title!"
+            echo ""
+            echo "PR title must follow the Conventional Commits format:"
+            echo ""
+            echo "  type: description"
+            echo ""
+            echo "Examples:"
+            echo "  feat: add cart management"
+            echo "  fix: fix cart quantity"
+            echo "  test: add cart tests"
+            echo "  refactor: improve cart architecture"
+            echo "  docs: update README"
+            echo ""
+            echo "Allowed types:"
+            echo "  feat, fix, docs, style, refactor, test,"
+            echo "  chore, perf, ci, build, revert"
+            echo ""
+            exit 1
+          fi
+          echo ""
+          echo "✅ PR title is valid!"
