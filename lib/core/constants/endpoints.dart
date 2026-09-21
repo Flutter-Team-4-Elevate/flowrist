@@ -9,7 +9,7 @@ abstract final class Endpoints {
       'api/identity/devices/{deviceId}/notifications';
   static String deleteSession(String sessionId) =>
       'api/identity/auth/sessions/$sessionId';
-
+  static const String orderTracking = 'api/orders/{orderId}/tracking';
   static const occasions = 'api/catalog/occasions';
   static const categories = 'api/catalog/categories';
   static const products = 'api/catalog/products';
