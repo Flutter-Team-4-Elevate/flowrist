@@ -10,6 +10,8 @@ abstract final class AppImages {
   static const String flowerTrackingOrder = '$_imagesPath/track_order.png';
   static const String flowerTrackingOrderBoy = '$_imagesPath/Delivery Boy.png';
   static const String flowerTrackingOrderCar = '$_imagesPath/Car.png';
+  static const String flowerTrackingOrderMotorcycle =
+      '$_imagesPath/Motorcycle Delivery.png';
   static const String flowerTrackingOrderWattsapp = '$_imagesPath/whatsapp.png';
   static const String flowerTrackingOrderCall =
       '$_imagesPath/call_delivery.png';

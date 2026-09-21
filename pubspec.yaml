@@ -70,6 +70,7 @@ flutter:
 
   assets:
     - assets/images/
+    - .env
     - shorebird.yaml
 
   fonts:

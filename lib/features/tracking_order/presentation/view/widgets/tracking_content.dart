@@ -1,10 +1,12 @@
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
+import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class TrackingContent extends StatelessWidget {
   final OrderTrackingEntity tracking;
@@ -114,13 +116,18 @@ class _TrackingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDelivered = status == 'DELIVERED';
+    final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';
 
     if (isDelivered) {
       return Row(
         children: [
           Expanded(
-            child: AppButton(text: 'Show map', onPressed: () {}),
+            child: AppButton(
+              text: 'Show map',
+              onPressed: () {
+                context.push(AppRoutes.trackingMap);
+              },
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -132,7 +139,12 @@ class _TrackingActions extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      child: AppButton(text: 'Show map', onPressed: () {}),
+      child: AppButton(
+        text: 'Show map',
+        onPressed: () {
+          context.push(AppRoutes.trackingMap);
+        },
+      ),
     );
   }
 }
