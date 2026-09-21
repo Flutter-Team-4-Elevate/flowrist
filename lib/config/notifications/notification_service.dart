@@ -22,14 +22,15 @@ class PushNotificationsServices {
 
   bool _initialized = false;
   bool _permissionRequestedThisSession = false;
-
+  final StreamController<RemoteMessage> _messageController =
+      StreamController<RemoteMessage>.broadcast();
   PushNotificationsServices(
     this._messaging,
     this._deviceIdService,
     this._updateFcmTokenUseCase,
     this._localNotificationService,
   );
-
+  Stream<RemoteMessage> get messages => _messageController.stream;
   Future<String?> getFcmToken() async {
     try {
       if (_fcmToken != null && _fcmToken!.isNotEmpty) {
