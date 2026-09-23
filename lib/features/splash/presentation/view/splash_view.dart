@@ -45,7 +45,7 @@ class _SplashViewState extends State<SplashView> {
       if (isRemembered) {
         context.go(AppRoutes.homeTab);
       } else {
-        context.go(AppRoutes.login);
+        context.go(AppRoutes.trackOrder);
       }
     } catch (error) {
       debugPrint('Splash session check failed: $error');

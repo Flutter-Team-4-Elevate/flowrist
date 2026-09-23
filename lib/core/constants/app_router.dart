@@ -33,6 +33,8 @@ import 'package:flowrist/features/home/profile/session_management/presentation/v
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
+import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
+import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -53,6 +55,8 @@ abstract final class AppRoutes {
   static const categoriesTab = '/categories-tab';
   static const cartTab = '/cart-tab';
   static const checkOut = '/checkout';
+  static const trackOrder = '/track-order';
+  static const trackOrderDetails = '/track_order_details';
   static const profileTab = '/profile-tab';
   static const paymentWebView = '/paymentWebView';
 
@@ -136,6 +140,16 @@ abstract final class AppRouter {
         path: AppRoutes.search,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const SearchView(),
+      ),
+      GoRoute(
+        path: AppRoutes.trackOrder,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const TrackingView(),
+      ),
+      GoRoute(
+        path: AppRoutes.trackOrderDetails,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const TrackOrderDetails(),
       ),
       GoRoute(
         path: AppRoutes.successOrder,
