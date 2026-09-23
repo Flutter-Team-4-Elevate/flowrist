@@ -2,6 +2,9 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../config/base_state/base_state.dart';
 
+// differentiate null and not passed like freezed does
+const Object _unset = Object();
+
 enum ForgetPasswordStep { email, otp, resetPassword }
 
 enum ForgetPasswordOperation {
@@ -45,7 +48,7 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
     String? email,
     int? remainingSeconds,
     bool? isLoading,
-    String? errorMessage,
+    Object? errorMessage = _unset,
     dynamic data,
   }) {
     return ForgetPasswordState(
@@ -56,7 +59,9 @@ class ForgetPasswordState extends BaseState<dynamic> with Equatable {
       email: email ?? this.email,
       remainingSeconds: remainingSeconds ?? this.remainingSeconds,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage == _unset
+          ? this.errorMessage
+          : errorMessage as String?,
       data: data ?? this.data,
     );
   }
