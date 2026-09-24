@@ -29,26 +29,25 @@ class _OtpInputFieldState extends State<OtpInputField> {
 
     _controllers = List.generate(
       widget.length,
-          (index) => TextEditingController(),
+      (index) => TextEditingController(),
     );
 
     _focusNodes = List.generate(
       widget.length,
-          (index) =>
-          FocusNode(
-            onKeyEvent: (node, event) {
-              if (event is KeyDownEvent &&
-                  event.logicalKey == LogicalKeyboardKey.backspace &&
-                  _controllers[index].text.isEmpty &&
-                  index > 0) {
-                _focusNodes[index - 1].requestFocus();
-                _controllers[index - 1].clear();
-                _sendOtp();
-                return KeyEventResult.handled;
-              }
-              return KeyEventResult.ignored;
-            },
-          ),
+      (index) => FocusNode(
+        onKeyEvent: (node, event) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.backspace &&
+              _controllers[index].text.isEmpty &&
+              index > 0) {
+            _focusNodes[index - 1].requestFocus();
+            _controllers[index - 1].clear();
+            _sendOtp();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+      ),
     );
 
     _setInitialValue();
@@ -79,8 +78,7 @@ class _OtpInputFieldState extends State<OtpInputField> {
     final otp = value.replaceAll(RegExp(r'\D'), '');
 
     for (int i = 0; i < widget.length; i++) {
-      _controllers[i].text =
-      i < otp.length ? otp[i] : '';
+      _controllers[i].text = i < otp.length ? otp[i] : '';
     }
 
     _sendOtp();
@@ -115,41 +113,33 @@ class _OtpInputFieldState extends State<OtpInputField> {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(
-        widget.length,
-            (index) {
-          return SizedBox(
-            width: 48,
-            height: 56,
-            child: TextField(
-              controller: _controllers[index],
-              focusNode: _focusNodes[index],
-              keyboardType: widget.keyboardType,
-              textAlign: TextAlign.center,
-              maxLength: 1,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+      children: List.generate(widget.length, (index) {
+        return SizedBox(
+          width: 48,
+          height: 56,
+          child: TextField(
+            controller: _controllers[index],
+            focusNode: _focusNodes[index],
+            keyboardType: widget.keyboardType,
+            textAlign: TextAlign.center,
+            maxLength: 1,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              counterText: '',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-              decoration: InputDecoration(
-                counterText: '',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(
-                    width: 2,
-                  ),
-                ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: const BorderSide(width: 2),
               ),
-              onChanged: (value) {
-                _onChanged(value, index);
-              },
             ),
-          );
-        },
-      ),
+            onChanged: (value) {
+              _onChanged(value, index);
+            },
+          ),
+        );
+      }),
     );
   }
 }

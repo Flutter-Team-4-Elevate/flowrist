@@ -1,14 +1,25 @@
-import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:flowrist/config/session/session_service.dart';
+import 'package:flowrist/config/network/auth_interceptor.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:injectable/injectable.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 @module
 abstract class DioModule {
+  @Named(AppConstants.refreshDioName)
   @lazySingleton
-  Dio dio(SessionService sessionService) {
+  Dio refreshDio() {
+    return Dio(
+      BaseOptions(
+        baseUrl: Endpoints.baseUrl,
+        sendTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+      ),
+    );
+  }
+
+  @lazySingleton
+  Dio dio(AuthInterceptor authInterceptor) {
     final dio = Dio(
       BaseOptions(
         baseUrl: Endpoints.baseUrl,
@@ -17,37 +28,16 @@ abstract class DioModule {
       ),
     );
 
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) async {
-          try {
-            final token = await sessionService.getToken();
-
-            if (token.isNotEmpty) {
-              options.headers['Authorization'] = 'Bearer $token';
-            }
-          } catch (error, stackTrace) {
-            log(
-              'Failed to retrieve authentication token',
-              error: error,
-              stackTrace: stackTrace,
-            );
-          }
-
-          handler.next(options);
-        },
-      ),
-    );
+    dio.interceptors.add(authInterceptor);
 
     dio.interceptors.add(
-      PrettyDioLogger(
+      LogInterceptor(
+        request: true,
         requestHeader: true,
         requestBody: true,
         responseBody: true,
         responseHeader: false,
         error: true,
-        compact: true,
-        maxWidth: 90,
       ),
     );
 

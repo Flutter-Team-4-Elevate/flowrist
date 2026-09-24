@@ -229,10 +229,7 @@ class ForgetPasswordBloc
     emit(state.copyWith(remainingSeconds: state.remainingSeconds - 1));
   }
 
-  void _onOtpChanged(
-      OtpChangedEvent event,
-      Emitter<ForgetPasswordState> emit,
-      ) {
+  void _onOtpChanged(OtpChangedEvent event, Emitter<ForgetPasswordState> emit) {
     emit(state.copyWith(otp: event.otp));
   }
 

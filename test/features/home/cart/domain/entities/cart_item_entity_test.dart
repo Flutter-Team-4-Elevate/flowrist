@@ -68,9 +68,7 @@ void main() {
     });
 
     test('copyWith should update availability correctly', () {
-      final updated = tItemA.copyWith(
-        isAvailable: false,
-      );
+      final updated = tItemA.copyWith(isAvailable: false);
 
       expect(updated.isAvailable, isFalse);
       expect(updated.itemId, equals(tItemA.itemId));
@@ -78,18 +76,14 @@ void main() {
     });
 
     test('copyWith should update priceChanged correctly', () {
-      final updated = tItemA.copyWith(
-        priceChanged: true,
-      );
+      final updated = tItemA.copyWith(priceChanged: true);
 
       expect(updated.priceChanged, isTrue);
       expect(updated.unitPrice, equals(tItemA.unitPrice));
     });
 
     test('copyWith should update stockChanged correctly', () {
-      final updated = tItemA.copyWith(
-        stockChanged: true,
-      );
+      final updated = tItemA.copyWith(stockChanged: true);
 
       expect(updated.stockChanged, isTrue);
       expect(updated.availableStock, equals(tItemA.availableStock));

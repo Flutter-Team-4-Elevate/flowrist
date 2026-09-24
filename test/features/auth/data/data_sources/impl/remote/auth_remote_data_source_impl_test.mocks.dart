@@ -3,6 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i8;
 
 import 'package:flowrist/features/auth/data/client/auth_api_client.dart' as _i7;

@@ -29,21 +29,13 @@ class ProductCardShimmer extends StatelessWidget {
           Shimmer.fromColors(
             baseColor: AppColors.white60,
             highlightColor: Colors.grey.shade100,
-            child: Container(
-              width: 110,
-              height: 12,
-              color: Colors.white,
-            ),
+            child: Container(width: 110, height: 12, color: Colors.white),
           ),
           const SizedBox(height: 6),
           Shimmer.fromColors(
             baseColor: AppColors.white60,
             highlightColor: Colors.grey.shade100,
-            child: Container(
-              width: 60,
-              height: 14,
-              color: Colors.white,
-            ),
+            child: Container(width: 60, height: 14, color: Colors.white),
           ),
         ],
       ),

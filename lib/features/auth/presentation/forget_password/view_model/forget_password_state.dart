@@ -15,10 +15,11 @@ enum ForgetPasswordOperation {
   resetPassword,
 }
 
+// ignore: must_be_immutable
 class ForgetPasswordState extends BaseState<dynamic> with Equatable {
   final ForgetPasswordStep step;
   final ForgetPasswordOperation operation;
-  String otp;
+  final String otp;
   final String otpToken;
   final String? email;
   final int remainingSeconds;

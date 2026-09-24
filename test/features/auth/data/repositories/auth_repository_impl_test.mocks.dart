@@ -3,8 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+
 import 'dart:async' as _i8;
 
+import 'package:flowrist/config/device_id/device_id_services.dart' as _i13;
+import 'package:flowrist/config/notifications/notification_service.dart'
+    as _i14;
 import 'package:flowrist/config/session/session_service.dart' as _i11;
 import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_remote_data_source.dart'
     as _i7;
@@ -201,9 +205,32 @@ class MockSessionService extends _i1.Mock implements _i11.SessionService {
           as _i8.Future<bool>);
 
   @override
-  _i8.Future<void> saveToken(String? token, {bool? rememberMe = false}) =>
+  _i8.Future<void> saveTokens({
+    required String? token,
+    required String? refreshToken,
+    bool? rememberMe = true,
+  }) =>
       (super.noSuchMethod(
-            Invocation.method(#saveToken, [token], {#rememberMe: rememberMe}),
+            Invocation.method(#saveTokens, [], {
+              #token: token,
+              #refreshToken: refreshToken,
+              #rememberMe: rememberMe,
+            }),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> updateTokens({
+    required String? token,
+    required String? refreshToken,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateTokens, [], {
+              #token: token,
+              #refreshToken: refreshToken,
+            }),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )
@@ -220,9 +247,88 @@ class MockSessionService extends _i1.Mock implements _i11.SessionService {
           as _i8.Future<String>);
 
   @override
+  _i8.Future<String> getRefreshToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getRefreshToken, []),
+            returnValue: _i8.Future<String>.value(
+              _i12.dummyValue<String>(
+                this,
+                Invocation.method(#getRefreshToken, []),
+              ),
+            ),
+          )
+          as _i8.Future<String>);
+
+  @override
   _i8.Future<void> clearSession() =>
       (super.noSuchMethod(
             Invocation.method(#clearSession, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+}
+
+/// A class which mocks [DeviceIdService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDeviceIdService extends _i1.Mock implements _i13.DeviceIdService {
+  MockDeviceIdService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Future<String> getDeviceId() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDeviceId, []),
+            returnValue: _i8.Future<String>.value(
+              _i12.dummyValue<String>(
+                this,
+                Invocation.method(#getDeviceId, []),
+              ),
+            ),
+          )
+          as _i8.Future<String>);
+}
+
+/// A class which mocks [PushNotificationsServices].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPushNotificationsServices extends _i1.Mock
+    implements _i14.PushNotificationsServices {
+  MockPushNotificationsServices() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i8.Future<String?> getFcmToken() =>
+      (super.noSuchMethod(
+            Invocation.method(#getFcmToken, []),
+            returnValue: _i8.Future<String?>.value(),
+          )
+          as _i8.Future<String?>);
+
+  @override
+  _i8.Future<void> init() =>
+      (super.noSuchMethod(
+            Invocation.method(#init, []),
+            returnValue: _i8.Future<void>.value(),
+            returnValueForMissingStub: _i8.Future<void>.value(),
+          )
+          as _i8.Future<void>);
+
+  @override
+  _i8.Future<bool> requestPermission() =>
+      (super.noSuchMethod(
+            Invocation.method(#requestPermission, []),
+            returnValue: _i8.Future<bool>.value(false),
+          )
+          as _i8.Future<bool>);
+
+  @override
+  _i8.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
             returnValue: _i8.Future<void>.value(),
             returnValueForMissingStub: _i8.Future<void>.value(),
           )
