@@ -42,4 +42,17 @@ class AddressesRepositoryImpl implements AddressesRepository {
         return ErrorResponse(response.errorMessage);
     }
   }
+
+  @override
+  Future<BaseResponse<String>> deleteAddress(String addressId) async {
+    final response = await _remoteDataSource.deleteAddress(addressId);
+
+    switch (response) {
+      case SuccessResponse<String>():
+        return SuccessResponse(response.data);
+
+      case ErrorResponse<String>():
+        return ErrorResponse(response.errorMessage);
+    }
+  }
 }

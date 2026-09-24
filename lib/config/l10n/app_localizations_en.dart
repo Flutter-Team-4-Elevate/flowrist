@@ -1,6 +1,5 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
-
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -439,4 +438,216 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clear => 'Clear';
+
+  @override
+  String get activeSessions => 'Active Sessions';
+
+  @override
+  String get noActiveSessions => 'No active sessions found';
+
+  @override
+  String get thisDevice => 'This Device';
+
+  @override
+  String get activeNow => 'Active Now';
+
+  @override
+  String get revoke => 'Revoke';
+
+  @override
+  String get logOut => 'Logout';
+
+  @override
+  String get logOutEverywhere => 'Log out everywhere';
+
+  @override
+  String get revokeSessionTitle => 'Revoke Session';
+
+  @override
+  String get revokeSessionConfirmation =>
+      'Are you sure you want to log out from this device?';
+
+  @override
+  String get revokeAllTitle => 'Log out everywhere';
+
+  @override
+  String get revokeAllConfirmation =>
+      'This will revoke all active sessions except your current device. Continue?';
+
+  @override
+  String get sessionRevokedSuccessfully => 'Session revoked successfully';
+
+  @override
+  String get currentSession => 'Current Session';
+
+  @override
+  String get allSessionsRevokedSuccessfully =>
+      'All sessions revoked successfully';
+
+  @override
+  String get myOrders => 'My orders';
+
+  @override
+  String get active => 'Active';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get trackOrder => 'Track order';
+
+  @override
+  String get reorder => 'Reorder';
+
+  @override
+  String get deliveredOn => 'Delivered on';
+
+  @override
+  String get noOrdersFound => 'No orders found';
+
+  @override
+  String get orderNumberPrefix => 'Order number:';
+
+  @override
+  String get orderDetails => 'Order Details';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get paymentMethod => 'Payment Method';
+
+  @override
+  String get paymentStatus => 'Payment Status';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get deliveryTime => 'Delivery time';
+
+  @override
+  String get instantArriveBy => 'Instant, Arrive by';
+
+  @override
+  String get deliveryAddress => 'Delivery address';
+
+  @override
+  String get addNew => 'Add New';
+
+  @override
+  String get cashOnDelivery => 'Cash on delivery';
+
+  @override
+  String get creditCard => 'Credit card';
+
+  @override
+  String get itIsAGift => 'It is a gift';
+
+  @override
+  String get enterTheName => 'Enter the name';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get enterThePhoneNumber => 'Enter the phone number';
+
+  @override
+  String get placeOrder => 'Place order';
+
+  @override
+  String get couldnotopenpaymentpage => 'Could not open payment page';
+
+  @override
+  String get paymentsessionURLismissing => 'Payment session URL is missing';
+
+  @override
+  String get invalidpaymentURL => 'Invalid payment URL';
+
+  @override
+  String get pleaseselectapaymentmethod => 'Please select a payment method';
+
+  @override
+  String get pleaseenterrecipientname => 'Please enter recipient name';
+
+  @override
+  String get pleaseenterrecipientphone => 'Please enter recipient phone';
+
+  @override
+  String get notification => 'Notification';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get current_language => 'English';
+
+  @override
+  String get about_us => 'About us';
+
+  @override
+  String get terms_and_conditions => 'Terms & conditions';
+
+  @override
+  String get app_version => 'v 6.3.0 - (446)';
+
+  @override
+  String get savedAddress => 'Saved address';
+
+  @override
+  String get orderDate => 'Order date';
+
+  @override
+  String get orderIdRequired => 'Order ID is required';
+
+  @override
+  String get confirmLogout => 'Confirm logout!!';
+
+  @override
+  String get changeLanguage => 'Change Language';
+
+  @override
+  String get arabic => 'Arabic';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get allPricesIncludeTax => 'All prices include tax';
+
+  @override
+  String get connectionErrorMessage =>
+      'Please check your internet connection and try again.';
+
+  @override
+  String get noAddressSelected => 'No address selected';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get editProfile => 'Edit profile';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get currentPassword => 'Current password';
+
+  @override
+  String get confirmNewPassword => 'Confirm password';
+
+  @override
+  String get invalidPassword => 'Invalid password';
+
+  @override
+  String get passwordChangedSuccess =>
+      'Password changed successfully. Please log in again.';
 }

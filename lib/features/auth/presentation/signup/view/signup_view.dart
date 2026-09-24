@@ -18,6 +18,7 @@ class SignUpView extends StatelessWidget {
       create: (_) => getIt<SignUpViewModel>(),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text(localizations.signup, style: AppStyles.medium20),
           titleSpacing: AppDimensions.defaultScreenPadding,
         ),

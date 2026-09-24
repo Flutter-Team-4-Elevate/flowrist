@@ -9,4 +9,9 @@ abstract interface class AddAddressRepository {
   Future<BaseResponse<List<CityEntity>>> getCities(int governorateId);
 
   Future<BaseResponse<void>> saveAddress(AddAddressRequestModel request);
+
+  Future<BaseResponse<void>> updateAddress(
+    String addressId,
+    AddAddressRequestModel request,
+  );
 }

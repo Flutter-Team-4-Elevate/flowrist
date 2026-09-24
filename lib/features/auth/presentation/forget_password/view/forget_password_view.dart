@@ -1,5 +1,5 @@
-import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/forget_password_otp_view.dart';
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/features/auth/presentation/forget_password/widgets/reset_password_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

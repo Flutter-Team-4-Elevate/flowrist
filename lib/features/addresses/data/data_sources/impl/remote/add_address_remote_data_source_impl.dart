@@ -26,4 +26,9 @@ class AddAddressRemoteDataSourceImpl implements AddAddressRemoteDataSource {
   Future<void> saveAddress(AddAddressRequestModel request) {
     return _apiClient.saveAddress(request);
   }
+
+  @override
+  Future<void> updateAddress(String addressId, AddAddressRequestModel request) {
+    return _apiClient.updateAddress(addressId, request);
+  }
 }

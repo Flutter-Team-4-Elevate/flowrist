@@ -87,7 +87,7 @@ class _LoginViewState extends State<LoginView> {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: Text(localizations.login)),
       body: SafeArea(
         child: ListView(
           children: [
@@ -116,8 +116,8 @@ class _LoginViewState extends State<LoginView> {
                       valueListenable: obscurePassword,
                       builder: (context, isObscure, child) {
                         return AppTextField(
-                          label: "Password",
-                          hint: "Enter your password",
+                          label: localizations.password,
+                          hint: localizations.passwordHint,
                           controller: passwordController,
                           obscureText: isObscure,
                           suffixIcon: IconButton(
@@ -185,14 +185,16 @@ class _LoginViewState extends State<LoginView> {
                             text: localizations.login,
                             isLoading: state.login.isLoading,
                             onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                context.read<LoginCubit>().doEvent(
-                                  LoginSubmitted(
-                                    email: emailController.text.trim(),
-                                    password: passwordController.text,
-                                  ),
-                                );
+                              if (!_formKey.currentState!.validate()) {
+                                return;
                               }
+
+                              context.read<LoginCubit>().doEvent(
+                                LoginSubmitted(
+                                  email: emailController.text.trim(),
+                                  password: passwordController.text,
+                                ),
+                              );
                             },
                           ),
                         );

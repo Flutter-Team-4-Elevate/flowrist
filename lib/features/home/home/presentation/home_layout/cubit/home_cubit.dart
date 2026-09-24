@@ -30,6 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
     );
 
     final response = await _getHomeLayoutUseCase();
+    if (isClosed) return;
     switch (response) {
       case SuccessResponse<List<HomeLayoutEntity>>():
         emit(

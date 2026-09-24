@@ -1,0 +1,50 @@
+require 'dotenv'
+Dotenv.load(File.join(File.dirname(__FILE__), '.env'))
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Build APK and distribute to Firebase App Distribution"
+  lane :firebase_distribution do
+
+    # Clean Flutter project
+    sh("flutter clean")
+
+    # Get dependencies
+    sh("flutter pub get")
+
+    # Build release APK
+    sh("flutter build apk --release")
+
+    # Firebase service account JSON
+    credentials_path = File.expand_path(
+      ENV["FIREBASE_CREDENTIALS_PATH"],
+      File.dirname(__FILE__)
+    )
+
+    # Generated APK
+    apk_path = File.expand_path(
+      "../../build/app/outputs/flutter-apk/app-release.apk",
+      File.dirname(__FILE__)
+    )
+
+    puts "========================================"
+    puts "CREDENTIALS PATH: #{credentials_path}"
+    puts "FILE EXISTS? #{File.exist?(credentials_path)}"
+    puts "APK PATH: #{apk_path}"
+    puts "APK EXISTS? #{File.exist?(apk_path)}"
+    puts "========================================"
+
+    # Upload APK to Firebase App Distribution
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID"],
+      groups: ENV["FIREBASE_TESTER_GROUP"],
+      release_notes: "New Flowrist release",
+      apk_path: apk_path,
+      service_credentials_file: credentials_path
+    )
+
+  end
+
+end
