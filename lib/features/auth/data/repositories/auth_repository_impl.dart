@@ -5,9 +5,6 @@ import 'package:flowrist/features/auth/data/data_sources/contract/remote/auth_re
 import 'package:flowrist/features/auth/data/mapper/auth_mapper.dart';
 import 'package:flowrist/features/auth/data/models/register_request_dto.dart';
 import 'package:flowrist/features/auth/data/models/verify_otp_response_dto.dart';
-import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
-import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/auth/data/request/login_request.dart';
 import 'package:flowrist/features/auth/domain/entities/login_entity.dart';
 import 'package:flowrist/features/auth/domain/entities/user_entity.dart';
@@ -96,8 +93,8 @@ class AuthRepositoryImpl implements AuthRepository {
     required String otp,
   }) async {
     try {
-      VerifyOtpResponseDto verifyOtpResponse =
-      await _remoteDataSource.verifyOtp(email: email, otp: otp);
+      VerifyOtpResponseDto verifyOtpResponse = await _remoteDataSource
+          .verifyOtp(email: email, otp: otp);
 
       return SuccessResponse<Map<String, dynamic>>(verifyOtpResponse.data);
     } on Exception catch (exception) {

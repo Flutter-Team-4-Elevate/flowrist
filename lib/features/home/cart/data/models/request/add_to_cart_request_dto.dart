@@ -7,10 +7,7 @@ class AddToCartRequestDto {
   final String productId;
   final int quantity;
 
-  const AddToCartRequestDto({
-    required this.productId,
-    required this.quantity,
-  });
+  const AddToCartRequestDto({required this.productId, required this.quantity});
 
   Map<String, dynamic> toJson() => _$AddToCartRequestDtoToJson(this);
 }

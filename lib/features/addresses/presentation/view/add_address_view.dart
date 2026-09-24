@@ -46,7 +46,8 @@ class _AddAddressViewState extends State<AddAddressView>
     final localizations = AppLocalizations.of(context)!;
 
     return BlocListener<AddAddressViewModel, AddAddressState>(
-      listenWhen: (previous, current) => previous.saveAddressState != current.saveAddressState,
+      listenWhen: (previous, current) =>
+          previous.saveAddressState != current.saveAddressState,
       listener: (context, state) {
         final saveState = state.saveAddressState;
 

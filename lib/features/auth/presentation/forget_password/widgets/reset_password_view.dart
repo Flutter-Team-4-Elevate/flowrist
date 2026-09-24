@@ -32,10 +32,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
     super.dispose();
   }
 
-  String? _validatePassword(
-      String? value,
-      AppLocalizations localizations,
-      ) {
+  String? _validatePassword(String? value, AppLocalizations localizations) {
     if (value == null || value.isEmpty) {
       return localizations.enterNewPassword;
     }
@@ -56,13 +53,11 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
 
     return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
       listener: (context, state) {
-        if (!state.isLoading && 
-        state.operation == ForgetPasswordOperation.resetPassword) {
+        if (!state.isLoading &&
+            state.operation == ForgetPasswordOperation.resetPassword) {
           if (state.errorMessage == null || state.errorMessage!.isEmpty) {
             AppRouter.router.go(AppRoutes.login);
-          } else {
-            
-          }
+          } else {}
         }
       },
       child: Form(
@@ -71,26 +66,22 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           padding: const EdgeInsets.all(24),
           children: [
             const SizedBox(height: 40),
-      
+
             Text(
               localizations.createNewPassword,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
-      
+
             const SizedBox(height: 40),
-      
+
             AppTextField(
               label: localizations.newPassword,
               hint: localizations.enterNewPassword,
               controller: _passwordController,
               localizations: localizations,
               obscureText: _obscurePassword,
-              validator: (value) =>
-                  _validatePassword(value, localizations),
+              validator: (value) => _validatePassword(value, localizations),
               suffixIcon: IconButton(
                 onPressed: () {
                   setState(() {
@@ -104,9 +95,9 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
               ),
             ),
-      
+
             const SizedBox(height: 20),
-      
+
             AppTextField(
               label: localizations.confirmPassword,
               hint: localizations.confirmYourPassword,
@@ -117,18 +108,17 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 if (value == null || value.isEmpty) {
                   return localizations.confirmYourPassword;
                 }
-      
+
                 if (value != _passwordController.text) {
                   return localizations.passwordsDoNotMatch;
                 }
-      
+
                 return null;
               },
               suffixIcon: IconButton(
                 onPressed: () {
                   setState(() {
-                    _obscureConfirmPassword =
-                    !_obscureConfirmPassword;
+                    _obscureConfirmPassword = !_obscureConfirmPassword;
                   });
                 },
                 icon: Icon(
@@ -138,16 +128,15 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                 ),
               ),
             ),
-      
+
             const SizedBox(height: 24),
-      
+
             BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
               builder: (context, state) {
                 final isLoading =
                     state.isLoading &&
-                        state.operation ==
-                            ForgetPasswordOperation.resetPassword;
-      
+                    state.operation == ForgetPasswordOperation.resetPassword;
+
                 return SizedBox(
                   width: double.infinity,
                   height: 52,
@@ -155,24 +144,20 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                     onPressed: isLoading
                         ? null
                         : () {
-                      if (!_formKey.currentState!.validate()) {
-                        return;
-                      }
-      
-                      context.read<ForgetPasswordBloc>().add(
-                        ResetPasswordEvent(
-                          _passwordController.text,
-                        ),
-                      );
-                    },
+                            if (!_formKey.currentState!.validate()) {
+                              return;
+                            }
+
+                            context.read<ForgetPasswordBloc>().add(
+                              ResetPasswordEvent(_passwordController.text),
+                            );
+                          },
                     child: isLoading
                         ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
-                    )
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : Text(localizations.resetPassword),
                   ),
                 );

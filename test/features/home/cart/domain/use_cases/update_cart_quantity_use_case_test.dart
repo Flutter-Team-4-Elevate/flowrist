@@ -1,12 +1,11 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/cart/data/models/request/update_cart_item_request_dto.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_entity.dart';
 import 'package:flowrist/features/home/cart/domain/repositories/cart_repository.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/update_cart_quantity_use_case.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([CartRepository])
 import 'update_cart_quantity_use_case_test.mocks.dart';
@@ -15,9 +14,7 @@ void main() {
   late MockCartRepository mockRepository;
   late UpdateCartQuantityUseCase useCase;
 
-  const tRequest = UpdateCartItemRequestDto(
-    quantity: 4,
-  );
+  const tRequest = UpdateCartItemRequestDto(quantity: 4);
 
   const tCart = CartEntity(
     cartId: 'cart_123',
@@ -31,9 +28,7 @@ void main() {
   );
 
   setUpAll(() {
-    provideDummy<BaseResponse<CartEntity>>(
-      SuccessResponse<CartEntity>(tCart),
-    );
+    provideDummy<BaseResponse<CartEntity>>(SuccessResponse<CartEntity>(tCart));
   });
 
   setUp(() {
@@ -51,15 +46,10 @@ void main() {
             itemId: 'item_1',
             request: tRequest,
           ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCart),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCart));
 
         // Act
-        final result = await useCase(
-          itemId: 'item_1',
-          request: tRequest,
-        );
+        final result = await useCase(itemId: 'item_1', request: tRequest);
 
         // Assert
         expect(result, isA<SuccessResponse<CartEntity>>());

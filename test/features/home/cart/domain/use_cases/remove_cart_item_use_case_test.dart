@@ -1,11 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_entity.dart';
 import 'package:flowrist/features/home/cart/domain/repositories/cart_repository.dart';
 import 'package:flowrist/features/home/cart/domain/use_cases/remove_cart_item_use_case.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 @GenerateMocks([CartRepository])
 import 'remove_cart_item_use_case_test.mocks.dart';
@@ -26,9 +25,7 @@ void main() {
   );
 
   setUpAll(() {
-    provideDummy<BaseResponse<CartEntity>>(
-      SuccessResponse<CartEntity>(tCart),
-    );
+    provideDummy<BaseResponse<CartEntity>>(SuccessResponse<CartEntity>(tCart));
   });
 
   setUp(() {
@@ -43,9 +40,7 @@ void main() {
         // Arrange
         when(
           mockRepository.removeCartItem('item_1'),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCart),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCart));
 
         // Act
         final result = await useCase('item_1');
@@ -64,9 +59,7 @@ void main() {
         expect(data.total, equals(50));
         expect(data.hasChanges, isFalse);
 
-        verify(
-          mockRepository.removeCartItem('item_1'),
-        ).called(1);
+        verify(mockRepository.removeCartItem('item_1')).called(1);
 
         verifyNoMoreInteractions(mockRepository);
       },

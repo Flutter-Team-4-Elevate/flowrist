@@ -1,7 +1,6 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/home/data/data_sources/contract/remote/home_remote_data_source.dart';
 import 'package:flowrist/features/home/home/data/models/home_model/home_response_model.dart';
-
 import 'package:injectable/injectable.dart';
 
 import '../../domain/entities/home_entities/home_layout_entity.dart';
@@ -19,7 +18,7 @@ class HomeRepositoryImpl implements HomeRepository {
     switch (response) {
       case SuccessResponse<List<HomeResponseModel>>():
         return SuccessResponse(
-          response.data?.map((e) => e.toEntity()).toList()??[],
+          response.data?.map((e) => e.toEntity()).toList() ?? [],
         );
       case ErrorResponse<List<HomeResponseModel>>():
         return ErrorResponse(response.errorMessage);

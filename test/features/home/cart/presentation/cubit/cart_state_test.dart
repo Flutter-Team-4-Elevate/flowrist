@@ -16,11 +16,11 @@ class CartState extends Equatable {
   });
 
   CartState.initial()
-      : this(
-          cart: BaseState<CartEntity>.initial(),
-          addingProductIds: const {},
-          loadingItemIds: const {},
-        );
+    : this(
+        cart: BaseState<CartEntity>.initial(),
+        addingProductIds: const {},
+        loadingItemIds: const {},
+      );
 
   CartState copyWith({
     BaseState<CartEntity>? cart,
@@ -40,9 +40,7 @@ class CartState extends Equatable {
     if (cartData == null) return null;
 
     try {
-      return cartData.items.firstWhere(
-        (item) => item.productId == productId,
-      );
+      return cartData.items.firstWhere((item) => item.productId == productId);
     } catch (_) {
       return null;
     }
@@ -67,9 +65,5 @@ class CartState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        cart,
-        addingProductIds,
-        loadingItemIds,
-      ];
+  List<Object?> get props => [cart, addingProductIds, loadingItemIds];
 }

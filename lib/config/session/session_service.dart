@@ -10,31 +10,21 @@ class SessionService {
   SessionService(this._secureStorage);
 
   Future<void> setRememberMe(bool value) async {
-    await _secureStorage.save(
-      AppConstants.rememberMeKey,
-      value.toString(),
-    );
+    await _secureStorage.save(AppConstants.rememberMeKey, value.toString());
   }
 
   Future<bool> isRemembered() async {
-    final value = await _secureStorage.get(
-      AppConstants.rememberMeKey,
-    );
+    final value = await _secureStorage.get(AppConstants.rememberMeKey);
 
     return value == 'true';
   }
 
   Future<void> setGuestMode(bool value) async {
-    await _secureStorage.save(
-      AppConstants.guestModeKey,
-      value.toString(),
-    );
-  } 
+    await _secureStorage.save(AppConstants.guestModeKey, value.toString());
+  }
 
   Future<bool> isGuest() async {
-    final value = await _secureStorage.get(
-      AppConstants.guestModeKey,
-    );
+    final value = await _secureStorage.get(AppConstants.guestModeKey);
 
     return value == 'true';
   }
@@ -42,14 +32,9 @@ class SessionService {
   Future<void> saveToken(String token, {bool rememberMe = false}) async {
     _inMemoryToken = token;
     if (rememberMe) {
-      await _secureStorage.save(
-        AppConstants.storageTokenKey,
-        token,
-      );
+      await _secureStorage.save(AppConstants.storageTokenKey, token);
     } else {
-      await _secureStorage.delete(
-        AppConstants.storageTokenKey,
-      );
+      await _secureStorage.delete(AppConstants.storageTokenKey);
     }
   }
 
@@ -57,9 +42,7 @@ class SessionService {
     if (_inMemoryToken?.isNotEmpty == true) {
       return _inMemoryToken!;
     }
-    final storedToken = await _secureStorage.get(
-      AppConstants.storageTokenKey,
-    );
+    final storedToken = await _secureStorage.get(AppConstants.storageTokenKey);
     if (storedToken.isNotEmpty) {
       _inMemoryToken = storedToken;
     }
@@ -68,16 +51,10 @@ class SessionService {
 
   Future<void> clearSession() async {
     _inMemoryToken = null;
-    await _secureStorage.delete(
-      AppConstants.storageTokenKey,
-    );
+    await _secureStorage.delete(AppConstants.storageTokenKey);
 
-    await _secureStorage.delete(
-      AppConstants.rememberMeKey,
-    );
+    await _secureStorage.delete(AppConstants.rememberMeKey);
 
-    await _secureStorage.delete(
-      AppConstants.guestModeKey,
-    );
+    await _secureStorage.delete(AppConstants.guestModeKey);
   }
 }

@@ -44,10 +44,8 @@ void main() {
   group('register', () {
     test(
       'should call apiClient.register and return RegisterResponseDto on success',
-          () async {
-        when(
-          mockApiClient.register(any),
-        ).thenAnswer((_) async => tResponseDto);
+      () async {
+        when(mockApiClient.register(any)).thenAnswer((_) async => tResponseDto);
 
         final result = await remoteDataSource.register(tRequestDto);
 
@@ -58,12 +56,10 @@ void main() {
     );
 
     test('should rethrow exception when apiClient.register fails', () async {
-      when(
-        mockApiClient.register(any),
-      ).thenThrow(Exception('Server error'));
+      when(mockApiClient.register(any)).thenThrow(Exception('Server error'));
 
       expect(
-            () => remoteDataSource.register(tRequestDto),
+        () => remoteDataSource.register(tRequestDto),
         throwsA(isA<Exception>()),
       );
 
@@ -81,20 +77,18 @@ void main() {
 
     test(
       'should call apiClient.forgotPassword with correct email and return response',
-          () async {
+      () async {
         when(
           mockApiClient.forgotPassword(any),
         ).thenAnswer((_) async => response);
 
-        final result = await remoteDataSource.forgotPassword(
-          email: email,
-        );
+        final result = await remoteDataSource.forgotPassword(email: email);
 
         expect(result, equals(response));
 
-        final captured = verify(
-          mockApiClient.forgotPassword(captureAny),
-        ).captured.single as ForgetPasswordRequestDto;
+        final captured =
+            verify(mockApiClient.forgotPassword(captureAny)).captured.single
+                as ForgetPasswordRequestDto;
 
         expect(captured.email, equals(email));
 
@@ -104,13 +98,13 @@ void main() {
 
     test(
       'should rethrow exception when apiClient.forgotPassword fails',
-          () async {
+      () async {
         when(
           mockApiClient.forgotPassword(any),
         ).thenThrow(Exception('Server error'));
 
         expect(
-              () => remoteDataSource.forgotPassword(email: email),
+          () => remoteDataSource.forgotPassword(email: email),
           throwsA(isA<Exception>()),
         );
 
@@ -130,21 +124,16 @@ void main() {
 
     test(
       'should call apiClient.verifyOtp with correct email and otp',
-          () async {
-        when(
-          mockApiClient.verifyOtp(any),
-        ).thenAnswer((_) async => response);
+      () async {
+        when(mockApiClient.verifyOtp(any)).thenAnswer((_) async => response);
 
-        final result = await remoteDataSource.verifyOtp(
-          email: email,
-          otp: otp,
-        );
+        final result = await remoteDataSource.verifyOtp(email: email, otp: otp);
 
         expect(result, equals(response));
 
-        final captured = verify(
-          mockApiClient.verifyOtp(captureAny),
-        ).captured.single as VerifyOtpRequestDto;
+        final captured =
+            verify(mockApiClient.verifyOtp(captureAny)).captured.single
+                as VerifyOtpRequestDto;
 
         expect(captured.email, equals(email));
         expect(captured.otp, equals(otp));
@@ -153,24 +142,16 @@ void main() {
       },
     );
 
-    test(
-      'should rethrow exception when apiClient.verifyOtp fails',
-          () async {
-        when(
-          mockApiClient.verifyOtp(any),
-        ).thenThrow(Exception('Server error'));
+    test('should rethrow exception when apiClient.verifyOtp fails', () async {
+      when(mockApiClient.verifyOtp(any)).thenThrow(Exception('Server error'));
 
-        expect(
-              () => remoteDataSource.verifyOtp(
-            email: email,
-            otp: otp,
-          ),
-          throwsA(isA<Exception>()),
-        );
+      expect(
+        () => remoteDataSource.verifyOtp(email: email, otp: otp),
+        throwsA(isA<Exception>()),
+      );
 
-        verify(mockApiClient.verifyOtp(any)).called(1);
-      },
-    );
+      verify(mockApiClient.verifyOtp(any)).called(1);
+    });
   });
 
   group('resetPassword', () {
@@ -185,7 +166,7 @@ void main() {
 
     test(
       'should call apiClient.resetPassword with correct parameters',
-          () async {
+      () async {
         when(
           mockApiClient.resetPassword(any),
         ).thenAnswer((_) async => response);
@@ -198,9 +179,9 @@ void main() {
 
         expect(result, equals(response));
 
-        final captured = verify(
-          mockApiClient.resetPassword(captureAny),
-        ).captured.single as ResetPasswordRequestDto;
+        final captured =
+            verify(mockApiClient.resetPassword(captureAny)).captured.single
+                as ResetPasswordRequestDto;
 
         expect(captured.otpToken, equals(otpToken));
         expect(captured.password, equals(password));
@@ -212,16 +193,16 @@ void main() {
 
     test(
       'should rethrow exception when apiClient.resetPassword fails',
-          () async {
+      () async {
         when(
           mockApiClient.resetPassword(any),
         ).thenThrow(Exception('Server error'));
 
         expect(
-              () => remoteDataSource.resetPassword(
-                otpToken: otpToken,
-                password: password,
-                confirmPassword: confirmPassword,
+          () => remoteDataSource.resetPassword(
+            otpToken: otpToken,
+            password: password,
+            confirmPassword: confirmPassword,
           ),
           throwsA(isA<Exception>()),
         );

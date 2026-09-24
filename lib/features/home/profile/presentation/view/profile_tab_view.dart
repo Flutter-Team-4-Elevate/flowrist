@@ -21,15 +21,15 @@ class ProfileTabView extends StatelessWidget {
 
             if (!context.mounted) return;
 
-        Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(
-    builder: (_) => BlocProvider(
-      create: (_) => getIt<LoginCubit>(),
-      child: const LoginView(),
-    ),
-  ),
-);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                  create: (_) => getIt<LoginCubit>(),
+                  child: const LoginView(),
+                ),
+              ),
+            );
           },
           child: Text("data"),
         ),

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'address_model.dart';
 
 part 'address_api_response_model.g.dart';
@@ -21,11 +22,8 @@ class AddressApiResponseModel {
     this.errors,
   });
 
-  factory AddressApiResponseModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory AddressApiResponseModel.fromJson(Map<String, dynamic> json) =>
       _$AddressApiResponseModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$AddressApiResponseModelToJson(this);
+  Map<String, dynamic> toJson() => _$AddressApiResponseModelToJson(this);
 }

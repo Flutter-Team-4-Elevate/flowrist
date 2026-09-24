@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/home/cart/data/models/request/add_to_cart_request_dto.dart';
 import 'package:flowrist/features/home/cart/data/models/request/update_cart_item_request_dto.dart';
@@ -38,10 +39,7 @@ class CartCubit extends Cubit<CartState> {
         await _addToCart(event.productId);
 
       case ChangeCartQuantityEvent():
-        _changeQuantity(
-          itemId: event.itemId,
-          quantity: event.quantity,
-        );
+        _changeQuantity(itemId: event.itemId, quantity: event.quantity);
 
       case RemoveCartItemEvent():
         await _removeCartItem(event.itemId);
@@ -51,10 +49,7 @@ class CartCubit extends Cubit<CartState> {
   Future<void> _getCart() async {
     emit(
       state.copyWith(
-        cart: state.cart.copyWith(
-          isLoading: true,
-          errorMessage: null,
-        ),
+        cart: state.cart.copyWith(isLoading: true, errorMessage: null),
       ),
     );
 
@@ -85,24 +80,18 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> _addToCart(String productId) async {
-    final addingProducts = Set<String>.from(
-      state.addingProductIds,
-    )..add(productId);
+    final addingProducts = Set<String>.from(state.addingProductIds)
+      ..add(productId);
 
     emit(
       state.copyWith(
         addingProductIds: addingProducts,
-        cart: state.cart.copyWith(
-          errorMessage: null,
-        ),
+        cart: state.cart.copyWith(errorMessage: null),
       ),
     );
 
     final result = await _addToCartUseCase(
-      AddToCartRequestDto(
-        productId: productId,
-        quantity: 1,
-      ),
+      AddToCartRequestDto(productId: productId, quantity: 1),
     );
 
     switch (result) {
@@ -143,9 +132,8 @@ class CartCubit extends Cubit<CartState> {
         }
 
       case ErrorResponse<void>():
-        final updatedAddingProducts = Set<String>.from(
-          state.addingProductIds,
-        )..remove(productId);
+        final updatedAddingProducts = Set<String>.from(state.addingProductIds)
+          ..remove(productId);
 
         emit(
           state.copyWith(
@@ -159,17 +147,12 @@ class CartCubit extends Cubit<CartState> {
     }
   }
 
-  void _changeQuantity({
-    required String itemId,
-    required int quantity,
-  }) {
+  void _changeQuantity({required String itemId, required int quantity}) {
     final cart = state.cart.data;
 
     if (cart == null) return;
 
-    final itemIndex = cart.items.indexWhere(
-      (item) => item.itemId == itemId,
-    );
+    final itemIndex = cart.items.indexWhere((item) => item.itemId == itemId);
 
     if (itemIndex == -1) return;
 
@@ -194,41 +177,25 @@ class CartCubit extends Cubit<CartState> {
 
     final updatedItems = List<CartItemEntity>.from(cart.items);
 
-    updatedItems[itemIndex] = currentItem.copyWith(
-      quantity: quantity,
-    );
+    updatedItems[itemIndex] = currentItem.copyWith(quantity: quantity);
 
-    final updatedCart = _calculateCart(
-      cart: cart,
-      items: updatedItems,
-    );
+    final updatedCart = _calculateCart(cart: cart, items: updatedItems);
 
     emit(
       state.copyWith(
-        cart: state.cart.copyWith(
-          data: updatedCart,
-          errorMessage: null,
-        ),
+        cart: state.cart.copyWith(data: updatedCart, errorMessage: null),
       ),
     );
 
     _quantityTimers[itemId] = Timer(
       const Duration(milliseconds: 400),
       () async {
-        final loadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..add(itemId);
+        final loadingItems = Set<String>.from(state.loadingItemIds)
+          ..add(itemId);
 
-        emit(
-          state.copyWith(
-            loadingItemIds: loadingItems,
-          ),
-        );
+        emit(state.copyWith(loadingItemIds: loadingItems));
 
-        await _updateQuantityOnServer(
-          itemId: itemId,
-          quantity: quantity,
-        );
+        await _updateQuantityOnServer(itemId: itemId, quantity: quantity);
       },
     );
   }
@@ -239,16 +206,13 @@ class CartCubit extends Cubit<CartState> {
   }) async {
     final result = await _updateCartQuantityUseCase(
       itemId: itemId,
-      request: UpdateCartItemRequestDto(
-        quantity: quantity,
-      ),
+      request: UpdateCartItemRequestDto(quantity: quantity),
     );
 
     switch (result) {
       case SuccessResponse<CartEntity>():
-        final loadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
+        final loadingItems = Set<String>.from(state.loadingItemIds)
+          ..remove(itemId);
 
         emit(
           state.copyWith(
@@ -273,16 +237,12 @@ class CartCubit extends Cubit<CartState> {
     _quantityTimers[itemId]?.cancel();
     _quantityTimers.remove(itemId);
 
-    final loadingItems = Set<String>.from(
-      state.loadingItemIds,
-    )..add(itemId);
+    final loadingItems = Set<String>.from(state.loadingItemIds)..add(itemId);
 
     emit(
       state.copyWith(
         loadingItemIds: loadingItems,
-        cart: state.cart.copyWith(
-          errorMessage: null,
-        ),
+        cart: state.cart.copyWith(errorMessage: null),
       ),
     );
 
@@ -290,9 +250,8 @@ class CartCubit extends Cubit<CartState> {
 
     switch (result) {
       case SuccessResponse<CartEntity>():
-        final updatedLoadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
+        final updatedLoadingItems = Set<String>.from(state.loadingItemIds)
+          ..remove(itemId);
 
         emit(
           state.copyWith(
@@ -306,9 +265,8 @@ class CartCubit extends Cubit<CartState> {
         );
 
       case ErrorResponse<CartEntity>():
-        final updatedLoadingItems = Set<String>.from(
-          state.loadingItemIds,
-        )..remove(itemId);
+        final updatedLoadingItems = Set<String>.from(state.loadingItemIds)
+          ..remove(itemId);
 
         emit(
           state.copyWith(
@@ -328,9 +286,7 @@ class CartCubit extends Cubit<CartState> {
   }) async {
     final result = await _getCartUseCase();
 
-    final loadingItems = Set<String>.from(
-      state.loadingItemIds,
-    )..remove(itemId);
+    final loadingItems = Set<String>.from(state.loadingItemIds)..remove(itemId);
 
     switch (result) {
       case SuccessResponse<CartEntity>():

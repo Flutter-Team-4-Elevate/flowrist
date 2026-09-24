@@ -1,13 +1,12 @@
+import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/features/home/home/domain/entities/home_entities/banner_payload_entity.dart';
+import 'package:flowrist/features/home/home/domain/entities/home_entities/category_rail_payload_entity.dart';
+import 'package:flowrist/features/home/home/domain/entities/home_entities/home_layout_entity.dart';
+import 'package:flowrist/features/home/home/domain/repositories/home_repository.dart';
 import 'package:flowrist/features/home/home/domain/use_cases/get_home_layout_usecase.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
-import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/features/home/home/domain/entities/home_entities/banner_payload_entity.dart';
-import 'package:flowrist/features/home/home/domain/entities/home_entities/home_layout_entity.dart';
-import 'package:flowrist/features/home/home/domain/entities/home_entities/category_rail_payload_entity.dart';
-import 'package:flowrist/features/home/home/domain/repositories/home_repository.dart';
 
 import 'get_home_layout_usecase_test.mocks.dart';
 
@@ -39,7 +38,8 @@ void main() {
             isEnabled: true,
             payload: BannerPayloadEntity(
               imageUrl: 'https://example.com/banner.jpg',
-              clickAction: 'flowerapp://promotions', type: '',
+              clickAction: 'flowerapp://promotions',
+              type: '',
             ),
           ),
           HomeLayoutEntity(
@@ -50,17 +50,15 @@ void main() {
             isEnabled: true,
             payload: CategoryRailPayloadEntity(
               items: [],
-              viewAllAction: 'flowerapp://categories', type: '',
+              viewAllAction: 'flowerapp://categories',
+              type: '',
             ),
           ),
         ];
 
-        final response = SuccessResponse<List<HomeLayoutEntity>>(
-          homeData,
-        );
+        final response = SuccessResponse<List<HomeLayoutEntity>>(homeData);
 
-        when(mockRepository.getHomeLayout())
-            .thenAnswer((_) async => response);
+        when(mockRepository.getHomeLayout()).thenAnswer((_) async => response);
 
         // Act
         final result = await useCase();
@@ -91,12 +89,9 @@ void main() {
         // Arrange
         const errorMessage = 'Failed to load home layout';
 
-        final response = ErrorResponse<List<HomeLayoutEntity>>(
-          errorMessage,
-        );
+        final response = ErrorResponse<List<HomeLayoutEntity>>(errorMessage);
 
-        when(mockRepository.getHomeLayout())
-            .thenAnswer((_) async => response);
+        when(mockRepository.getHomeLayout()).thenAnswer((_) async => response);
 
         // Act
         final result = await useCase();
@@ -104,13 +99,9 @@ void main() {
         // Assert
         expect(result, same(response));
 
-        expect(
-          result,
-          isA<ErrorResponse<List<HomeLayoutEntity>>>(),
-        );
+        expect(result, isA<ErrorResponse<List<HomeLayoutEntity>>>());
 
-        final errorResponse =
-            result as ErrorResponse<List<HomeLayoutEntity>>;
+        final errorResponse = result as ErrorResponse<List<HomeLayoutEntity>>;
 
         expect(errorResponse.errorMessage, errorMessage);
 

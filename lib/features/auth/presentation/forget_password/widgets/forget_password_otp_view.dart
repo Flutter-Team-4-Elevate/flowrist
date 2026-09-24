@@ -83,8 +83,8 @@ class ForgetPasswordOtpView extends StatelessWidget {
                             final form = Form.of(context);
 
                             if (!form.validate()) {
-                        return;
-                      }
+                              return;
+                            }
 
                             context.read<ForgetPasswordBloc>().add(
                               VerifyOtpEvent(state.otp.trim()),
