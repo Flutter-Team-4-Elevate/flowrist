@@ -104,7 +104,7 @@ void main() {
     );
 
     test(
-      'should return SuccessResponse with null data for COD order',
+      'should return ErrorResponse when COD order response data is null',
       () async {
         // Arrange
         final codRequestEntity = CardOrderRequestEntity(
@@ -130,11 +130,11 @@ void main() {
         final result = await repository.placeOrder(codRequestEntity);
 
         // Assert
-        expect(result, isA<SuccessResponse<CardOrderEntity?>>());
+        expect(result, isA<ErrorResponse<CardOrderEntity?>>());
 
-        final successResult = result as SuccessResponse<CardOrderEntity?>;
+        final errorResult = result as ErrorResponse<CardOrderEntity?>;
 
-        expect(successResult.data, isNull);
+        expect(errorResult.errorMessage, 'Invalid order response');
 
         verify(mockRemoteDataSource.placeOrder(any)).called(1);
       },

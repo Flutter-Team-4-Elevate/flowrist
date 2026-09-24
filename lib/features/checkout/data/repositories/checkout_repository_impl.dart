@@ -39,18 +39,10 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
           return ErrorResponse<CardOrderEntity?>('Invalid order response');
         }
 
-        // ----------------------------------------
-        // CASH ON DELIVERY
-        // ----------------------------------------
         if (order.paymentMethod == Endpoints.cod) {
-          // COD does not have a payment session URL,
-          // but it DOES have orderId/orderNumber/status.
           return SuccessResponse<CardOrderEntity?>(orderEntity);
         }
 
-        // ----------------------------------------
-        // CREDIT CARD
-        // ----------------------------------------
         if (order.paymentMethod == Endpoints.card) {
           final sessionUrl = orderEntity.sessionUrl;
 
