@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_item_entity.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   const tItemA = CartItemEntity(

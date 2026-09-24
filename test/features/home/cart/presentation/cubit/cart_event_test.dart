@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('CartEvent Unit Tests', () {

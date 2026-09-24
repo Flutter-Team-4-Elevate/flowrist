@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'home_response_model.dart';
 
 part 'home_api_response_model.g.dart';

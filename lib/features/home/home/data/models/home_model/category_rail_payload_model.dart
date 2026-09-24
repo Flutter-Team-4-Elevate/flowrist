@@ -3,6 +3,7 @@ import 'package:flowrist/features/home/home/data/models/home_model/home_payload_
 import 'package:flowrist/features/home/home/domain/entities/home_entities/category_item_entity.dart';
 import 'package:flowrist/features/home/home/domain/entities/home_entities/category_rail_payload_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'category_rail_payload_model.g.dart';
 
 @JsonSerializable()

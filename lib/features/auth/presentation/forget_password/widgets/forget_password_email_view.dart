@@ -79,9 +79,9 @@ class _ForgetPasswordEmailPageState extends State<ForgetPasswordEmailView> {
                           }
 
                           context.read<ForgetPasswordBloc>().add(
-                            CheckEmailEvent(_emailController.text.trim()),
-                          );
-                        },
+                      CheckEmailEvent(_emailController.text.trim()),
+                    );
+                  },
                   child: isLoading
                       ? const SizedBox(
                           height: 24,

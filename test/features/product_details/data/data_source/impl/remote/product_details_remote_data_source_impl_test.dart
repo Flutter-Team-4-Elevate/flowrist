@@ -1,12 +1,11 @@
+import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/features/home/shared/product_details/data/client/product_details_api_client.dart';
+import 'package:flowrist/features/home/shared/product_details/data/data_source/impl/remote/product_details_remote_data_source_impl.dart';
+import 'package:flowrist/features/home/shared/product_details/data/models/product_details_request_dto.dart';
+import 'package:flowrist/features/home/shared/product_details/data/models/product_details_response_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
-import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/features/home/shared/product_details/data/client/product_details_api_client.dart';
-import 'package:flowrist/features/home/shared/product_details/data/models/product_details_request_dto.dart';
-import 'package:flowrist/features/home/shared/product_details/data/models/product_details_response_dto.dart';
-import 'package:flowrist/features/home/shared/product_details/data/data_source/impl/remote/product_details_remote_data_source_impl.dart';
 
 import 'product_details_remote_data_source_impl_test.mocks.dart';
 

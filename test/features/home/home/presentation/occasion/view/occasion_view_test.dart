@@ -8,6 +8,7 @@ import 'package:flowrist/features/home/home/presentation/occasion/cubit/occassio
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+
 import 'occasion_view_test.mocks.dart';
 
 @GenerateMocks([GetOccasionsUseCase, GetProductsUseCase])

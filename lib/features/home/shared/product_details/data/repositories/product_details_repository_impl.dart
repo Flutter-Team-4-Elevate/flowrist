@@ -1,6 +1,5 @@
-import 'package:injectable/injectable.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:injectable/injectable.dart';
 
 import '../../domain/repositories/product_details_repo.dart';
 import '../data_source/contract/remote/product_details_remote_data_source.dart';

@@ -1,12 +1,7 @@
-import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/session/session_guard.dart';
-import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
-import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
-import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_cubit.dart';
-import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,8 +17,17 @@ class HomeNavigationView extends StatefulWidget {
 
 class _HomeNavigationViewState extends State<HomeNavigationView> {
   @override
+  void initState() {
+    super.initState();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _initializeAddress();
+    // });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final AppLocalizations l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: widget.tabViewShell,
@@ -32,23 +36,6 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
         localization: l10n,
       ),
     );
-  }
-
-  Future<void> _refreshHome() async {
-    if (!mounted) return;
-
-    // Refresh Home API
-    context.read<HomeCubit>().doEvent(GetHomeLayout());
-
-    // Refresh cart if logged in
-    final sessionService = getIt<SessionService>();
-
-    final isGuest = await sessionService.isGuest();
-    final token = await sessionService.getToken();
-
-    if (!isGuest && token.isNotEmpty && mounted) {
-      context.read<CartCubit>().doEvent(GetCartEvent());
-    }
   }
 
   BottomNavigationBar _buildBottomNavigationBar({
@@ -66,13 +53,6 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
           }
         }
 
-        // Home tab
-        if (index == 0) {
-          await _refreshHome();
-        }
-
-        if (!context.mounted) return;
-
         widget.tabViewShell.goBranch(index);
       },
       items: [
@@ -88,21 +68,17 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
           icon: BlocBuilder<CartCubit, CartState>(
             buildWhen: (previous, current) {
               final previousCount = previous.cart.data?.totalQuantity ?? 0;
-
               final currentCount = current.cart.data?.totalQuantity ?? 0;
-
               return previousCount != currentCount;
             },
             builder: (context, state) {
               final count = state.cart.data?.totalQuantity ?? 0;
-
               return Badge(
                 isLabelVisible: count > 0,
                 label: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
-                  transitionBuilder: (child, animation) {
-                    return ScaleTransition(scale: animation, child: child);
-                  },
+                  transitionBuilder: (child, animation) =>
+                      ScaleTransition(scale: animation, child: child),
                   child: Text(
                     '$count',
                     key: ValueKey<int>(count),
