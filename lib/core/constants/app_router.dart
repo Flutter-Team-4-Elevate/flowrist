@@ -34,6 +34,7 @@ import 'package:flowrist/features/home/search_and_filtering/search/presentation/
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
+import 'package:flowrist/features/tracking_order/presentation/view/tracking_map.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,6 +57,7 @@ abstract final class AppRoutes {
   static const cartTab = '/cart-tab';
   static const checkOut = '/checkout';
   static const trackOrder = '/track-order';
+  static const trackingMap = '/tracking_map';
   static const trackOrderDetails = '/track_order_details';
   static const profileTab = '/profile-tab';
   static const paymentWebView = '/paymentWebView';
@@ -150,6 +152,11 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrderDetails,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) => const TrackOrderDetails(),
+      ),
+      GoRoute(
+        path: AppRoutes.trackingMap,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) => const TrackingMap(),
       ),
       GoRoute(
         path: AppRoutes.successOrder,

@@ -4,6 +4,7 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/dummy_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class TrackOrderDetails extends StatelessWidget {
   const TrackOrderDetails({super.key});
@@ -92,7 +93,12 @@ class TrackOrderDetails extends StatelessWidget {
                 Row(
                   children: [
                     Expanded(
-                      child: AppButton(text: "Show map", onPressed: () {}),
+                      child: AppButton(
+                        text: "Show map",
+                        onPressed: () {
+                          context.push('/tracking_map');
+                        },
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -106,7 +112,12 @@ class TrackOrderDetails extends StatelessWidget {
               ] else ...[
                 SizedBox(
                   width: double.infinity,
-                  child: AppButton(text: "Show map", onPressed: () {}),
+                  child: AppButton(
+                    text: "Show map",
+                    onPressed: () {
+                      context.push('/tracking_map');
+                    },
+                  ),
                 ),
               ],
             ],
