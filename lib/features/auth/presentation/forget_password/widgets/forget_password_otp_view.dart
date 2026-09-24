@@ -83,8 +83,8 @@ class ForgetPasswordOtpView extends StatelessWidget {
                             final form = Form.of(context);
 
                             if (!form.validate()) {
-                        return;
-                      }
+                              return;
+                            }
 
                             context.read<ForgetPasswordBloc>().add(
                               VerifyOtpEvent(state.otp.trim()),
@@ -118,19 +118,19 @@ class ForgetPasswordOtpView extends StatelessWidget {
                     state.operation == ForgetPasswordOperation.resendOtp;
 
                 return TextButton(
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        context.read<ForgetPasswordBloc>().add(
-                          const ResendOtpEvent(),
-                        );
-                      },
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : Text(localizations.resendOtp),
-              );
-            },
-          ),
+                  onPressed: isLoading
+                      ? null
+                      : () {
+                          context.read<ForgetPasswordBloc>().add(
+                            const ResendOtpEvent(),
+                          );
+                        },
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : Text(localizations.resendOtp),
+                );
+              },
+            ),
           ],
         ),
       ),
