@@ -33,6 +33,7 @@ import 'package:flowrist/features/home/profile/session_management/presentation/v
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
 import 'package:flutter/material.dart';
@@ -144,17 +145,32 @@ abstract final class AppRouter {
       GoRoute(
         path: AppRoutes.trackOrder,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const TrackingView(),
+        builder: (context, state) {
+          final orderId = state.extra as String;
+
+          return TrackingView(orderId: orderId);
+        },
       ),
       GoRoute(
         path: AppRoutes.trackOrderDetails,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const TrackOrderDetails(),
+        builder: (context, state) {
+          final orderId = state.extra as String;
+
+          return BlocProvider(
+            create: (_) => getIt<TrackingCubit>()..startTracking(orderId),
+            child: const TrackOrderDetails(),
+          );
+        },
       ),
       GoRoute(
         path: AppRoutes.successOrder,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const SuccessOrder(),
+        builder: (context, state) {
+          final orderId = state.extra as String;
+
+          return SuccessOrder(orderId: orderId);
+        },
       ),
       GoRoute(
         path: AppRoutes.checkOut,

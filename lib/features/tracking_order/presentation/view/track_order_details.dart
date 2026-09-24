@@ -1,116 +1,96 @@
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
-import 'package:flowrist/core/ui/widgets/app_button.dart';
-import 'package:flowrist/features/tracking_order/presentation/widgets/dummy_timeline.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
+import 'package:flowrist/features/tracking_order/presentation/view/widgets/tracking_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TrackOrderDetails extends StatelessWidget {
   const TrackOrderDetails({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const String time = "11:00 AM";
-    const String arrivalDate = "03 Sep 2024";
-    const String driverName = "Mohammad";
-    const OrderStatus currentStatus = OrderStatus.preparing;
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Track order")),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Estimated arrival', style: AppStyles.regular14Inter),
+      appBar: AppBar(title: const Text('Track order')),
+      body: BlocBuilder<TrackingCubit, TrackingState>(
+        builder: (context, state) {
+          // Initial loading
+          if (state.isLoading && state.tracking == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-              Text("$arrivalDate, $time", style: AppStyles.medium16InterBlack),
+          // Initial error
+          if (state.errorMessage != null && state.tracking == null) {
+            return Center(child: Text(state.errorMessage!));
+          }
 
-              const SizedBox(height: 40),
+          final tracking = state.tracking;
 
-              Row(
-                children: [
-                  const SizedBox(width: 20),
+          // No data
+          if (tracking == null) {
+            return const SizedBox.shrink();
+          }
 
-                  SizedBox(
-                    height: 36,
-                    width: 36,
-                    child: Image.asset(AppImages.flowerTrackingOrderBoy),
-                  ),
+          // =====================================================
+          // ORDER NOT ACCEPTED YET
+          // =====================================================
 
-                  const SizedBox(width: 20),
+          if (tracking.status == 'PLACED') {
+            return const WaitingForDriverView();
+          }
 
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(driverName, style: AppStyles.regular14InterW500),
-                      Text(
-                        'Is your delivery hero for today',
-                        style: AppStyles.regular13,
-                      ),
-                    ],
-                  ),
+          // =====================================================
+          // DRIVER ACCEPTED
+          // PREPARING / PICKED_UP / OUT_FOR_DELIVERY / DELIVERED
+          // =====================================================
 
-                  const Spacer(),
+          return TrackingContent(tracking: tracking);
+        },
+      ),
+    );
+  }
+}
 
-                  SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: Image.asset(AppImages.flowerTrackingOrderCall),
-                  ),
+class WaitingForDriverView extends StatelessWidget {
+  const WaitingForDriverView({super.key});
 
-                  const SizedBox(width: 10),
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              AppImages.flowerTrackingOrderBoy,
+              height: 120,
+              width: 120,
+            ),
 
-                  SizedBox(
-                    height: 18,
-                    width: 18,
-                    child: Image.asset(AppImages.flowerTrackingOrderWattsapp),
-                  ),
+            const SizedBox(height: 24),
 
-                  const SizedBox(width: 20),
-                ],
-              ),
+            Text(
+              'Waiting for driver',
+              style: AppStyles.medium16InterBlack,
+              textAlign: TextAlign.center,
+            ),
 
-              const SizedBox(height: 50),
+            const SizedBox(height: 8),
 
-              Center(
-                child: SizedBox(
-                  height: 83,
-                  width: 213,
-                  child: Image.asset(AppImages.flowerTrackingOrderCar),
-                ),
-              ),
+            Text(
+              'Your order has been placed. '
+              'We are waiting for a driver to accept it.',
+              style: AppStyles.regular14Inter,
+              textAlign: TextAlign.center,
+            ),
 
-              const SizedBox(height: 50),
+            const SizedBox(height: 24),
 
-              const OrderStatusTimeline(),
-
-              const SizedBox(height: 30),
-
-              if (currentStatus == OrderStatus.delivered) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppButton(text: "Show map", onPressed: () {}),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: AppButton(
-                        text: "Order Delivered",
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ] else ...[
-                SizedBox(
-                  width: double.infinity,
-                  child: AppButton(text: "Show map", onPressed: () {}),
-                ),
-              ],
-            ],
-          ),
+            const CircularProgressIndicator(),
+          ],
         ),
       ),
     );

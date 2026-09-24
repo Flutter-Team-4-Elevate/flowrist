@@ -1,82 +1,76 @@
-import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/features/tracking_order/domain/entities/tracking_timeline_entity.dart';
+import 'package:flowrist/features/tracking_order/presentation/widgets/dummy_timeline.dart';
 import 'package:flutter/material.dart';
 
-class OrderStatusItem extends StatelessWidget {
-  final String title;
-  final String date;
-  final bool isCompleted;
-  final bool isCurrent;
-  final bool isLast;
+class OrderStatusTimeline extends StatelessWidget {
+  final List<TrackingTimelineEntity> timeline;
 
-  const OrderStatusItem({
-    super.key,
-    required this.title,
-    required this.date,
-    required this.isCompleted,
-    required this.isCurrent,
-    required this.isLast,
-  });
+  const OrderStatusTimeline({super.key, required this.timeline});
 
   @override
   Widget build(BuildContext context) {
-    final isActive = isCompleted || isCurrent;
+    return Column(
+      children: List.generate(timeline.length, (index) {
+        final item = timeline[index];
 
-    return SizedBox(
-      height: 75,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              Container(
-                width: 18,
-                height: 18,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: isActive ? Colors.pink : Colors.grey,
-                    width: 2,
-                  ),
-                ),
-                child: isActive
-                    ? Center(
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.pink,
-                          ),
-                        ),
-                      )
-                    : null,
-              ),
-
-              if (!isLast)
-                Expanded(
-                  child: Container(
-                    width: 1,
-                    color: isCompleted ? Colors.pink : Colors.grey,
-                  ),
-                ),
-            ],
-          ),
-
-          const SizedBox(width: 20),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: AppStyles.regular14Inter),
-
-              if (date.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Text(date, style: AppStyles.regular13),
-              ],
-            ],
-          ),
-        ],
-      ),
+        return OrderStatusItem(
+          title: _getTitle(item.status),
+          date: _formatDate(item.occurredAt),
+          isCompleted: item.isCompleted,
+          isCurrent: item.isCurrent,
+          isLast: index == timeline.length - 1,
+        );
+      }),
     );
+  }
+
+  String _getTitle(String status) {
+    switch (status) {
+      case 'PLACED':
+        return 'Received your order';
+
+      case 'PREPARING':
+        return 'Preparing your order';
+
+      case 'PICKED_UP':
+        return 'Picked up';
+
+      case 'OUT_FOR_DELIVERY':
+        return 'Out for delivery';
+
+      case 'DELIVERED':
+        return 'Delivered';
+
+      default:
+        return status;
+    }
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return '';
+
+    return '${date.day.toString().padLeft(2, '0')} '
+        '${_monthName(date.month)} '
+        '${date.year} - '
+        '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _monthName(int month) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    return months[month - 1];
   }
 }

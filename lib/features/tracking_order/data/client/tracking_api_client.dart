@@ -6,7 +6,6 @@ import 'package:retrofit/retrofit.dart';
 
 part 'tracking_api_client.g.dart';
 
-// test
 @lazySingleton
 @RestApi()
 abstract class TrackingApiClient {

@@ -35,25 +35,26 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
         final responseEntity = responseModel.toEntity();
         final orderEntity = responseEntity.data;
 
+        if (orderEntity == null) {
+          return ErrorResponse<CardOrderEntity?>('Invalid order response');
+        }
+
         // ----------------------------------------
         // CASH ON DELIVERY
         // ----------------------------------------
         if (order.paymentMethod == Endpoints.cod) {
-          // Backend legitimately returns data: null for COD.
-          return SuccessResponse<CardOrderEntity?>(null);
+          // COD does not have a payment session URL,
+          // but it DOES have orderId/orderNumber/status.
+          return SuccessResponse<CardOrderEntity?>(orderEntity);
         }
 
         // ----------------------------------------
         // CREDIT CARD
         // ----------------------------------------
         if (order.paymentMethod == Endpoints.card) {
-          if (orderEntity == null) {
-            return ErrorResponse<CardOrderEntity?>('Invalid order response');
-          }
+          final sessionUrl = orderEntity.sessionUrl;
 
-          final sessionUrl = orderEntity.sessionUrl!.trim();
-
-          if (sessionUrl.isEmpty) {
+          if (sessionUrl == null || sessionUrl.trim().isEmpty) {
             return ErrorResponse<CardOrderEntity?>('Invalid payment URL');
           }
 
@@ -68,7 +69,10 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
           return SuccessResponse<CardOrderEntity?>(orderEntity);
         }
 
-        // Unknown payment method.
+        // ----------------------------------------
+        // UNKNOWN PAYMENT METHOD
+        // ----------------------------------------
+
         return ErrorResponse<CardOrderEntity?>('Invalid payment method');
 
       case ErrorResponse<CardOrderResponseModel>():
