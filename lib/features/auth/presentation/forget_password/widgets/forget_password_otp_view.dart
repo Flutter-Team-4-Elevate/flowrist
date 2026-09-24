@@ -1,6 +1,8 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../view_model/forget_password_event.dart';
 import '../view_model/forget_password_state.dart';
 import '../view_model/forget_password_view_model.dart';
@@ -13,112 +15,124 @@ class ForgetPasswordOtpView extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Form(
-      child: ListView(
-        padding: const EdgeInsets.all(24),
-        children: [
-          const SizedBox(height: 40),
-
-          Text(
-            localizations.verifyOtp,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+    return BlocListener<ForgetPasswordBloc, ForgetPasswordState>(
+      listenWhen: (prev, curr) =>
+          prev.errorMessage != curr.errorMessage && curr.errorMessage != null,
+      listener: (context, state) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(state.errorMessage!),
+            backgroundColor: AppColors.red,
           ),
+        );
+      },
+      child: Form(
+        child: ListView(
+          padding: const EdgeInsets.all(24),
+          children: [
+            const SizedBox(height: 40),
 
-          const SizedBox(height: 12),
+            Text(
+              localizations.verifyOtp,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
 
-          BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-            builder: (context, state) {
-              return Text(
-                localizations.otpSentTo(state.email ?? ""),
-                textAlign: TextAlign.center,
-              );
-            },
-          ),
+            const SizedBox(height: 12),
 
-          const SizedBox(height: 40),
+            BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+              builder: (context, state) {
+                return Text(
+                  localizations.otpSentTo(state.email ?? ""),
+                  textAlign: TextAlign.center,
+                );
+              },
+            ),
 
-          BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-            builder: (context, state) {
-              return OtpInputField(
-                initialValue: state.otp,
-                keyboardType: TextInputType.visiblePassword,
-                onChanged: (value) {
-                  context.read<ForgetPasswordBloc>().add(
-                    OtpChangedEvent(value),
+            const SizedBox(height: 40),
+
+            BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+              builder: (context, state) {
+                return OtpInputField(
+                  initialValue: state.otp,
+                  keyboardType: TextInputType.visiblePassword,
+                  onChanged: (value) {
+                    context.read<ForgetPasswordBloc>().add(
+                      OtpChangedEvent(value),
+                    );
+                  },
+                );
+              },
+            ),
+
+            const SizedBox(height: 24),
+
+            BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+              builder: (context, state) {
+                final isLoading =
+                    state.isLoading &&
+                    state.operation == ForgetPasswordOperation.verifyOtp;
+
+                return SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            final form = Form.of(context);
+
+                            if (!form.validate()) {
+                              return;
+                            }
+
+                            context.read<ForgetPasswordBloc>().add(
+                              VerifyOtpEvent(state.otp.trim()),
+                            );
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(localizations.verifyOtp),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 24),
+
+            BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
+              builder: (context, state) {
+                if (state.remainingSeconds > 0) {
+                  return Text(
+                    localizations.resendOtpIn(state.remainingSeconds),
+                    textAlign: TextAlign.center,
                   );
-                },
-              );
-            },
-          ),
+                }
 
-          const SizedBox(height: 24),
+                final isLoading =
+                    state.isLoading &&
+                    state.operation == ForgetPasswordOperation.resendOtp;
 
-          BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-            builder: (context, state) {
-              final isLoading =
-                  state.isLoading &&
-                  state.operation == ForgetPasswordOperation.verifyOtp;
-
-              return SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
+                return TextButton(
                   onPressed: isLoading
                       ? null
                       : () {
-                          final form = Form.of(context);
-
-                          if (!form.validate()) {
-                            return;
-                          }
-
                           context.read<ForgetPasswordBloc>().add(
-                            VerifyOtpEvent(state.otp.trim()),
+                            const ResendOtpEvent(),
                           );
                         },
                   child: isLoading
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(localizations.verifyOtp),
-                ),
-              );
-            },
-          ),
-
-          const SizedBox(height: 24),
-
-          BlocBuilder<ForgetPasswordBloc, ForgetPasswordState>(
-            builder: (context, state) {
-              if (state.remainingSeconds > 0) {
-                return Text(
-                  localizations.resendOtpIn(state.remainingSeconds),
-                  textAlign: TextAlign.center,
+                      ? const CircularProgressIndicator()
+                      : Text(localizations.resendOtp),
                 );
-              }
-
-              final isLoading =
-                  state.isLoading &&
-                  state.operation == ForgetPasswordOperation.resendOtp;
-
-              return TextButton(
-                onPressed: isLoading
-                    ? null
-                    : () {
-                        context.read<ForgetPasswordBloc>().add(
-                          const ResendOtpEvent(),
-                        );
-                      },
-                child: isLoading
-                    ? const CircularProgressIndicator()
-                    : Text(localizations.resendOtp),
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
