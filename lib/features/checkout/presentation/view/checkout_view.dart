@@ -1,4 +1,5 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_address.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_time.dart';
@@ -10,6 +11,7 @@ import 'package:flowrist/features/checkout/presentation/view_model/checkout_even
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckoutView extends StatefulWidget {
@@ -127,6 +129,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
                           TotalPrice(
                             subTotal: widget.subTotal,
+
                             cartId: widget.cartId,
                             addressId: widget.addressId,
                           ),
@@ -162,17 +165,30 @@ class _CheckoutViewState extends State<CheckoutView> {
 class _DeliveryTimeSection extends StatelessWidget {
   const _DeliveryTimeSection();
 
+  static const String estimatedDeliveryAtKey = 'estimated_delivery_at';
+
   @override
   Widget build(BuildContext context) {
+    final secureStorage = GetIt.I<SecureStorageService>();
+
     return BlocListener<CheckoutCubit, CheckoutState>(
       listenWhen: (previous, current) {
-        return previous.deliveryFeeState.errorMessage !=
-            current.deliveryFeeState.errorMessage;
+        return previous.deliveryFeeState.data != current.deliveryFeeState.data;
       },
-      listener: (context, state) {
+      listener: (context, state) async {
+        final estimatedDeliveryAt =
+            state.deliveryFeeState.data?.estimatedDeliveryAt;
+
+        if (estimatedDeliveryAt != null) {
+          await secureStorage.save(
+            estimatedDeliveryAtKey,
+            estimatedDeliveryAt.toIso8601String(),
+          );
+        }
+
         final errorMessage = state.deliveryFeeState.errorMessage;
 
-        if (errorMessage != null) {
+        if (errorMessage != null && context.mounted) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(errorMessage)));

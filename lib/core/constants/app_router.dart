@@ -161,7 +161,7 @@ abstract final class AppRouter {
 
           return BlocProvider(
             create: (_) => getIt<TrackingCubit>()..startTracking(orderId),
-            child: const TrackOrderDetails(),
+            child: TrackOrderDetails(),
           );
         },
       ),

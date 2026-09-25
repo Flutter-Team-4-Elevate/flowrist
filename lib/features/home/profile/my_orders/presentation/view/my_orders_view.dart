@@ -184,7 +184,9 @@ class _OrdersListViewState extends State<_OrdersListView> {
               return OrderCardWidget(
                 order: order,
                 onTap: () => context.push(AppRoutes.orderDetailsPath(order.id)),
-                onActionPressed: () {},
+                onActionPressed: () {
+                  context.push(AppRoutes.trackOrderDetails, extra: order.id);
+                },
               );
             },
           );

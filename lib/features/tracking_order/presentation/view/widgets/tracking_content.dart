@@ -2,20 +2,62 @@ import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-class TrackingContent extends StatelessWidget {
+import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:get_it/get_it.dart';
+
+class TrackingContent extends StatefulWidget {
   final OrderTrackingEntity tracking;
 
   const TrackingContent({super.key, required this.tracking});
 
   @override
+  State<TrackingContent> createState() => _TrackingContentState();
+}
+
+class _TrackingContentState extends State<TrackingContent> {
+  static const String estimatedDeliveryAtKey = 'estimated_delivery_at';
+
+  DateTime? _estimatedDeliveryAt;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEstimatedDelivery();
+  }
+
+  Future<void> _loadEstimatedDelivery() async {
+    final secureStorage = GetIt.I<SecureStorageService>();
+
+    final savedValue = await secureStorage.get(estimatedDeliveryAtKey);
+
+    if (savedValue.isEmpty || !mounted) return;
+
+    final parsedDate = DateTime.tryParse(savedValue);
+
+    if (parsedDate != null) {
+      setState(() {
+        _estimatedDeliveryAt = parsedDate;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final driver = tracking.driver;
+    final driver = widget.tracking.driver;
+
+    final deliveryTime = _estimatedDeliveryAt == null
+        ? '--'
+        : DateFormat(
+            Endpoints.dateFormatDelivery,
+          ).format(_estimatedDeliveryAt!.toLocal());
 
     return SingleChildScrollView(
       child: Padding(
@@ -25,16 +67,11 @@ class TrackingContent extends StatelessWidget {
           children: [
             Text('Estimated arrival', style: AppStyles.regular14Inter),
 
-            Text(
-              '03 Sep 2024, 11:00 AM',
-              // Later replace with the actual estimated arrival
-              // from your API if backend provides it.
-              style: AppStyles.medium16InterBlack,
-            ),
+            Text(deliveryTime, style: AppStyles.medium16InterBlack),
 
             const SizedBox(height: 40),
 
-            _DriverSection(driverName: driver?.name ?? 'Mohammad'),
+            _DriverSection(driverName: driver?.name ?? ''),
 
             const SizedBox(height: 50),
 
@@ -48,11 +85,11 @@ class TrackingContent extends StatelessWidget {
 
             const SizedBox(height: 50),
 
-            OrderStatusTimeline(timeline: tracking.timeline),
+            OrderStatusTimeline(timeline: widget.tracking.timeline),
 
             const SizedBox(height: 30),
 
-            _TrackingActions(status: tracking.status),
+            _TrackingActions(status: widget.tracking.status),
           ],
         ),
       ),
