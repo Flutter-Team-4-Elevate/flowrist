@@ -162,8 +162,18 @@ class PushNotificationsServices {
 
   void _listenToForegroundMessages() {
     _foregroundSubscription ??= FirebaseMessaging.onMessage.listen(
-      (remoteMessage) async {
-        await _localNotificationService.showBasicNotification(remoteMessage);
+      (remoteMessage) {
+        // App is currently in foreground.
+        // Do NOT show a local notification.
+        log(
+          'Foreground FCM received: '
+          '${remoteMessage.messageId}',
+        );
+
+        // Still expose the message to the rest of the app.
+        if (!_messageController.isClosed) {
+          _messageController.add(remoteMessage);
+        }
       },
       onError: (Object error, StackTrace stackTrace) {
         log(

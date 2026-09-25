@@ -1,4 +1,5 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
@@ -25,8 +26,17 @@ class _HomeTabViewState extends State<HomeTabView> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotifications();
+    });
     _loadHome();
+  }
+
+  Future<void> _initializeNotifications() async {
+    final pushNotifications = getIt<PushNotificationsServices>();
+
+    await pushNotifications.requestPermission();
+    await pushNotifications.init();
   }
 
   Future<void> _loadHome() async {
