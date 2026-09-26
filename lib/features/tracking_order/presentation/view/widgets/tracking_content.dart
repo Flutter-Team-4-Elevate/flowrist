@@ -116,6 +116,12 @@ class _TrackingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMapDisabled = [
+      'ARRIVED',
+      'AWAITING_DELIVERY_CONFIRMATION',
+      'DELIVERED',
+    ].contains(status);
+
     final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';
 
     if (isDelivered) {
@@ -124,9 +130,11 @@ class _TrackingActions extends StatelessWidget {
           Expanded(
             child: AppButton(
               text: 'Show map',
-              onPressed: () {
-                context.push(AppRoutes.trackingMap);
-              },
+              onPressed: isMapDisabled
+                  ? null
+                  : () {
+                      context.push(AppRoutes.trackingMap);
+                    },
             ),
           ),
           const SizedBox(width: 12),
@@ -141,9 +149,11 @@ class _TrackingActions extends StatelessWidget {
       width: double.infinity,
       child: AppButton(
         text: 'Show map',
-        onPressed: () {
-          context.push(AppRoutes.trackingMap);
-        },
+        onPressed: isMapDisabled
+            ? null
+            : () {
+                context.push(AppRoutes.trackingMap);
+              },
       ),
     );
   }
