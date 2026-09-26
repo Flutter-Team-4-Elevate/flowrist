@@ -5,8 +5,11 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
@@ -89,7 +92,10 @@ class _TrackingContentState extends State<TrackingContent> {
 
             const SizedBox(height: 30),
 
-            _TrackingActions(status: widget.tracking.status),
+            _TrackingActions(
+              status: widget.tracking.status,
+              orderId: widget.tracking.orderId,
+            ),
           ],
         ),
       ),
@@ -147,8 +153,8 @@ class _DriverSection extends StatelessWidget {
 }
 
 class _TrackingActions extends StatelessWidget {
-  const _TrackingActions({required this.status});
-
+  const _TrackingActions({required this.status, required this.orderId});
+  final String orderId;
   final String status;
 
   @override
@@ -166,9 +172,33 @@ class _TrackingActions extends StatelessWidget {
               },
             ),
           ),
+
           const SizedBox(width: 12),
+
           Expanded(
-            child: AppButton(text: 'Order Delivered', onPressed: () {}),
+            child: BlocBuilder<TrackingCubit, TrackingState>(
+              buildWhen: (previous, current) =>
+                  previous.isConfirmingDelivery !=
+                      current.isConfirmingDelivery ||
+                  previous.isDeliveryConfirmed != current.isDeliveryConfirmed,
+              builder: (context, state) {
+                return AppButton(
+                  text: state.isConfirmingDelivery
+                      ? 'Confirming...'
+                      : state.isDeliveryConfirmed
+                      ? 'Delivered'
+                      : 'Order Delivered',
+                  onPressed:
+                      state.isConfirmingDelivery || state.isDeliveryConfirmed
+                      ? null
+                      : () {
+                          context.read<TrackingCubit>().confirmDelivery(
+                            orderId,
+                          );
+                        },
+                );
+              },
+            ),
           ),
         ],
       );

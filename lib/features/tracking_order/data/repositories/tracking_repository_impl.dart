@@ -87,4 +87,15 @@ class TrackingRepositoryImpl implements TrackingRepository {
       _controllers[update.orderId]?.add(tracking);
     }
   }
+
+  @override
+  Future<BaseResponse<dynamic>> confirmDelivery(String orderId) async {
+    final response = await _remoteDataSource.confirmDelivery(orderId);
+    switch (response) {
+      case SuccessResponse<dynamic>():
+        return SuccessResponse(null);
+      case ErrorResponse<dynamic>():
+        return ErrorResponse(response.errorMessage);
+    }
+  }
 }
