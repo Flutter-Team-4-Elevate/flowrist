@@ -26,10 +26,8 @@ class TrackingState extends Equatable {
   }) {
     return TrackingState(
       isLoading: isLoading ?? this.isLoading,
-      isConfirmingDelivery:
-          isConfirmingDelivery ?? this.isConfirmingDelivery,
-      isDeliveryConfirmed:
-          isDeliveryConfirmed ?? this.isDeliveryConfirmed,
+      isConfirmingDelivery: isConfirmingDelivery ?? this.isConfirmingDelivery,
+      isDeliveryConfirmed: isDeliveryConfirmed ?? this.isDeliveryConfirmed,
       errorMessage: errorMessage,
       tracking: tracking ?? this.tracking,
     );
@@ -37,10 +35,10 @@ class TrackingState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        isConfirmingDelivery,
-        isDeliveryConfirmed,
-        errorMessage,
-        tracking,
-      ];
+    isLoading,
+    isConfirmingDelivery,
+    isDeliveryConfirmed,
+    errorMessage,
+    tracking,
+  ];
 }

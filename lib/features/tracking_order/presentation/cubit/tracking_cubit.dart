@@ -14,7 +14,8 @@ class TrackingCubit extends Cubit<TrackingState> {
   final ConfirmDeliveryUseCase _confirmDeliveryUseCase;
   Timer? _pollingTimer;
 
-  TrackingCubit(this._watchOrderTrackingUseCase, this._confirmDeliveryUseCase) : super(const TrackingState());
+  TrackingCubit(this._watchOrderTrackingUseCase, this._confirmDeliveryUseCase)
+    : super(const TrackingState());
 
   Future<void> startTracking(String orderId) async {
     _pollingTimer?.cancel();
@@ -59,31 +60,23 @@ class TrackingCubit extends Cubit<TrackingState> {
     _pollingTimer?.cancel();
     return super.close();
   }
- 
-Future<void> confirmDelivery(String orderId) async {
-  emit(
-    state.copyWith(
-      isConfirmingDelivery: true,
-      errorMessage: null,
-    ),
-  );
 
-  final response = await _confirmDeliveryUseCase(orderId);
+  Future<void> confirmDelivery(String orderId) async {
+    emit(state.copyWith(isConfirmingDelivery: true, errorMessage: null));
 
-  if (response is SuccessResponse) {
-    emit(
-      state.copyWith(
-        isConfirmingDelivery: false,
-        isDeliveryConfirmed: true,
-      ),
-    );
-  } else if (response is ErrorResponse) {
-    emit(
-      state.copyWith(
-        isConfirmingDelivery: false,
-        errorMessage: response.errorMessage,
-      ),
-    );
+    final response = await _confirmDeliveryUseCase(orderId);
+
+    if (response is SuccessResponse) {
+      emit(
+        state.copyWith(isConfirmingDelivery: false, isDeliveryConfirmed: true),
+      );
+    } else if (response is ErrorResponse) {
+      emit(
+        state.copyWith(
+          isConfirmingDelivery: false,
+          errorMessage: response.errorMessage,
+        ),
+      );
+    }
   }
-}
 }

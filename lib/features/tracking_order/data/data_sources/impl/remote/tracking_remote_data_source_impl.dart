@@ -31,7 +31,7 @@ class TrackingRemoteDataSourceImpl implements TrackingRemoteDataSource {
   @override
   Future<BaseResponse<dynamic>> confirmDelivery(String orderId) async {
     try {
-     await _apiClient.confirmDelivery(orderId);
+      await _apiClient.confirmDelivery(orderId);
 
       return SuccessResponse(null);
     } on Exception catch (e) {

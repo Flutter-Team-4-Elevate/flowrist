@@ -17,7 +17,5 @@ abstract class TrackingApiClient {
     @Path('orderId') String orderId,
   );
   @POST(Endpoints.confirmDelivery)
-  Future<void> confirmDelivery(
-    @Path('orderId') String orderId,
-  );
+  Future<void> confirmDelivery(@Path('orderId') String orderId);
 }
