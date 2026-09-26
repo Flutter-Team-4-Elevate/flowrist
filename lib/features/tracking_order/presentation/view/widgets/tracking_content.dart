@@ -182,10 +182,11 @@ class _TrackingActions extends StatelessWidget {
           Expanded(
             child: AppButton(
               text: 'Show map',
-              onPressed:isMapDisabled
-                  ? null: () {
-                context.push(AppRoutes.trackingMap, extra: tracking);
-              },
+              onPressed: isMapDisabled
+                  ? null
+                  : () {
+                      context.push(AppRoutes.trackingMap, extra: tracking);
+                    },
             ),
           ),
 
@@ -220,14 +221,15 @@ class _TrackingActions extends StatelessWidget {
       );
     }
 
-    return SizedBox( 
+    return SizedBox(
       width: double.infinity,
       child: AppButton(
         text: 'Show map',
-        onPressed:isMapDisabled
-                  ? null: () {
-          context.push(AppRoutes.trackingMap, extra: tracking);
-        },
+        onPressed: isMapDisabled
+            ? null
+            : () {
+                context.push(AppRoutes.trackingMap, extra: tracking);
+              },
       ),
     );
   }
