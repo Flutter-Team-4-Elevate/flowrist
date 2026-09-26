@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -16,8 +17,16 @@ class TrackingCubit extends Cubit<TrackingState> {
 
   TrackingCubit(this._watchOrderTrackingUseCase, this._confirmDeliveryUseCase)
     : super(const TrackingState());
+  Future<void> doEvent(TrackingEvent event) async {
+    switch (event) {
+      case StartTracking():
+        _startTracking(event.orderId);
+      case ConfirmDelivery():
+        _confirmDelivery(event.orderId);
+    }
+  }
 
-  Future<void> startTracking(String orderId) async {
+  Future<void> _startTracking(String orderId) async {
     _pollingTimer?.cancel();
 
     await _fetchTracking(orderId);
@@ -61,7 +70,7 @@ class TrackingCubit extends Cubit<TrackingState> {
     return super.close();
   }
 
-  Future<void> confirmDelivery(String orderId) async {
+  Future<void> _confirmDelivery(String orderId) async {
     emit(state.copyWith(isConfirmingDelivery: true, errorMessage: null));
 
     final response = await _confirmDeliveryUseCase(orderId);

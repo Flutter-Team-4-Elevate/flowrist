@@ -1,23 +1,22 @@
-import 'dart:async';
-
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
+import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
-final List<LatLng> dummyDriverLocations = [
-  const LatLng(30.0500, 31.2300),
-  const LatLng(30.0480, 31.2320),
-  const LatLng(30.0460, 31.2340),
-  const LatLng(30.0450, 31.2350),
-];
-
 class TrackingMap extends StatefulWidget {
-  const TrackingMap({super.key});
+  const TrackingMap({super.key, required this.tracking});
+
+  final OrderTrackingEntity tracking;
 
   @override
   State<TrackingMap> createState() => _TrackingMapState();
@@ -25,37 +24,44 @@ class TrackingMap extends StatefulWidget {
 
 class _TrackingMapState extends State<TrackingMap> {
   LatLng? _userLocation;
+  DateTime? _estimatedDeliveryAt;
 
-  final LatLng _storeLocation = const LatLng(30.0444, 31.2357);
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  // Store location comes from API
+  LatLng get _storeLocation => LatLng(
+    widget.tracking.storeLocation!.lat,
+    widget.tracking.storeLocation!.lng,
+  );
 
-  LatLng _driverLocation = dummyDriverLocations.first;
+  // Destination comes from API
+  LatLng get _destination =>
+      LatLng(widget.tracking.destination.lat, widget.tracking.destination.lng);
 
-  int _driverLocationIndex = 0;
-
-  Timer? _driverTimer;
+  // Keep bike in UI for now.
+  // Replace this with the driver's real location
+  // when the backend provides it.
+  final LatLng _driverLocation = const LatLng(30.0500, 31.2300);
 
   @override
   void initState() {
     super.initState();
-
+    _loadEstimatedDeliveryAt();
     _getUserLocation();
-    _startDummyDriverTracking();
   }
 
-  void _startDummyDriverTracking() {
-    _driverTimer = Timer.periodic(const Duration(seconds: 10), (_) {
-      if (!mounted) return;
+  Future<void> _loadEstimatedDeliveryAt() async {
+    final value = await _secureStorage.read(
+      key: AppConstants.estimatedDeliveryAtKey,
+    );
 
-      setState(() {
-        _driverLocationIndex++;
+    if (value == null || value.isEmpty) return;
 
-        // Start again from the first location
-        if (_driverLocationIndex >= dummyDriverLocations.length) {
-          _driverLocationIndex = 0;
-        }
+    final estimatedDeliveryAt = DateTime.tryParse(value);
 
-        _driverLocation = dummyDriverLocations[_driverLocationIndex];
-      });
+    if (!mounted) return;
+
+    setState(() {
+      _estimatedDeliveryAt = estimatedDeliveryAt;
     });
   }
 
@@ -82,12 +88,6 @@ class _TrackingMapState extends State<TrackingMap> {
     setState(() {
       _userLocation = LatLng(position.latitude, position.longitude);
     });
-  }
-
-  @override
-  void dispose() {
-    _driverTimer?.cancel();
-    super.dispose();
   }
 
   Widget _labelPin({required IconData icon, required String label}) {
@@ -126,7 +126,7 @@ class _TrackingMapState extends State<TrackingMap> {
   Widget _buildMap() {
     const pink = Color(0xFFD5136B);
 
-    final apartment = _userLocation ?? const LatLng(30.0520, 31.2250);
+    final apartment = _userLocation ?? _destination;
 
     return FlutterMap(
       options: MapOptions(
@@ -166,6 +166,7 @@ class _TrackingMapState extends State<TrackingMap> {
               alignment: Alignment.topCenter,
               child: _labelPin(icon: Icons.home_rounded, label: 'Apartment'),
             ),
+
             Marker(
               point: _storeLocation,
               width: 100,
@@ -173,6 +174,7 @@ class _TrackingMapState extends State<TrackingMap> {
               alignment: Alignment.topCenter,
               child: _labelPin(icon: Icons.local_florist, label: 'Flower'),
             ),
+
             Marker(
               point: _driverLocation,
               width: 50,
@@ -186,9 +188,12 @@ class _TrackingMapState extends State<TrackingMap> {
   }
 
   Widget _buildOrderInfo() {
-    const String driverName = "Mohammad";
-    const String time = "11:00 AM";
-    const String arrivalDate = "03 Sep 2024";
+    final driverName = widget.tracking.driver?.name ?? 'Driver';
+    final deliveryTime = _estimatedDeliveryAt == null
+        ? '--'
+        : DateFormat(
+            Endpoints.dateFormatDelivery,
+          ).format(_estimatedDeliveryAt!.toLocal());
 
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),
@@ -196,7 +201,8 @@ class _TrackingMapState extends State<TrackingMap> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Estimated arrival', style: AppStyles.regular14Inter),
-          Text("$arrivalDate, $time", style: AppStyles.medium16InterBlack),
+
+          Text(deliveryTime, style: AppStyles.medium16InterBlack),
 
           const SizedBox(height: 30),
 
@@ -216,6 +222,7 @@ class _TrackingMapState extends State<TrackingMap> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(driverName, style: AppStyles.regular14InterW500),
+
                   Text(
                     'Is your delivery hero for today',
                     style: AppStyles.regular13,
@@ -247,7 +254,12 @@ class _TrackingMapState extends State<TrackingMap> {
 
           SizedBox(
             width: double.infinity,
-            child: AppButton(text: "Order details", onPressed: () {}),
+            child: AppButton(
+              text: "Order details",
+              onPressed: () {
+                context.pop();
+              },
+            ),
           ),
         ],
       ),

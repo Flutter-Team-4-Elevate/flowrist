@@ -1,6 +1,7 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_address.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_time.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/gift_methods.dart';
@@ -165,8 +166,6 @@ class _CheckoutViewState extends State<CheckoutView> {
 class _DeliveryTimeSection extends StatelessWidget {
   const _DeliveryTimeSection();
 
-  static const String estimatedDeliveryAtKey = 'estimated_delivery_at';
-
   @override
   Widget build(BuildContext context) {
     final secureStorage = GetIt.I<SecureStorageService>();
@@ -181,7 +180,7 @@ class _DeliveryTimeSection extends StatelessWidget {
 
         if (estimatedDeliveryAt != null) {
           await secureStorage.save(
-            estimatedDeliveryAtKey,
+            AppConstants.estimatedDeliveryAtKey,
             estimatedDeliveryAt.toIso8601String(),
           );
         }

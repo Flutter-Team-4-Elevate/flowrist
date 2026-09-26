@@ -6,6 +6,7 @@ import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_timeline.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +55,12 @@ class _TrackingContentState extends State<TrackingContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isMapDisabled = [
+      'PREPARING',
+      'ARRIVED',
+      'AWAITING_DELIVERY_CONFIRMATION',
+      'DELIVERED',
+    ].contains(widget.tracking.status);
     final driver = widget.tracking.driver;
 
     final deliveryTime = _estimatedDeliveryAt == null
@@ -93,8 +100,10 @@ class _TrackingContentState extends State<TrackingContent> {
             const SizedBox(height: 30),
 
             _TrackingActions(
+              isMapDisabled: isMapDisabled,
               status: widget.tracking.status,
               orderId: widget.tracking.orderId,
+              tracking: widget.tracking,
             ),
           ],
         ),
@@ -153,10 +162,16 @@ class _DriverSection extends StatelessWidget {
 }
 
 class _TrackingActions extends StatelessWidget {
-  const _TrackingActions({required this.status, required this.orderId});
+  const _TrackingActions({
+    required this.status,
+    required this.orderId,
+    required this.tracking,
+    required this.isMapDisabled,
+  });
+  final bool isMapDisabled;
   final String orderId;
   final String status;
-
+  final OrderTrackingEntity tracking;
   @override
   Widget build(BuildContext context) {
     final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';
@@ -167,8 +182,9 @@ class _TrackingActions extends StatelessWidget {
           Expanded(
             child: AppButton(
               text: 'Show map',
-              onPressed: () {
-                context.push(AppRoutes.trackingMap);
+              onPressed:isMapDisabled
+                  ? null: () {
+                context.push(AppRoutes.trackingMap, extra: tracking);
               },
             ),
           ),
@@ -192,8 +208,8 @@ class _TrackingActions extends StatelessWidget {
                       state.isConfirmingDelivery || state.isDeliveryConfirmed
                       ? null
                       : () {
-                          context.read<TrackingCubit>().confirmDelivery(
-                            orderId,
+                          context.read<TrackingCubit>().doEvent(
+                            ConfirmDelivery(orderId: orderId),
                           );
                         },
                 );
@@ -204,12 +220,13 @@ class _TrackingActions extends StatelessWidget {
       );
     }
 
-    return SizedBox(
+    return SizedBox( 
       width: double.infinity,
       child: AppButton(
         text: 'Show map',
-        onPressed: () {
-          context.push(AppRoutes.trackingMap);
+        onPressed:isMapDisabled
+                  ? null: () {
+          context.push(AppRoutes.trackingMap, extra: tracking);
         },
       ),
     );

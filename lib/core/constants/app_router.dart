@@ -33,7 +33,9 @@ import 'package:flowrist/features/home/profile/session_management/presentation/v
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
+import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_map.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
@@ -160,7 +162,9 @@ abstract final class AppRouter {
           final orderId = state.extra as String;
 
           return BlocProvider(
-            create: (_) => getIt<TrackingCubit>()..startTracking(orderId),
+            create: (_) =>
+                getIt<TrackingCubit>()
+                  ..doEvent(StartTracking(orderId: orderId)),
             child: TrackOrderDetails(),
           );
         },
@@ -168,7 +172,11 @@ abstract final class AppRouter {
       GoRoute(
         path: AppRoutes.trackingMap,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const TrackingMap(),
+        builder: (context, state) {
+          final tracking = state.extra as OrderTrackingEntity;
+
+          return TrackingMap(tracking: tracking);
+        },
       ),
       GoRoute(
         path: AppRoutes.successOrder,

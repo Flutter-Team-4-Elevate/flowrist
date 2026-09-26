@@ -13,7 +13,7 @@ class OrderTrackingEntity extends Equatable {
   final TrackingDriverEntity? driver;
   final TrackingLocationEntity? lastKnownLocation;
   final TrackingDestinationEntity destination;
-
+  final TrackingLocationEntity? storeLocation;
   const OrderTrackingEntity({
     required this.orderId,
     required this.orderNumber,
@@ -22,6 +22,7 @@ class OrderTrackingEntity extends Equatable {
     required this.timeline,
     this.driver,
     this.lastKnownLocation,
+    this.storeLocation,
     required this.destination,
   });
 
