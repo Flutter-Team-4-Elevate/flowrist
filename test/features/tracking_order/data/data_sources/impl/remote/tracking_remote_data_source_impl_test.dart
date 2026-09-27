@@ -162,7 +162,10 @@ void main() {
 
         final error = result as ErrorResponse<dynamic>;
 
-        expect(error.errorMessage, contains('Network error'));
+        expect(
+          error.errorMessage,
+          'Something went wrong. Please try again later.',
+        );
 
         verify(mockApiClient.confirmDelivery(orderId)).called(1);
       },
