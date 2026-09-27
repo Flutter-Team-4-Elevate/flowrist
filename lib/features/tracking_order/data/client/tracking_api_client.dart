@@ -14,8 +14,8 @@ abstract class TrackingApiClient {
 
   @GET(Endpoints.orderTracking)
   Future<OrderTrackingResponseModel> getOrderTracking(
-    @Path('orderId') String orderId,
+    @Path(Endpoints.orderId) String orderId,
   );
   @POST(Endpoints.confirmDelivery)
-  Future<void> confirmDelivery(@Path('orderId') String orderId);
+  Future<void> confirmDelivery(@Path(Endpoints.orderId) String orderId);
 }

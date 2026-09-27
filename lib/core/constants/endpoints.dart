@@ -52,4 +52,5 @@ abstract final class Endpoints {
   static const String changePassword = 'api/identity/users/change-password';
   static const String deviceId = 'deviceId';
   static const String notificationsEnabled = 'notifications_enabled';
+  static const String orderId = 'orderId';
 }
