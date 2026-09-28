@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class TrackingView extends StatelessWidget {
-  const TrackingView({super.key, required this.orderId});
   final String orderId;
+  const TrackingView({super.key, required this.orderId});
   @override
   Widget build(BuildContext context) {
     return Scaffold(

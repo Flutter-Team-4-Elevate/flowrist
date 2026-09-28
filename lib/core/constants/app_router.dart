@@ -1,7 +1,9 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
@@ -12,7 +14,6 @@ import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
 import 'package:flowrist/features/auth/presentation/signup/view/signup_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/checkout_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/payment_web_view.dart';
-import 'package:flowrist/features/checkout/presentation/view/success_order.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
 import 'package:flowrist/features/home/cart/presentation/view/cart_tab_view.dart';
@@ -150,8 +151,13 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrder,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String;
+          final orderId = state.extra as String?;
 
+          if (orderId == null || orderId.isEmpty) {
+            return HomeTabView(
+              pushNotificationsServices: getIt<PushNotificationsServices>(),
+            );
+          }
           return TrackingView(orderId: orderId);
         },
       ),
@@ -159,7 +165,11 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrderDetails,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String;
+          final orderId = state.extra is String ? state.extra as String : null;
+
+          if (orderId == null || orderId.isEmpty) {
+            return const SizedBox.shrink();
+          }
 
           return BlocProvider(
             create: (_) =>
@@ -173,20 +183,31 @@ abstract final class AppRouter {
         path: AppRoutes.trackingMap,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final tracking = state.extra as OrderTrackingEntity;
+          final tracking = state.extra is OrderTrackingEntity
+              ? state.extra as OrderTrackingEntity
+              : null;
 
-          return TrackingMap(tracking: tracking);
+          if (tracking == null) {
+            return HomeTabView(
+              pushNotificationsServices: getIt<PushNotificationsServices>(),
+            );
+          }
+
+          return TrackingMap(
+            tracking: tracking,
+            secureStorageService: getIt<SecureStorageService>(),
+          );
         },
       ),
-      GoRoute(
-        path: AppRoutes.successOrder,
-        parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) {
-          final orderId = state.extra as String;
+      // GoRoute(
+      //   path: AppRoutes.successOrder,
+      //   parentNavigatorKey: rootNavigatorKey,
+      //   builder: (context, state) {
+      //     final orderId = state.extra as String;
 
-          return SuccessOrder(orderId: orderId);
-        },
-      ),
+      //     return SuccessOrder(orderId: orderId);
+      //   },
+      // ),
       GoRoute(
         path: AppRoutes.checkOut,
         builder: (context, state) {
@@ -328,7 +349,10 @@ abstract final class AppRouter {
               GoRoute(
                 path: AppRoutes.homeTab,
                 builder: (context, state) {
-                  return const HomeTabView();
+                  return HomeTabView(
+                    pushNotificationsServices:
+                        getIt<PushNotificationsServices>(),
+                  );
                 },
               ),
             ],

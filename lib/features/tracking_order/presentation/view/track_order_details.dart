@@ -46,7 +46,10 @@ class TrackOrderDetails extends StatelessWidget {
           // PREPARING / PICKED_UP / OUT_FOR_DELIVERY / DELIVERED
           // =====================================================
 
-          return TrackingContent(tracking: tracking);
+          return TrackingContent(
+            tracking: tracking,
+            estimatedDeliveryAt: state.estimatedDeliveryAt,
+          );
         },
       ),
     );

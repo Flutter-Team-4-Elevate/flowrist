@@ -16,8 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeTabView extends StatefulWidget {
-  const HomeTabView({super.key});
-
+  const HomeTabView({super.key, required this.pushNotificationsServices});
+  final PushNotificationsServices pushNotificationsServices;
   @override
   State<HomeTabView> createState() => _HomeTabViewState();
 }
@@ -33,10 +33,8 @@ class _HomeTabViewState extends State<HomeTabView> {
   }
 
   Future<void> _initializeNotifications() async {
-    final pushNotifications = getIt<PushNotificationsServices>();
-
-    await pushNotifications.requestPermission();
-    await pushNotifications.init();
+    await widget.pushNotificationsServices.requestPermission();
+    await widget.pushNotificationsServices.init();
   }
 
   Future<void> _loadHome() async {

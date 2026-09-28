@@ -10,8 +10,9 @@ class OrderStatusTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: List.generate(timeline.length, (index) {
-        final item = timeline[index];
+      children: timeline.asMap().entries.map((entry) {
+        final index = entry.key;
+        final item = entry.value;
 
         return OrderStatusItem(
           title: _getTitle(item.status),
@@ -20,7 +21,7 @@ class OrderStatusTimeline extends StatelessWidget {
           isCurrent: item.isCurrent,
           isLast: index == timeline.length - 1,
         );
-      }),
+      }).toList(),
     );
   }
 

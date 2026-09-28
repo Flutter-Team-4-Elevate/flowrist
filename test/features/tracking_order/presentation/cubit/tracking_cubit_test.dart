@@ -1,35 +1,44 @@
 import 'dart:async';
 
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flowrist/features/tracking_order/domain/entities/tracking_destination_entity.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
+import 'package:flowrist/features/tracking_order/domain/entities/tracking_destination_entity.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/watch_order_tracking_use_case.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
-
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'tracking_cubit_test.mocks.dart';
 
-@GenerateMocks([WatchOrderTrackingUseCase, ConfirmDeliveryUseCase])
+@GenerateMocks([
+  WatchOrderTrackingUseCase,
+  ConfirmDeliveryUseCase,
+  SecureStorageService,
+])
 void main() {
   provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
+
   late MockWatchOrderTrackingUseCase mockWatchOrderTrackingUseCase;
   late MockConfirmDeliveryUseCase mockConfirmDeliveryUseCase;
+  late MockSecureStorageService mockSecureStorageService;
   late TrackingCubit cubit;
 
   setUp(() {
     mockWatchOrderTrackingUseCase = MockWatchOrderTrackingUseCase();
     mockConfirmDeliveryUseCase = MockConfirmDeliveryUseCase();
+    mockSecureStorageService = MockSecureStorageService();
+
+    when(mockSecureStorageService.get(any)).thenAnswer((_) async => '');
 
     cubit = TrackingCubit(
       mockWatchOrderTrackingUseCase,
       mockConfirmDeliveryUseCase,
+      mockSecureStorageService,
     );
   });
 
@@ -41,17 +50,13 @@ void main() {
     test('should call WatchOrderTrackingUseCase with order id', () async {
       const orderId = 'order-123';
 
-      final controller = StreamController<OrderTrackingEntity>();
-
       when(
         mockWatchOrderTrackingUseCase(orderId),
-      ).thenAnswer((_) => controller.stream);
+      ).thenAnswer((_) => const Stream.empty());
 
       await cubit.doEvent(StartTracking(orderId: orderId));
 
       verify(mockWatchOrderTrackingUseCase(orderId)).called(1);
-
-      await controller.close();
     });
 
     blocTest<TrackingCubit, TrackingState>(
@@ -59,23 +64,18 @@ void main() {
       build: () {
         const orderId = 'order-123';
 
-        final controller = StreamController<OrderTrackingEntity>();
-
         when(
           mockWatchOrderTrackingUseCase(orderId),
-        ).thenAnswer((_) => controller.stream);
-
-        Future.microtask(() {
-          controller.add(_createTrackingEntity(orderId));
-        });
+        ).thenAnswer((_) => Stream.value(_createTrackingEntity(orderId)));
 
         return TrackingCubit(
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
+          mockSecureStorageService,
         );
       },
-      act: (cubit) async {
-        await cubit.doEvent(StartTracking(orderId: 'order-123'));
+      act: (cubit) {
+        cubit.doEvent(StartTracking(orderId: 'order-123'));
       },
       expect: () => [
         isA<TrackingState>()
@@ -84,7 +84,6 @@ void main() {
             .having((state) => state.errorMessage, 'errorMessage', isNull),
       ],
     );
-
     blocTest<TrackingCubit, TrackingState>(
       'should emit error when tracking stream throws',
       build: () {
@@ -98,6 +97,7 @@ void main() {
         return TrackingCubit(
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
+          mockSecureStorageService,
         );
       },
       act: (cubit) async {
@@ -110,7 +110,8 @@ void main() {
               (state) => state.errorMessage,
               'errorMessage',
               contains('Tracking failed'),
-            ),
+            )
+            .having((state) => state.tracking, 'tracking', isNull),
       ],
     );
   });
@@ -128,6 +129,7 @@ void main() {
         return TrackingCubit(
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
+          mockSecureStorageService,
         );
       },
       act: (cubit) async {
@@ -170,6 +172,7 @@ void main() {
         return TrackingCubit(
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
+          mockSecureStorageService,
         );
       },
       act: (cubit) async {
@@ -204,13 +207,14 @@ void main() {
 
 OrderTrackingEntity _createTrackingEntity(String orderId) {
   final destination = TrackingDestinationEntity(
-    addressLine: "",
-    area: "",
-    city: "",
+    addressLine: '',
+    area: '',
+    city: '',
     lat: 1.2,
     lng: 2.2,
-    recipientName: "",
+    recipientName: '',
   );
+
   return OrderTrackingEntity(
     orderId: orderId,
     orderNumber: 'ORD-123',
@@ -220,9 +224,6 @@ OrderTrackingEntity _createTrackingEntity(String orderId) {
     driver: null,
     lastKnownLocation: null,
     storeLocation: null,
-
-    // Replace this with your actual destination entity
-    // constructor if destination is required.
     destination: destination,
   );
 }

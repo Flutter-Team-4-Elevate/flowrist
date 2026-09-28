@@ -1,3 +1,4 @@
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
@@ -7,16 +8,20 @@ import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 
 class TrackingMap extends StatefulWidget {
-  const TrackingMap({super.key, required this.tracking});
+  const TrackingMap({
+    super.key,
+    required this.tracking,
+    required this.secureStorageService,
+  });
 
   final OrderTrackingEntity tracking;
+  final SecureStorageService secureStorageService;
 
   @override
   State<TrackingMap> createState() => _TrackingMapState();
@@ -26,39 +31,55 @@ class _TrackingMapState extends State<TrackingMap> {
   LatLng? _userLocation;
   DateTime? _estimatedDeliveryAt;
 
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-  // Store location comes from API
-  LatLng get _storeLocation => LatLng(
-    widget.tracking.storeLocation!.lat,
-    widget.tracking.storeLocation!.lng,
-  );
+  LatLng? get _storeLocation {
+    final location = widget.tracking.storeLocation;
 
-  // Destination comes from API
-  LatLng get _destination =>
-      LatLng(widget.tracking.destination.lat, widget.tracking.destination.lng);
+    if (location == null) {
+      return null;
+    }
 
-  // Keep bike in UI for now.
-  // Replace this with the driver's real location
-  // when the backend provides it.
-  final LatLng _driverLocation = const LatLng(30.0500, 31.2300);
+    return LatLng(location.lat, location.lng);
+  }
+
+  LatLng get _destination {
+    return LatLng(
+      widget.tracking.destination.lat,
+      widget.tracking.destination.lng,
+    );
+  }
+
+  LatLng? get _driverLocation {
+    final location = widget.tracking.lastKnownLocation;
+
+    if (location == null) {
+      return null;
+    }
+
+    return LatLng(location.lat, location.lng);
+  }
 
   @override
   void initState() {
     super.initState();
+
     _loadEstimatedDeliveryAt();
     _getUserLocation();
   }
 
   Future<void> _loadEstimatedDeliveryAt() async {
-    final value = await _secureStorage.read(
-      key: AppConstants.estimatedDeliveryAtKey,
+    final value = await widget.secureStorageService.get(
+      AppConstants.estimatedDeliveryAtKey,
     );
 
-    if (value == null || value.isEmpty) return;
+    if (value.isEmpty) {
+      return;
+    }
 
     final estimatedDeliveryAt = DateTime.tryParse(value);
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _estimatedDeliveryAt = estimatedDeliveryAt;
@@ -68,7 +89,9 @@ class _TrackingMapState extends State<TrackingMap> {
   Future<void> _getUserLocation() async {
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
-    if (!serviceEnabled) return;
+    if (!serviceEnabled) {
+      return;
+    }
 
     var permission = await Geolocator.checkPermission();
 
@@ -83,7 +106,9 @@ class _TrackingMapState extends State<TrackingMap> {
 
     final position = await Geolocator.getCurrentPosition();
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _userLocation = LatLng(position.latitude, position.longitude);
@@ -126,14 +151,38 @@ class _TrackingMapState extends State<TrackingMap> {
   Widget _buildMap() {
     const pink = Color(0xFFD5136B);
 
-    final apartment = _userLocation ?? _destination;
+    final storeLocation = _storeLocation;
+    final driverLocation = _driverLocation;
+
+    // The API destination is the actual apartment/order destination.
+    final apartment = _destination;
+
+    final coordinates = <LatLng>[apartment];
+
+    if (storeLocation != null) {
+      coordinates.add(storeLocation);
+    }
+
+    if (driverLocation != null) {
+      coordinates.add(driverLocation);
+    }
+
+    final routePoints = <LatLng>[apartment];
+
+    if (driverLocation != null) {
+      routePoints.add(driverLocation);
+    }
+
+    if (storeLocation != null) {
+      routePoints.add(storeLocation);
+    }
 
     return FlutterMap(
       options: MapOptions(
-        initialCenter: _storeLocation,
+        initialCenter: storeLocation ?? apartment,
         initialZoom: 14,
         initialCameraFit: CameraFit.coordinates(
-          coordinates: [apartment, _driverLocation, _storeLocation],
+          coordinates: coordinates,
           padding: const EdgeInsets.all(70),
         ),
         interactionOptions: const InteractionOptions(
@@ -149,11 +198,7 @@ class _TrackingMapState extends State<TrackingMap> {
 
         PolylineLayer(
           polylines: [
-            Polyline(
-              points: [apartment, _driverLocation, _storeLocation],
-              strokeWidth: 3,
-              color: pink,
-            ),
+            Polyline(points: routePoints, strokeWidth: 3, color: pink),
           ],
         ),
 
@@ -167,20 +212,34 @@ class _TrackingMapState extends State<TrackingMap> {
               child: _labelPin(icon: Icons.home_rounded, label: 'Apartment'),
             ),
 
-            Marker(
-              point: _storeLocation,
-              width: 100,
-              height: 60,
-              alignment: Alignment.topCenter,
-              child: _labelPin(icon: Icons.local_florist, label: 'Flower'),
-            ),
+            if (storeLocation != null)
+              Marker(
+                point: storeLocation,
+                width: 100,
+                height: 60,
+                alignment: Alignment.topCenter,
+                child: _labelPin(icon: Icons.local_florist, label: 'Flower'),
+              ),
 
-            Marker(
-              point: _driverLocation,
-              width: 50,
-              height: 50,
-              child: Image.asset(AppImages.flowerTrackingOrderMotorcycle),
-            ),
+            if (driverLocation != null)
+              Marker(
+                point: driverLocation,
+                width: 50,
+                height: 50,
+                child: Image.asset(AppImages.flowerTrackingOrderMotorcycle),
+              ),
+
+            if (_userLocation != null)
+              Marker(
+                point: _userLocation!,
+                width: 40,
+                height: 40,
+                child: const Icon(
+                  Icons.my_location,
+                  size: 24,
+                  color: Colors.blue,
+                ),
+              ),
           ],
         ),
       ],
@@ -189,6 +248,7 @@ class _TrackingMapState extends State<TrackingMap> {
 
   Widget _buildOrderInfo() {
     final driverName = widget.tracking.driver?.name ?? 'Driver';
+
     final deliveryTime = _estimatedDeliveryAt == null
         ? '--'
         : DateFormat(
@@ -222,7 +282,6 @@ class _TrackingMapState extends State<TrackingMap> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(driverName, style: AppStyles.regular14InterW500),
-
                   Text(
                     'Is your delivery hero for today',
                     style: AppStyles.regular13,
@@ -255,7 +314,7 @@ class _TrackingMapState extends State<TrackingMap> {
           SizedBox(
             width: double.infinity,
             child: AppButton(
-              text: "Order details",
+              text: 'Order details',
               onPressed: () {
                 context.pop();
               },

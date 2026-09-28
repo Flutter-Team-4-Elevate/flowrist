@@ -8,6 +8,7 @@ class TrackingState extends Equatable {
   final bool isDeliveryConfirmed;
   final String? errorMessage;
   final OrderTrackingEntity? tracking;
+  final DateTime? estimatedDeliveryAt;
 
   const TrackingState({
     this.isLoading = false,
@@ -15,6 +16,7 @@ class TrackingState extends Equatable {
     this.isDeliveryConfirmed = false,
     this.errorMessage,
     this.tracking,
+    this.estimatedDeliveryAt,
   });
 
   TrackingState copyWith({
@@ -23,6 +25,7 @@ class TrackingState extends Equatable {
     bool? isDeliveryConfirmed,
     String? errorMessage,
     OrderTrackingEntity? tracking,
+    DateTime? estimatedDeliveryAt,
   }) {
     return TrackingState(
       isLoading: isLoading ?? this.isLoading,
@@ -30,6 +33,7 @@ class TrackingState extends Equatable {
       isDeliveryConfirmed: isDeliveryConfirmed ?? this.isDeliveryConfirmed,
       errorMessage: errorMessage,
       tracking: tracking ?? this.tracking,
+      estimatedDeliveryAt: estimatedDeliveryAt ?? this.estimatedDeliveryAt,
     );
   }
 
@@ -40,5 +44,6 @@ class TrackingState extends Equatable {
     isDeliveryConfirmed,
     errorMessage,
     tracking,
+    estimatedDeliveryAt,
   ];
 }

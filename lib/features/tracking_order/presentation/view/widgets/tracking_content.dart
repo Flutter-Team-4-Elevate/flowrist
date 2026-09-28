@@ -14,44 +14,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import 'package:flowrist/config/storage/secure_storage_service.dart';
-import 'package:get_it/get_it.dart';
-
-class TrackingContent extends StatefulWidget {
+class TrackingContent extends StatelessWidget {
   final OrderTrackingEntity tracking;
+  final DateTime? estimatedDeliveryAt;
 
-  const TrackingContent({super.key, required this.tracking});
-
-  @override
-  State<TrackingContent> createState() => _TrackingContentState();
-}
-
-class _TrackingContentState extends State<TrackingContent> {
-  static const String estimatedDeliveryAtKey = 'estimated_delivery_at';
-
-  DateTime? _estimatedDeliveryAt;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadEstimatedDelivery();
-  }
-
-  Future<void> _loadEstimatedDelivery() async {
-    final secureStorage = GetIt.I<SecureStorageService>();
-
-    final savedValue = await secureStorage.get(estimatedDeliveryAtKey);
-
-    if (savedValue.isEmpty || !mounted) return;
-
-    final parsedDate = DateTime.tryParse(savedValue);
-
-    if (parsedDate != null) {
-      setState(() {
-        _estimatedDeliveryAt = parsedDate;
-      });
-    }
-  }
+  const TrackingContent({
+    super.key,
+    required this.tracking,
+    required this.estimatedDeliveryAt,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,14 +31,15 @@ class _TrackingContentState extends State<TrackingContent> {
       'ARRIVED',
       'AWAITING_DELIVERY_CONFIRMATION',
       'DELIVERED',
-    ].contains(widget.tracking.status);
-    final driver = widget.tracking.driver;
+    ].contains(tracking.status);
 
-    final deliveryTime = _estimatedDeliveryAt == null
+    final driver = tracking.driver;
+
+    final deliveryTime = estimatedDeliveryAt == null
         ? '--'
         : DateFormat(
             Endpoints.dateFormatDelivery,
-          ).format(_estimatedDeliveryAt!.toLocal());
+          ).format(estimatedDeliveryAt!.toLocal());
 
     return SingleChildScrollView(
       child: Padding(
@@ -95,15 +67,15 @@ class _TrackingContentState extends State<TrackingContent> {
 
             const SizedBox(height: 50),
 
-            OrderStatusTimeline(timeline: widget.tracking.timeline),
+            OrderStatusTimeline(timeline: tracking.timeline),
 
             const SizedBox(height: 30),
 
             _TrackingActions(
               isMapDisabled: isMapDisabled,
-              status: widget.tracking.status,
-              orderId: widget.tracking.orderId,
-              tracking: widget.tracking,
+              status: tracking.status,
+              orderId: tracking.orderId,
+              tracking: tracking,
             ),
           ],
         ),
@@ -113,9 +85,9 @@ class _TrackingContentState extends State<TrackingContent> {
 }
 
 class _DriverSection extends StatelessWidget {
-  const _DriverSection({required this.driverName});
-
   final String driverName;
+
+  const _DriverSection({required this.driverName});
 
   @override
   Widget build(BuildContext context) {
@@ -162,16 +134,18 @@ class _DriverSection extends StatelessWidget {
 }
 
 class _TrackingActions extends StatelessWidget {
+  final bool isMapDisabled;
+  final String orderId;
+  final String status;
+  final OrderTrackingEntity tracking;
+
   const _TrackingActions({
     required this.status,
     required this.orderId,
     required this.tracking,
     required this.isMapDisabled,
   });
-  final bool isMapDisabled;
-  final String orderId;
-  final String status;
-  final OrderTrackingEntity tracking;
+
   @override
   Widget build(BuildContext context) {
     final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';

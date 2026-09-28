@@ -51,25 +51,29 @@ class OrderStatusItem extends StatelessWidget {
                       )
                     : null,
               ),
+
               if (!isLast)
-                Expanded(
-                  child: Container(
-                    width: 1,
-                    color: isCompleted ? Colors.pink : Colors.grey,
-                  ),
+                Container(
+                  width: 1,
+                  height: 57,
+                  color: isCompleted ? Colors.pink : Colors.grey,
                 ),
             ],
           ),
+
           const SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(title, style: AppStyles.regular14Inter),
-              if (date.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                Text(date, style: AppStyles.regular13),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: AppStyles.regular14Inter),
+                if (date.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(date, style: AppStyles.regular13),
+                ],
               ],
-            ],
+            ),
           ),
         ],
       ),
