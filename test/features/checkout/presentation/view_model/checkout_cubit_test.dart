@@ -17,7 +17,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import '../../../../config/l10n/cubit/app_language_cubit_test.mocks.dart';
-import 'checkout_cubit_test.mocks.dart';
+import 'checkout_cubit_test.mocks.dart' hide MockSecureStorageService;
 
 @GenerateMocks([
   PlaceOrderUseCase,
