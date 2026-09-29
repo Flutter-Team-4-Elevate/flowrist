@@ -41,10 +41,8 @@ class TrackingRepositoryImpl implements TrackingRepository {
 
       _currentTracking[orderId] = tracking;
 
-      // Emit initial API response.
       yield tracking;
 
-      // Start listening for FCM tracking updates.
       _startNotificationListener(orderId);
     }
 
