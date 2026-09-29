@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
@@ -15,17 +16,20 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'checkout_cubit_test.mocks.dart';
+import '../../../../config/l10n/cubit/app_language_cubit_test.mocks.dart';
+import 'checkout_cubit_test.mocks.dart' hide MockSecureStorageService;
 
 @GenerateMocks([
   PlaceOrderUseCase,
   GetDeliveryFeeUseCase,
   GetAllUserAddressesUseCase,
+  SecureStorageService,
 ])
 void main() {
   late MockPlaceOrderUseCase mockPlaceOrderUseCase;
   late MockGetDeliveryFeeUseCase mockGetDeliveryFeeUseCase;
   late MockGetAllUserAddressesUseCase mockGetAllUserAddressesUseCase;
+  late MockSecureStorageService mockSecureStorageService;
   late CheckoutCubit cubit;
 
   const addressId = 'address-123';
@@ -118,11 +122,15 @@ void main() {
     mockPlaceOrderUseCase = MockPlaceOrderUseCase();
     mockGetDeliveryFeeUseCase = MockGetDeliveryFeeUseCase();
     mockGetAllUserAddressesUseCase = MockGetAllUserAddressesUseCase();
+    mockSecureStorageService = MockSecureStorageService();
+
+    when(mockSecureStorageService.save(any, any)).thenAnswer((_) async {});
 
     cubit = CheckoutCubit(
       mockPlaceOrderUseCase,
       mockGetDeliveryFeeUseCase,
       mockGetAllUserAddressesUseCase,
+      mockSecureStorageService,
     );
   });
 

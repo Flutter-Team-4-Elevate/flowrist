@@ -127,6 +127,7 @@ class _CheckoutViewState extends State<CheckoutView> {
 
                           TotalPrice(
                             subTotal: widget.subTotal,
+
                             cartId: widget.cartId,
                             addressId: widget.addressId,
                           ),
@@ -166,13 +167,12 @@ class _DeliveryTimeSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<CheckoutCubit, CheckoutState>(
       listenWhen: (previous, current) {
-        return previous.deliveryFeeState.errorMessage !=
-            current.deliveryFeeState.errorMessage;
+        return previous.deliveryFeeState.data != current.deliveryFeeState.data;
       },
       listener: (context, state) {
         final errorMessage = state.deliveryFeeState.errorMessage;
 
-        if (errorMessage != null) {
+        if (errorMessage != null && context.mounted) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(errorMessage)));

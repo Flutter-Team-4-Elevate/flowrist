@@ -1,4 +1,5 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
@@ -15,8 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeTabView extends StatefulWidget {
-  const HomeTabView({super.key});
-
+  const HomeTabView({super.key, required this.pushNotificationsServices});
+  final PushNotificationsServices pushNotificationsServices;
   @override
   State<HomeTabView> createState() => _HomeTabViewState();
 }
@@ -25,8 +26,15 @@ class _HomeTabViewState extends State<HomeTabView> {
   @override
   void initState() {
     super.initState();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotifications();
+    });
     _loadHome();
+  }
+
+  Future<void> _initializeNotifications() async {
+    await widget.pushNotificationsServices.requestPermission();
+    await widget.pushNotificationsServices.init();
   }
 
   Future<void> _loadHome() async {

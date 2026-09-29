@@ -650,4 +650,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get passwordChangedSuccess =>
       'Password changed successfully. Please log in again.';
+
+  @override
+  String get waitingForDriver => 'Waiting for driver';
+
+  @override
+  String get waitingForDriverDescription =>
+      'Your order has been placed. We are waiting for a driver to accept it.';
+
+  @override
+  String get estimatedArrival => 'Estimated arrival';
+
+  @override
+  String get deliveryHeroDescription => 'Is your delivery hero for today';
+
+  @override
+  String get showMap => 'Show map';
+
+  @override
+  String get orderDelivered => 'Order Delivered';
+
+  @override
+  String get apartment => 'Apartment';
+
+  @override
+  String get flower => 'Flower';
+
+  @override
+  String get driver => 'Driver';
+
+  @override
+  String get orderPlacedSuccessfully => 'Your order placed successfully!';
+
+  @override
+  String get placed => 'Placed';
+
+  @override
+  String get preparing => 'Preparing';
+
+  @override
+  String get pickedUp => 'Picked up';
+
+  @override
+  String get outForDelivery => 'Out for delivery';
+
+  @override
+  String get arrived => 'Arrived';
+
+  @override
+  String get awaitingDeliveryConfirmation => 'Awaiting delivery confirmation';
+
+  @override
+  String get delivered => 'Delivered';
+
+  @override
+  String get unknownDeliveryTime => 'Not available';
 }

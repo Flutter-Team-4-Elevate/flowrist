@@ -10,6 +10,7 @@ abstract final class Endpoints {
   static String deleteSession(String sessionId) =>
       'api/identity/auth/sessions/$sessionId';
   static const String orderTracking = 'api/orders/{orderId}/tracking';
+  static const String confirmDelivery = 'api/orders/{orderId}/confirm-delivery';
   static const occasions = 'api/catalog/occasions';
   static const categories = 'api/catalog/categories';
   static const products = 'api/catalog/products';
@@ -51,4 +52,5 @@ abstract final class Endpoints {
   static const String changePassword = 'api/identity/users/change-password';
   static const String deviceId = 'deviceId';
   static const String notificationsEnabled = 'notifications_enabled';
+  static const String orderId = 'orderId';
 }

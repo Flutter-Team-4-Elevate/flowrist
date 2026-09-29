@@ -51,4 +51,5 @@ abstract final class AppConstants {
       'https://elevate-flutter-team.github.io/flower_app_web_views/about.html';
   static const String termsAndConditionsUrl =
       'https://elevate-flutter-team.github.io/flower_app_web_views/terms.html';
+  static const String estimatedDeliveryAtKey = 'estimated_delivery_at';
 }

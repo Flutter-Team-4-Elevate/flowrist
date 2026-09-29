@@ -1,3 +1,4 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
@@ -12,8 +13,9 @@ class TrackOrderDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Track order')),
+      appBar: AppBar(title: Text(l10n.trackOrder)),
       body: BlocBuilder<TrackingCubit, TrackingState>(
         builder: (context, state) {
           // Initial loading
@@ -46,7 +48,10 @@ class TrackOrderDetails extends StatelessWidget {
           // PREPARING / PICKED_UP / OUT_FOR_DELIVERY / DELIVERED
           // =====================================================
 
-          return TrackingContent(tracking: tracking);
+          return TrackingContent(
+            tracking: tracking,
+            estimatedDeliveryAt: state.estimatedDeliveryAt,
+          );
         },
       ),
     );
@@ -58,6 +63,7 @@ class WaitingForDriverView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),
@@ -73,7 +79,7 @@ class WaitingForDriverView extends StatelessWidget {
             const SizedBox(height: 24),
 
             Text(
-              'Waiting for driver',
+              l10n.waitingForDriver,
               style: AppStyles.medium16InterBlack,
               textAlign: TextAlign.center,
             ),
@@ -81,8 +87,7 @@ class WaitingForDriverView extends StatelessWidget {
             const SizedBox(height: 8),
 
             Text(
-              'Your order has been placed. '
-              'We are waiting for a driver to accept it.',
+              l10n.waitingForDriverDescription,
               style: AppStyles.regular14Inter,
               textAlign: TextAlign.center,
             ),

@@ -1,7 +1,9 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
@@ -12,7 +14,6 @@ import 'package:flowrist/features/auth/presentation/login/view/login_view.dart';
 import 'package:flowrist/features/auth/presentation/signup/view/signup_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/checkout_view.dart';
 import 'package:flowrist/features/checkout/presentation/view/payment_web_view.dart';
-import 'package:flowrist/features/checkout/presentation/view/success_order.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/helpers/checkout_arguments.dart';
 import 'package:flowrist/features/home/cart/presentation/view/cart_tab_view.dart';
@@ -33,7 +34,9 @@ import 'package:flowrist/features/home/profile/session_management/presentation/v
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
+import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_map.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
@@ -148,8 +151,13 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrder,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String;
+          final orderId = state.extra as String?;
 
+          if (orderId == null || orderId.isEmpty) {
+            return HomeTabView(
+              pushNotificationsServices: getIt<PushNotificationsServices>(),
+            );
+          }
           return TrackingView(orderId: orderId);
         },
       ),
@@ -157,28 +165,49 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrderDetails,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String;
+          final orderId = state.extra is String ? state.extra as String : null;
+
+          if (orderId == null || orderId.isEmpty) {
+            return const SizedBox.shrink();
+          }
 
           return BlocProvider(
-            create: (_) => getIt<TrackingCubit>()..startTracking(orderId),
-            child: const TrackOrderDetails(),
+            create: (_) =>
+                getIt<TrackingCubit>()
+                  ..doEvent(StartTracking(orderId: orderId)),
+            child: TrackOrderDetails(),
           );
         },
       ),
       GoRoute(
         path: AppRoutes.trackingMap,
         parentNavigatorKey: rootNavigatorKey,
-        builder: (context, state) => const TrackingMap(),
-      ),
-      GoRoute(
-        path: AppRoutes.successOrder,
-        parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String;
+          final tracking = state.extra is OrderTrackingEntity
+              ? state.extra as OrderTrackingEntity
+              : null;
 
-          return SuccessOrder(orderId: orderId);
+          if (tracking == null) {
+            return HomeTabView(
+              pushNotificationsServices: getIt<PushNotificationsServices>(),
+            );
+          }
+
+          return TrackingMap(
+            tracking: tracking,
+            secureStorageService: getIt<SecureStorageService>(),
+          );
         },
       ),
+      // GoRoute(
+      //   path: AppRoutes.successOrder,
+      //   parentNavigatorKey: rootNavigatorKey,
+      //   builder: (context, state) {
+      //     final orderId = state.extra as String;
+
+      //     return SuccessOrder(orderId: orderId);
+      //   },
+      // ),
       GoRoute(
         path: AppRoutes.checkOut,
         builder: (context, state) {
@@ -320,7 +349,10 @@ abstract final class AppRouter {
               GoRoute(
                 path: AppRoutes.homeTab,
                 builder: (context, state) {
-                  return const HomeTabView();
+                  return HomeTabView(
+                    pushNotificationsServices:
+                        getIt<PushNotificationsServices>(),
+                  );
                 },
               ),
             ],

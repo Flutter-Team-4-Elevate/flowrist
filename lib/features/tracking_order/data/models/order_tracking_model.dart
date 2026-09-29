@@ -20,7 +20,7 @@ class OrderTrackingModel {
   final TrackingDriverModel? driver;
 
   final TrackingLocationModel? lastKnownLocation;
-
+  final TrackingLocationModel? storeLocation;
   final TrackingDestinationModel destination;
 
   const OrderTrackingModel({
@@ -31,6 +31,7 @@ class OrderTrackingModel {
     required this.timeline,
     this.driver,
     this.lastKnownLocation,
+    this.storeLocation,
     required this.destination,
   });
 
@@ -48,6 +49,7 @@ class OrderTrackingModel {
       timeline: timeline.map((item) => item.toEntity()).toList(),
       driver: driver?.toEntity(),
       lastKnownLocation: lastKnownLocation?.toEntity(),
+      storeLocation: storeLocation?.toEntity(),
       destination: destination.toEntity(),
     );
   }
