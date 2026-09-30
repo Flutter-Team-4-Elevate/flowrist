@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/tracking_order/domain/repositories/tracking_repository.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
@@ -15,8 +14,7 @@ void main() {
 
   setUp(() {
     provideDummy<BaseResponse<void>>(SuccessResponse<void>(null));
-  });
-  setUp(() {
+
     mockRepository = MockTrackingRepository();
     useCase = ConfirmDeliveryUseCase(mockRepository);
   });
@@ -42,7 +40,7 @@ void main() {
   test('should return error response when repository fails', () async {
     const orderId = 'order-123';
 
-    final response = ErrorResponse<dynamic>('Failed to confirm delivery');
+    final response = ErrorResponse<void>('Failed to confirm delivery');
 
     when(
       mockRepository.confirmDelivery(orderId),
@@ -53,6 +51,7 @@ void main() {
     expect(result, same(response));
 
     verify(mockRepository.confirmDelivery(orderId)).called(1);
+
     verifyNoMoreInteractions(mockRepository);
   });
 }

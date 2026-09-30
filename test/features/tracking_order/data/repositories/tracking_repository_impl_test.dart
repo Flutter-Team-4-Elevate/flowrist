@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'package:flowrist/features/tracking_order/data/repositories/tracking_repository_impl.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
+
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_notification_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_remote_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/models/order_tracking_model.dart';
+import 'package:flowrist/features/tracking_order/data/models/tracking_destination_model.dart';
+import 'package:flowrist/features/tracking_order/data/repositories/tracking_repository_impl.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/tracking_update_entity.dart';
-import 'package:flowrist/features/tracking_order/data/models/tracking_destination_model.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 
 import 'tracking_repository_impl_test.mocks.dart';
 
@@ -18,7 +19,9 @@ void main() {
   provideDummy<BaseResponse<OrderTrackingModel>>(
     SuccessResponse<OrderTrackingModel>(null),
   );
+
   provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
+
   late MockTrackingRemoteDataSource mockRemoteDataSource;
   late MockTrackingNotificationDataSource mockNotificationDataSource;
   late TrackingRepositoryImpl repository;
@@ -42,15 +45,17 @@ void main() {
   });
 
   tearDown(() async {
+    await repository.dispose();
     await notificationController.close();
   });
 
   group('watchOrderTracking', () {
     test(
-      'should emit tracking data when API returns SuccessResponse',
+      'should emit SuccessResponse when API returns tracking data',
       () async {
         // Arrange
         const orderId = '33333333-3333-3333-3333-333333333333';
+
         final destination = TrackingDestinationModel(
           addressLine: "",
           area: "",
@@ -59,6 +64,7 @@ void main() {
           lng: 2.2,
           recipientName: "",
         );
+
         final tracking = OrderTrackingModel(
           orderId: orderId,
           orderNumber: 'ORD-001',
@@ -79,9 +85,17 @@ void main() {
         await expectLater(
           stream,
           emits(
-            isA<OrderTrackingEntity>()
-                .having((tracking) => tracking.orderId, 'orderId', orderId)
-                .having((tracking) => tracking.status, 'status', 'PREPARING'),
+            isA<SuccessResponse<OrderTrackingEntity>>()
+                .having(
+                  (response) => response.data?.orderId,
+                  'orderId',
+                  orderId,
+                )
+                .having(
+                  (response) => response.data?.status,
+                  'status',
+                  'PREPARING',
+                ),
           ),
         );
 
@@ -89,7 +103,7 @@ void main() {
       },
     );
 
-    test('should throw exception when API returns ErrorResponse', () async {
+    test('should emit ErrorResponse when API returns ErrorResponse', () async {
       // Arrange
       const orderId = '33333333-3333-3333-3333-333333333333';
 
@@ -103,9 +117,11 @@ void main() {
       // Assert
       await expectLater(
         stream,
-        emitsError(
-          predicate<Exception>(
-            (error) => error.toString().contains('Order tracking not found'),
+        emits(
+          isA<ErrorResponse<OrderTrackingEntity>>().having(
+            (response) => response.errorMessage,
+            'errorMessage',
+            'Order tracking not found',
           ),
         ),
       );
@@ -113,7 +129,7 @@ void main() {
       verify(mockRemoteDataSource.getOrderTracking(orderId)).called(1);
     });
 
-    test('should throw exception when tracking data is null', () async {
+    test('should emit ErrorResponse when tracking data is null', () async {
       // Arrange
       const orderId = '33333333-3333-3333-3333-333333333333';
 
@@ -127,9 +143,11 @@ void main() {
       // Assert
       await expectLater(
         stream,
-        emitsError(
-          predicate<Exception>(
-            (error) => error.toString().contains('Tracking data is empty'),
+        emits(
+          isA<ErrorResponse<OrderTrackingEntity>>().having(
+            (response) => response.errorMessage,
+            'errorMessage',
+            'Tracking data is empty',
           ),
         ),
       );
@@ -212,6 +230,7 @@ void main() {
             emitted[1] as SuccessResponse<OrderTrackingEntity>;
 
         expect(firstResponse.data?.status, 'PREPARING');
+
         expect(secondResponse.data?.status, 'PICKED_UP');
 
         verify(mockRemoteDataSource.getOrderTracking(orderId)).called(2);
