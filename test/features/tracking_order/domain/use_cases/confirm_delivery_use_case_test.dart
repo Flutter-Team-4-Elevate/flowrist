@@ -10,10 +10,12 @@ import 'confirm_delivery_use_case_test.mocks.dart';
 
 @GenerateMocks([TrackingRepository])
 void main() {
-  provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
   late MockTrackingRepository mockRepository;
   late ConfirmDeliveryUseCase useCase;
 
+  setUp(() {
+    provideDummy<BaseResponse<void>>(SuccessResponse<void>(null));
+  });
   setUp(() {
     mockRepository = MockTrackingRepository();
     useCase = ConfirmDeliveryUseCase(mockRepository);
@@ -22,7 +24,7 @@ void main() {
   test('should confirm delivery successfully', () async {
     const orderId = 'order-123';
 
-    final response = SuccessResponse<dynamic>(null);
+    final response = SuccessResponse<void>(null);
 
     when(
       mockRepository.confirmDelivery(orderId),
@@ -33,6 +35,7 @@ void main() {
     expect(result, same(response));
 
     verify(mockRepository.confirmDelivery(orderId)).called(1);
+
     verifyNoMoreInteractions(mockRepository);
   });
 
