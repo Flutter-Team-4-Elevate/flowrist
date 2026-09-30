@@ -20,8 +20,7 @@ void main() {
     SuccessResponse<OrderTrackingModel>(null),
   );
 
-  provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
-
+  provideDummy<BaseResponse<void>>(SuccessResponse<void>(null));
   late MockTrackingRemoteDataSource mockRemoteDataSource;
   late MockTrackingNotificationDataSource mockNotificationDataSource;
   late TrackingRepositoryImpl repository;
