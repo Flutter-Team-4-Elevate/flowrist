@@ -5,7 +5,7 @@ import 'package:flowrist/features/tracking_order/data/data_sources/contract/remo
 import 'package:flowrist/features/tracking_order/data/models/order_tracking_model.dart';
 import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: TrackingRemoteDataSource)
+@Injectable(as: TrackingRemoteDataSource)
 class TrackingRemoteDataSourceImpl implements TrackingRemoteDataSource {
   final TrackingApiClient _apiClient;
 
@@ -29,7 +29,7 @@ class TrackingRemoteDataSourceImpl implements TrackingRemoteDataSource {
   }
 
   @override
-  Future<BaseResponse<dynamic>> confirmDelivery(String orderId) async {
+  Future<BaseResponse<void>> confirmDelivery(String orderId) async {
     try {
       await _apiClient.confirmDelivery(orderId);
 

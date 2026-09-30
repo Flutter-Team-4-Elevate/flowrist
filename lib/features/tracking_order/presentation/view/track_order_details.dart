@@ -30,7 +30,12 @@ class TrackOrderDetails extends StatelessWidget {
 
           // No data
           if (tracking == null) {
-            return const SizedBox.shrink();
+            return const Center(
+              child: Text(
+                'No Data please try again',
+                textAlign: TextAlign.center,
+              ),
+            );
           }
 
           // =====================================================

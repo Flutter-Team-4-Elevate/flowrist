@@ -64,9 +64,9 @@ void main() {
       build: () {
         const orderId = 'order-123';
 
-        when(
-          mockWatchOrderTrackingUseCase(orderId),
-        ).thenAnswer((_) => Stream.value(_createTrackingEntity(orderId)));
+        when(mockWatchOrderTrackingUseCase(orderId)).thenAnswer(
+          (_) => Stream.value(SuccessResponse(_createTrackingEntity(orderId))),
+        );
 
         return TrackingCubit(
           mockWatchOrderTrackingUseCase,
@@ -78,20 +78,27 @@ void main() {
         cubit.doEvent(StartTracking(orderId: 'order-123'));
       },
       expect: () => [
+        isA<TrackingState>().having(
+          (state) => state.isLoading,
+          'isLoading',
+          true,
+        ),
         isA<TrackingState>()
             .having((state) => state.isLoading, 'isLoading', false)
             .having((state) => state.tracking, 'tracking', isNotNull)
-            .having((state) => state.errorMessage, 'errorMessage', isNull),
+            .having((state) => state.errorMessage, 'errorMessage', isNull)
+            .having((state) => state.lastUpdatedAt, 'lastUpdatedAt', isNotNull),
       ],
     );
     blocTest<TrackingCubit, TrackingState>(
-      'should emit error when tracking stream throws',
+      'should emit error when tracking stream returns error response',
       build: () {
         const orderId = 'order-123';
 
         when(mockWatchOrderTrackingUseCase(orderId)).thenAnswer(
-          (_) =>
-              Stream<OrderTrackingEntity>.error(Exception('Tracking failed')),
+          (_) => Stream.value(
+            ErrorResponse<OrderTrackingEntity>('Tracking failed'),
+          ),
         );
 
         return TrackingCubit(
@@ -104,12 +111,17 @@ void main() {
         await cubit.doEvent(StartTracking(orderId: 'order-123'));
       },
       expect: () => [
+        isA<TrackingState>().having(
+          (state) => state.isLoading,
+          'isLoading',
+          true,
+        ),
         isA<TrackingState>()
             .having((state) => state.isLoading, 'isLoading', false)
             .having(
               (state) => state.errorMessage,
               'errorMessage',
-              contains('Tracking failed'),
+              'Tracking failed',
             )
             .having((state) => state.tracking, 'tracking', isNull),
       ],

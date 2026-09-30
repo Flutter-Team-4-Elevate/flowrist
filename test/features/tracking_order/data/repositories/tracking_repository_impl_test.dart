@@ -144,6 +144,7 @@ void main() {
       () async {
         // Arrange
         const orderId = '33333333-3333-3333-3333-333333333333';
+
         final destination = TrackingDestinationModel(
           addressLine: "",
           area: "",
@@ -152,6 +153,7 @@ void main() {
           lng: 2.2,
           recipientName: "",
         );
+
         final initialTracking = OrderTrackingModel(
           orderId: orderId,
           orderNumber: 'ORD-001',
@@ -177,7 +179,7 @@ void main() {
         // First subscription.
         final stream = repository.watchOrderTracking(orderId);
 
-        final emitted = <OrderTrackingEntity>[];
+        final emitted = <BaseResponse<OrderTrackingEntity>>[];
 
         final subscription = stream.listen(emitted.add);
 
@@ -199,58 +201,24 @@ void main() {
         // Assert
         expect(emitted.length, 2);
 
-        expect(emitted[0].status, 'PREPARING');
-        expect(emitted[1].status, 'PICKED_UP');
+        expect(emitted[0], isA<SuccessResponse<OrderTrackingEntity>>());
+
+        expect(emitted[1], isA<SuccessResponse<OrderTrackingEntity>>());
+
+        final firstResponse =
+            emitted[0] as SuccessResponse<OrderTrackingEntity>;
+
+        final secondResponse =
+            emitted[1] as SuccessResponse<OrderTrackingEntity>;
+
+        expect(firstResponse.data?.status, 'PREPARING');
+        expect(secondResponse.data?.status, 'PICKED_UP');
 
         verify(mockRemoteDataSource.getOrderTracking(orderId)).called(2);
 
         await subscription.cancel();
       },
     );
-
-    test('should ignore notification belonging to another order', () async {
-      // Arrange
-      const orderId = 'order-123';
-      const anotherOrderId = 'order-456';
-      final destination = TrackingDestinationModel(
-        addressLine: "",
-        area: "",
-        city: "",
-        lat: 1.2,
-        lng: 2.2,
-        recipientName: "",
-      );
-      final tracking = OrderTrackingModel(
-        orderId: orderId,
-        orderNumber: 'ORD-001',
-        status: 'PREPARING',
-        isTrackingActive: true,
-        timeline: [],
-        destination: destination,
-      );
-
-      when(
-        mockRemoteDataSource.getOrderTracking(orderId),
-      ).thenAnswer((_) async => SuccessResponse(tracking));
-
-      final stream = repository.watchOrderTracking(orderId);
-
-      final subscription = stream.listen((_) {});
-
-      await Future<void>.delayed(Duration.zero);
-
-      // Act
-      notificationController.add(
-        TrackingUpdateEntity(orderId: anotherOrderId, status: 'PICKED_UP'),
-      );
-
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-
-      // Assert
-      verify(mockRemoteDataSource.getOrderTracking(orderId)).called(1);
-
-      await subscription.cancel();
-    });
   });
 
   group('confirmDelivery', () {

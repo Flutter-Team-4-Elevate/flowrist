@@ -151,11 +151,16 @@ abstract final class AppRouter {
         path: AppRoutes.trackOrder,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final orderId = state.extra as String?;
+          final orderId = state.extra is String ? state.extra as String : null;
 
           if (orderId == null || orderId.isEmpty) {
-            return HomeTabView(
-              pushNotificationsServices: getIt<PushNotificationsServices>(),
+            return const Scaffold(
+              body: Center(
+                child: Text(
+                  'Order ID is missing or invalid.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
             );
           }
           return TrackingView(orderId: orderId);
@@ -168,7 +173,12 @@ abstract final class AppRouter {
           final orderId = state.extra is String ? state.extra as String : null;
 
           if (orderId == null || orderId.isEmpty) {
-            return const SizedBox.shrink();
+            return const Center(
+              child: Text(
+                'Order ID is missing or invalid.',
+                textAlign: TextAlign.center,
+              ),
+            );
           }
 
           return BlocProvider(

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -23,7 +24,8 @@ void main() {
   test('should call repository watchOrderTracking', () {
     const orderId = 'order-123';
 
-    final controller = StreamController<OrderTrackingEntity>.broadcast();
+    final controller =
+        StreamController<BaseResponse<OrderTrackingEntity>>.broadcast();
 
     when(
       mockRepository.watchOrderTracking(orderId),
@@ -31,7 +33,7 @@ void main() {
 
     final result = useCase(orderId);
 
-    expect(result, isA<Stream<OrderTrackingEntity>>());
+    expect(result, isA<Stream<BaseResponse<OrderTrackingEntity>>>());
 
     verify(mockRepository.watchOrderTracking(orderId)).called(1);
 

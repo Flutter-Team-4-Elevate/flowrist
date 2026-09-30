@@ -17,124 +17,136 @@ class TrackingRepositoryImpl implements TrackingRepository {
 
   final Map<String, OrderTrackingEntity> _currentTracking = {};
 
-  final Map<String, StreamController<OrderTrackingEntity>> _controllers = {};
+  final Map<String, StreamController<BaseResponse<OrderTrackingEntity>>>
+  _controllers = {};
 
-  final Map<String, StreamSubscription<TrackingUpdateEntity>>
-  _notificationSubscriptions = {};
+  final Map<String, Timer> _pollingTimers = {};
+
+  StreamSubscription<TrackingUpdateEntity>? _notificationSubscription;
 
   @override
-  Stream<OrderTrackingEntity> watchOrderTracking(String orderId) async* {
-    final controller = _getController(orderId);
-
-    final response = await _remoteDataSource.getOrderTracking(orderId);
-
-    if (response is ErrorResponse<OrderTrackingModel>) {
-      throw Exception(response.errorMessage);
-    }
-
-    if (response is SuccessResponse<OrderTrackingModel>) {
-      final tracking = response.data?.toEntity();
-
-      if (tracking == null) {
-        throw Exception('Tracking data is empty');
-      }
-
-      _currentTracking[orderId] = tracking;
-
-      yield tracking;
-
-      _startNotificationListener(orderId);
-    }
-
-    // Continue listening for updates.
-    yield* controller.stream;
+  Stream<BaseResponse<OrderTrackingEntity>> watchOrderTracking(String orderId) {
+    return _getController(orderId).stream;
   }
 
-  StreamController<OrderTrackingEntity> _getController(String orderId) {
+  StreamController<BaseResponse<OrderTrackingEntity>> _getController(
+    String orderId,
+  ) {
     return _controllers.putIfAbsent(
       orderId,
-      () => StreamController<OrderTrackingEntity>.broadcast(),
+      () => StreamController<BaseResponse<OrderTrackingEntity>>.broadcast(
+        onListen: () => _startTracking(orderId),
+        onCancel: () => _onTrackingStreamCancelled(orderId),
+      ),
     );
   }
 
-  void _startNotificationListener(String orderId) {
-    if (_notificationSubscriptions.containsKey(orderId)) {
+  Future<void> _startTracking(String orderId) async {
+    _startNotificationListener();
+
+    await _getOrderTracking(orderId);
+
+    if (!_controllers.containsKey(orderId)) {
       return;
     }
 
-    _notificationSubscriptions[orderId] = _notificationDataSource
-        .trackingUpdates
-        .listen((update) async {
-          if (update.orderId != orderId) {
-            return;
-          }
+    _startPolling(orderId);
+  }
 
-          await _handleTrackingUpdate(update);
-        });
+  Future<void> _getOrderTracking(String orderId) async {
+    final controller = _controllers[orderId];
+
+    if (controller == null || controller.isClosed) {
+      return;
+    }
+
+    final response = await _remoteDataSource.getOrderTracking(orderId);
+
+    switch (response) {
+      case SuccessResponse<OrderTrackingModel>():
+        final tracking = response.data?.toEntity();
+
+        if (tracking == null) {
+          controller.add(
+            ErrorResponse<OrderTrackingEntity>('Tracking data is empty'),
+          );
+          return;
+        }
+
+        _currentTracking[orderId] = tracking;
+
+        controller.add(SuccessResponse<OrderTrackingEntity>(tracking));
+
+      case ErrorResponse<OrderTrackingModel>():
+        controller.add(
+          ErrorResponse<OrderTrackingEntity>(response.errorMessage),
+        );
+    }
+  }
+
+  void _startPolling(String orderId) {
+    if (_pollingTimers.containsKey(orderId)) {
+      return;
+    }
+
+    _pollingTimers[orderId] = Timer.periodic(
+      const Duration(seconds: 5),
+      (_) => _getOrderTracking(orderId),
+    );
+  }
+
+  void _startNotificationListener() {
+    if (_notificationSubscription != null) {
+      return;
+    }
+
+    _notificationSubscription = _notificationDataSource.trackingUpdates.listen(
+      _handleTrackingUpdate,
+    );
   }
 
   Future<void> _handleTrackingUpdate(TrackingUpdateEntity update) async {
-    try {
-      final response = await _remoteDataSource.getOrderTracking(update.orderId);
-
-      if (response is! SuccessResponse<OrderTrackingModel>) {
-        return;
-      }
-
-      final tracking = response.data?.toEntity();
-
-      if (tracking == null) {
-        return;
-      }
-
-      _currentTracking[update.orderId] = tracking;
-
-      final controller = _controllers[update.orderId];
-
-      if (controller != null && !controller.isClosed) {
-        controller.add(tracking);
-      }
-    } catch (_) {
-      // Ignore notification refresh errors.
-      // The next notification can retry the API refresh.
+    if (!_controllers.containsKey(update.orderId)) {
+      return;
     }
+
+    await _getOrderTracking(update.orderId);
   }
 
-  @override
-  Future<BaseResponse<dynamic>> confirmDelivery(String orderId) async {
-    final response = await _remoteDataSource.confirmDelivery(orderId);
-
-    switch (response) {
-      case SuccessResponse<dynamic>():
-        return SuccessResponse(null);
-
-      case ErrorResponse<dynamic>():
-        return ErrorResponse(response.errorMessage);
-    }
-  }
-
-  /// Closes the stream and notification listener for one order.
-  Future<void> closeOrderTracking(String orderId) async {
-    await _notificationSubscriptions.remove(orderId)?.cancel();
+  Future<void> _onTrackingStreamCancelled(String orderId) async {
+    _pollingTimers.remove(orderId)?.cancel();
 
     final controller = _controllers.remove(orderId);
+
+    _currentTracking.remove(orderId);
 
     if (controller != null && !controller.isClosed) {
       await controller.close();
     }
 
-    _currentTracking.remove(orderId);
+    if (_controllers.isEmpty) {
+      await _stopNotificationListener();
+    }
   }
 
-  /// Closes every active order tracking stream.
-  Future<void> dispose() async {
-    final subscriptions = _notificationSubscriptions.values.toList();
+  Future<void> _stopNotificationListener() async {
+    await _notificationSubscription?.cancel();
+    _notificationSubscription = null;
+  }
 
-    for (final subscription in subscriptions) {
-      await subscription.cancel();
+  @override
+  Future<BaseResponse<void>> confirmDelivery(String orderId) {
+    return _remoteDataSource.confirmDelivery(orderId);
+  }
+
+  Future<void> dispose() async {
+    await _stopNotificationListener();
+
+    for (final timer in _pollingTimers.values) {
+      timer.cancel();
     }
 
-    _notificationSubscriptions.clear();
+    _pollingTimers.clear();
 
     final controllers = _controllers.values.toList();
 

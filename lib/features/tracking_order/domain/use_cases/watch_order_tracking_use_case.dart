@@ -1,3 +1,4 @@
+import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:injectable/injectable.dart';
 
 import '../entities/order_tracking_entity.dart';
@@ -9,7 +10,7 @@ class WatchOrderTrackingUseCase {
 
   WatchOrderTrackingUseCase(this._repository);
 
-  Stream<OrderTrackingEntity> call(String orderId) {
+  Stream<BaseResponse<OrderTrackingEntity>> call(String orderId) {
     return _repository.watchOrderTracking(orderId);
   }
 }
