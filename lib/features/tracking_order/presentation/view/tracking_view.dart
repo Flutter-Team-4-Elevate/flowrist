@@ -1,3 +1,4 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_router.dart';
@@ -11,6 +12,7 @@ class TrackingView extends StatelessWidget {
   const TrackingView({super.key, required this.orderId});
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -19,7 +21,7 @@ class TrackingView extends StatelessWidget {
           },
           icon: const Icon(Icons.arrow_back),
         ),
-        title: Text("Track order"),
+        title: Text(l10n.trackOrder),
       ),
       body: Center(
         child: Padding(
@@ -36,7 +38,7 @@ class TrackingView extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Your order placed successfully!',
+                  l10n.orderPlacedSuccessfully,
                   textAlign: TextAlign.center,
                   style: AppStyles.medium24,
                 ),
@@ -45,7 +47,7 @@ class TrackingView extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: AppButton(
-                  text: "Track order",
+                  text: l10n.trackOrder,
                   onPressed: () {
                     context.push(AppRoutes.trackOrderDetails, extra: orderId);
                   },

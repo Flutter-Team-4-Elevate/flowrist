@@ -148,6 +148,12 @@ class _TrackingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMapDisabled = [
+      'ARRIVED',
+      'AWAITING_DELIVERY_CONFIRMATION',
+      'DELIVERED',
+    ].contains(status);
+
     final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';
 
     if (isDelivered) {

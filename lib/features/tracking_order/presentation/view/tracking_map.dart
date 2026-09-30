@@ -1,3 +1,4 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
@@ -150,6 +151,7 @@ class _TrackingMapState extends State<TrackingMap> {
 
   Widget _buildMap() {
     const pink = Color(0xFFD5136B);
+    final l10n = AppLocalizations.of(context)!;
 
     final storeLocation = _storeLocation;
     final driverLocation = _driverLocation;
@@ -209,7 +211,7 @@ class _TrackingMapState extends State<TrackingMap> {
               width: 100,
               height: 60,
               alignment: Alignment.topCenter,
-              child: _labelPin(icon: Icons.home_rounded, label: 'Apartment'),
+              child: _labelPin(icon: Icons.home_rounded, label: l10n.apartment),
             ),
 
             if (storeLocation != null)
@@ -218,7 +220,7 @@ class _TrackingMapState extends State<TrackingMap> {
                 width: 100,
                 height: 60,
                 alignment: Alignment.topCenter,
-                child: _labelPin(icon: Icons.local_florist, label: 'Flower'),
+                child: _labelPin(icon: Icons.local_florist, label: l10n.flower),
               ),
 
             if (driverLocation != null)
@@ -247,7 +249,9 @@ class _TrackingMapState extends State<TrackingMap> {
   }
 
   Widget _buildOrderInfo() {
-    final driverName = widget.tracking.driver?.name ?? 'Driver';
+    final l10n = AppLocalizations.of(context)!;
+
+    final driverName = widget.tracking.driver?.name ?? l10n.driver;
 
     final deliveryTime = _estimatedDeliveryAt == null
         ? '--'
@@ -260,7 +264,7 @@ class _TrackingMapState extends State<TrackingMap> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Estimated arrival', style: AppStyles.regular14Inter),
+          Text(l10n.estimatedArrival, style: AppStyles.regular14Inter),
 
           Text(deliveryTime, style: AppStyles.medium16InterBlack),
 
@@ -283,7 +287,7 @@ class _TrackingMapState extends State<TrackingMap> {
                 children: [
                   Text(driverName, style: AppStyles.regular14InterW500),
                   Text(
-                    'Is your delivery hero for today',
+                    l10n.deliveryHeroDescription,
                     style: AppStyles.regular13,
                   ),
                 ],
@@ -314,7 +318,7 @@ class _TrackingMapState extends State<TrackingMap> {
           SizedBox(
             width: double.infinity,
             child: AppButton(
-              text: 'Order details',
+              text: l10n.orderDetails,
               onPressed: () {
                 context.pop();
               },
