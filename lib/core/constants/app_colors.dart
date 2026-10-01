@@ -27,6 +27,7 @@ abstract final class AppColors {
   static const Color purple80 = Color(0xFF690f35);
   static const Color purple90 = Color(0xFF460a23);
   static const Color purple100 = Color(0xFF2a0615);
+  static const Color primaryPink = Color(0xFFD5136B);
 
   static const Color black = Color(0xFF000000);
   static const Color blackBase = Color(0xFF0c1015);

@@ -1,5 +1,6 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
@@ -117,15 +118,13 @@ class _TrackingMapState extends State<TrackingMap> {
   }
 
   Widget _labelPin({required IconData icon, required String label}) {
-    const pink = Color(0xFFD5136B);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: pink,
+            color: AppColors.primaryPink,
             borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
@@ -144,13 +143,12 @@ class _TrackingMapState extends State<TrackingMap> {
             ],
           ),
         ),
-        const Icon(Icons.location_on, size: 28, color: pink),
+        const Icon(Icons.location_on, size: 28, color: AppColors.primaryPink),
       ],
     );
   }
 
   Widget _buildMap() {
-    const pink = Color(0xFFD5136B);
     final l10n = AppLocalizations.of(context)!;
 
     final storeLocation = _storeLocation;
@@ -200,7 +198,11 @@ class _TrackingMapState extends State<TrackingMap> {
 
         PolylineLayer(
           polylines: [
-            Polyline(points: routePoints, strokeWidth: 3, color: pink),
+            Polyline(
+              points: routePoints,
+              strokeWidth: 3,
+              color: AppColors.primaryPink,
+            ),
           ],
         ),
 

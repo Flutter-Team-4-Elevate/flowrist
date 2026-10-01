@@ -15,6 +15,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class TrackingContent extends StatelessWidget {
+  static const Set<String> _mapDisabledStatuses = {
+    'PREPARING',
+    'ARRIVED',
+    'AWAITING_DELIVERY_CONFIRMATION',
+    'DELIVERED',
+  };
+
   final OrderTrackingEntity tracking;
   final DateTime? estimatedDeliveryAt;
 
@@ -26,12 +33,7 @@ class TrackingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMapDisabled = [
-      'PREPARING',
-      'ARRIVED',
-      'AWAITING_DELIVERY_CONFIRMATION',
-      'DELIVERED',
-    ].contains(tracking.status);
+    final isMapDisabled = _mapDisabledStatuses.contains(tracking.status);
 
     final driver = tracking.driver;
 
