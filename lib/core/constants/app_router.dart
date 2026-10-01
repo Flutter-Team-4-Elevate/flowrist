@@ -3,7 +3,6 @@ import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
@@ -34,12 +33,12 @@ import 'package:flowrist/features/home/profile/session_management/presentation/v
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
 import 'package:flowrist/features/home/shared/home_navigation_view.dart';
 import 'package:flowrist/features/splash/presentation/view/splash_view.dart';
-import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/track_order_details.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_map.dart';
 import 'package:flowrist/features/tracking_order/presentation/view/tracking_view.dart';
+import 'package:flowrist/features/tracking_order/presentation/view/widgets/tracking_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -193,19 +192,19 @@ abstract final class AppRouter {
         path: AppRoutes.trackingMap,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final tracking = state.extra is OrderTrackingEntity
-              ? state.extra as OrderTrackingEntity
+          final args = state.extra is TrackingMapArgs
+              ? state.extra as TrackingMapArgs
               : null;
 
-          if (tracking == null) {
-            return HomeTabView(
-              pushNotificationsServices: getIt<PushNotificationsServices>(),
+          if (args == null) {
+            return const Scaffold(
+              body: Center(child: Text('Estimated data is required')),
             );
           }
 
           return TrackingMap(
-            tracking: tracking,
-            secureStorageService: getIt<SecureStorageService>(),
+            tracking: args.tracking,
+            estimatedDeliveryAt: args.estimatedDeliveryAt,
           );
         },
       ),

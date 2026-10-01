@@ -1,5 +1,6 @@
 import 'package:flowrist/features/tracking_order/domain/entities/tracking_timeline_entity.dart';
-import 'package:flowrist/features/tracking_order/presentation/widgets/dummy_timeline.dart';
+import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_item.dart';
+import 'package:flowrist/features/tracking_order/presentation/widgets/tracking_timeline_extension.dart';
 import 'package:flutter/material.dart';
 
 class OrderStatusTimeline extends StatelessWidget {
@@ -15,63 +16,13 @@ class OrderStatusTimeline extends StatelessWidget {
         final item = entry.value;
 
         return OrderStatusItem(
-          title: _getTitle(item.status),
-          date: _formatDate(item.occurredAt),
+          title: item.displayTitle,
+          date: item.formattedDate,
           isCompleted: item.isCompleted,
           isCurrent: item.isCurrent,
           isLast: index == timeline.length - 1,
         );
       }).toList(),
     );
-  }
-
-  String _getTitle(String status) {
-    switch (status) {
-      case 'PLACED':
-        return 'Received your order';
-
-      case 'PREPARING':
-        return 'Preparing your order';
-
-      case 'PICKED_UP':
-        return 'Picked up';
-
-      case 'OUT_FOR_DELIVERY':
-        return 'Out for delivery';
-
-      case 'DELIVERED':
-        return 'Delivered';
-
-      default:
-        return status;
-    }
-  }
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return '';
-
-    return '${date.day.toString().padLeft(2, '0')} '
-        '${_monthName(date.month)} '
-        '${date.year} - '
-        '${date.hour}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
-  String _monthName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-
-    return months[month - 1];
   }
 }

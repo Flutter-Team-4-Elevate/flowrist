@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_notification_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_remote_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/models/order_tracking_model.dart';
@@ -12,8 +14,12 @@ import 'package:injectable/injectable.dart';
 class TrackingRepositoryImpl implements TrackingRepository {
   final TrackingRemoteDataSource _remoteDataSource;
   final TrackingNotificationDataSource _notificationDataSource;
-
-  TrackingRepositoryImpl(this._remoteDataSource, this._notificationDataSource);
+  final SecureStorageService _secureStorage;
+  TrackingRepositoryImpl(
+    this._remoteDataSource,
+    this._notificationDataSource,
+    this._secureStorage,
+  );
 
   final Map<String, OrderTrackingEntity> _currentTracking = {};
 
@@ -158,5 +164,18 @@ class TrackingRepositoryImpl implements TrackingRepository {
 
     _controllers.clear();
     _currentTracking.clear();
+  }
+
+  @override
+  Future<DateTime?> getEstimatedDeliveryAt() async {
+    final savedValue = await _secureStorage.get(
+      AppConstants.estimatedDeliveryAtKey,
+    );
+
+    if (savedValue.isEmpty) {
+      return null;
+    }
+
+    return DateTime.tryParse(savedValue);
   }
 }

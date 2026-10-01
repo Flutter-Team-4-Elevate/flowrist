@@ -1,4 +1,6 @@
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/data/data_sources/contract/remote/checkout_remote_data_source.dart';
 import 'package:flowrist/features/checkout/data/models/payment_model/card_order_request_model.dart';
@@ -13,8 +15,8 @@ import 'package:injectable/injectable.dart';
 @Injectable(as: CheckoutRepository)
 class CheckoutRepositoryImpl implements CheckoutRepository {
   final CheckoutRemoteDataSource _remoteDataSource;
-
-  CheckoutRepositoryImpl(this._remoteDataSource);
+  final SecureStorageService _secureStorage;
+  CheckoutRepositoryImpl(this._remoteDataSource, this._secureStorage);
 
   @override
   Future<BaseResponse<CardOrderEntity?>> placeOrder(
@@ -97,5 +99,14 @@ class CheckoutRepositoryImpl implements CheckoutRepository {
       case ErrorResponse<DeliveryFeeModel>():
         return ErrorResponse<DeliveryFeeEntity>(response.errorMessage);
     }
+  }
+
+  @override
+  @override
+  Future<void> saveEstimatedDeliveryAt(DateTime estimatedDeliveryAt) async {
+    await _secureStorage.save(
+      AppConstants.estimatedDeliveryAtKey,
+      estimatedDeliveryAt.toIso8601String(),
+    );
   }
 }

@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
-import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/get_estimated_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/watch_order_tracking_use_case.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
@@ -14,14 +13,14 @@ import 'package:injectable/injectable.dart';
 class TrackingCubit extends Cubit<TrackingState> {
   final WatchOrderTrackingUseCase _watchOrderTrackingUseCase;
   final ConfirmDeliveryUseCase _confirmDeliveryUseCase;
-  final SecureStorageService _secureStorage;
+  final GetEstimatedDeliveryUseCase _getEstimatedDeliveryUseCase;
 
   StreamSubscription<BaseResponse<OrderTrackingEntity>>? _trackingSubscription;
 
   TrackingCubit(
     this._watchOrderTrackingUseCase,
     this._confirmDeliveryUseCase,
-    this._secureStorage,
+    this._getEstimatedDeliveryUseCase,
   ) : super(const TrackingState());
 
   Future<void> doEvent(TrackingEvent event) async {
@@ -77,18 +76,10 @@ class TrackingCubit extends Cubit<TrackingState> {
   }
 
   Future<void> _loadEstimatedDelivery() async {
-    final savedValue = await _secureStorage.get(
-      AppConstants.estimatedDeliveryAtKey,
-    );
+    final estimatedDelivery = await _getEstimatedDeliveryUseCase();
 
-    if (savedValue.isEmpty || isClosed) {
-      return;
-    }
-
-    final parsedDate = DateTime.tryParse(savedValue);
-
-    if (parsedDate != null && !isClosed) {
-      emit(state.copyWith(estimatedDeliveryAt: parsedDate));
+    if (estimatedDelivery != null && !isClosed) {
+      emit(state.copyWith(estimatedDeliveryAt: estimatedDelivery));
     }
   }
 

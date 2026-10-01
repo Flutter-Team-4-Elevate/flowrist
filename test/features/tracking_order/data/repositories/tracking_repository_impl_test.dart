@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_notification_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_remote_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/models/order_tracking_model.dart';
@@ -12,9 +13,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'tracking_repository_impl_test.mocks.dart';
+import '../../../../config/l10n/cubit/app_language_cubit_test.mocks.dart';
+import 'tracking_repository_impl_test.mocks.dart' hide MockSecureStorageService;
 
-@GenerateMocks([TrackingRemoteDataSource, TrackingNotificationDataSource])
+@GenerateMocks([
+  TrackingRemoteDataSource,
+  TrackingNotificationDataSource,
+  SecureStorageService,
+])
 void main() {
   provideDummy<BaseResponse<OrderTrackingModel>>(
     SuccessResponse<OrderTrackingModel>(null),
@@ -23,6 +29,7 @@ void main() {
   provideDummy<BaseResponse<void>>(SuccessResponse<void>(null));
   late MockTrackingRemoteDataSource mockRemoteDataSource;
   late MockTrackingNotificationDataSource mockNotificationDataSource;
+  late MockSecureStorageService mockSecureStorage;
   late TrackingRepositoryImpl repository;
 
   late StreamController<TrackingUpdateEntity> notificationController;
@@ -30,6 +37,7 @@ void main() {
   setUp(() {
     mockRemoteDataSource = MockTrackingRemoteDataSource();
     mockNotificationDataSource = MockTrackingNotificationDataSource();
+    mockSecureStorage = MockSecureStorageService();
 
     notificationController = StreamController<TrackingUpdateEntity>.broadcast();
 
@@ -40,6 +48,7 @@ void main() {
     repository = TrackingRepositoryImpl(
       mockRemoteDataSource,
       mockNotificationDataSource,
+      mockSecureStorage,
     );
   });
 

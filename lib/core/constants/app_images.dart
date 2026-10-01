@@ -15,4 +15,6 @@ abstract final class AppImages {
   static const String flowerTrackingOrderWattsapp = '$_imagesPath/whatsapp.png';
   static const String flowerTrackingOrderCall =
       '$_imagesPath/call_delivery.png';
+  static const String waitingForDriverLottie =
+      '$_imagesPath/Tourists on the road.json';
 }

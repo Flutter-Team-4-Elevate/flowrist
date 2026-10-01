@@ -1,6 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
-import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
@@ -18,11 +16,11 @@ class TrackingMap extends StatefulWidget {
   const TrackingMap({
     super.key,
     required this.tracking,
-    required this.secureStorageService,
+    required this.estimatedDeliveryAt,
   });
 
   final OrderTrackingEntity tracking;
-  final SecureStorageService secureStorageService;
+  final DateTime? estimatedDeliveryAt;
 
   @override
   State<TrackingMap> createState() => _TrackingMapState();
@@ -30,7 +28,6 @@ class TrackingMap extends StatefulWidget {
 
 class _TrackingMapState extends State<TrackingMap> {
   LatLng? _userLocation;
-  DateTime? _estimatedDeliveryAt;
 
   LatLng? get _storeLocation {
     final location = widget.tracking.storeLocation;
@@ -62,29 +59,7 @@ class _TrackingMapState extends State<TrackingMap> {
   @override
   void initState() {
     super.initState();
-
-    _loadEstimatedDeliveryAt();
     _getUserLocation();
-  }
-
-  Future<void> _loadEstimatedDeliveryAt() async {
-    final value = await widget.secureStorageService.get(
-      AppConstants.estimatedDeliveryAtKey,
-    );
-
-    if (value.isEmpty) {
-      return;
-    }
-
-    final estimatedDeliveryAt = DateTime.tryParse(value);
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _estimatedDeliveryAt = estimatedDeliveryAt;
-    });
   }
 
   Future<void> _getUserLocation() async {
@@ -253,11 +228,11 @@ class _TrackingMapState extends State<TrackingMap> {
 
     final driverName = widget.tracking.driver?.name ?? l10n.driver;
 
-    final deliveryTime = _estimatedDeliveryAt == null
+    final deliveryTime = widget.estimatedDeliveryAt == null
         ? '--'
         : DateFormat(
             Endpoints.dateFormatDelivery,
-          ).format(_estimatedDeliveryAt!.toLocal());
+          ).format(widget.estimatedDeliveryAt!.toLocal());
 
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),

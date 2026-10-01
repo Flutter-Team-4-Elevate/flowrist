@@ -12,6 +12,7 @@ import 'package:flowrist/features/checkout/domain/entities/payment_entity/delive
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
+import '../../../../config/l10n/cubit/app_language_cubit_test.mocks.dart';
 import 'checkout_repository_impl_test.mocks.dart';
 
 @GenerateMocks([CheckoutRemoteDataSource])
@@ -41,11 +42,17 @@ void main() {
   );
 
   late MockCheckoutRemoteDataSource mockRemoteDataSource;
+  late MockSecureStorageService mockSecureStorage;
   late CheckoutRepositoryImpl repository;
 
   setUp(() {
     mockRemoteDataSource = MockCheckoutRemoteDataSource();
-    repository = CheckoutRepositoryImpl(mockRemoteDataSource);
+    mockSecureStorage = MockSecureStorageService();
+
+    repository = CheckoutRepositoryImpl(
+      mockRemoteDataSource,
+      mockSecureStorage,
+    );
   });
 
   group('placeOrder', () {
