@@ -1,0 +1,14 @@
+* [33m5abbe4a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/tracking-order[m[33m)[m Edit reviews
+*   [33m0eba1ff[m Merge branch 'feature/tracking-order' of https://github.com/Flutter-Team-4-Elevate/flowrist into feature/tracking-order
+[32m|[m[33m\[m  
+[32m|[m * [33m8b8af3f[m refactor: remove commented code for initial API response and FCM tracking updates
+* [33m|[m [33m9b29a9a[m add trackin order localization
+[34m|[m[33m\[m[33m|[m 
+[34m|[m * [33m47e002c[m fix: hide MockSecureStorageService in checkout_cubit_test mocks import
+[34m|[m * [33me1d637d[m feat: Refactor notification service and integrate secure storage for estimated delivery time
+[34m|[m * [33m4fa9d10[m fix: update error message in tracking remote data source test and add dummy response for order tracking
+[34m|[m * [33m14a4e2e[m fix: remove unused import from confirm delivery use case test
+[34m|[m * [33m9667923[m feat: add orderId constant and update API client methods for order tracking
+[34m|[m * [33m67febde[m fix: improve code formatting for button onPressed callbacks in TrackingActions widget
+[34m|[m * [33m32ff147[m feat: enhance order tracking feature with store location handling and delivery time updates
+[34m|[m * [33m734ea2d[m feat: refactor confirm delivery functionality and update related state management

@@ -19,7 +19,7 @@ class TrackingView extends StatelessWidget {
           onPressed: () {
             context.go(AppRoutes.homeTab);
           },
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
         title: Text(l10n.trackOrder),
       ),

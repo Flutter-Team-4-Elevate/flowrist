@@ -1,12 +1,12 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/get_delivery_fee_use_case.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/place_order_use_case.dart';
+import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_case.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
@@ -16,20 +16,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../../../config/l10n/cubit/app_language_cubit_test.mocks.dart';
-import 'checkout_cubit_test.mocks.dart' hide MockSecureStorageService;
+import 'checkout_cubit_test.mocks.dart';
 
 @GenerateMocks([
   PlaceOrderUseCase,
   GetDeliveryFeeUseCase,
   GetAllUserAddressesUseCase,
-  SecureStorageService,
+  SaveEstimatedDeliveryUseCase,
 ])
 void main() {
   late MockPlaceOrderUseCase mockPlaceOrderUseCase;
   late MockGetDeliveryFeeUseCase mockGetDeliveryFeeUseCase;
   late MockGetAllUserAddressesUseCase mockGetAllUserAddressesUseCase;
-  late MockSecureStorageService mockSecureStorageService;
+  late MockSaveEstimatedDeliveryUseCase mockSaveEstimatedDeliveryUseCase;
   late CheckoutCubit cubit;
 
   const addressId = 'address-123';
@@ -122,15 +121,13 @@ void main() {
     mockPlaceOrderUseCase = MockPlaceOrderUseCase();
     mockGetDeliveryFeeUseCase = MockGetDeliveryFeeUseCase();
     mockGetAllUserAddressesUseCase = MockGetAllUserAddressesUseCase();
-    mockSecureStorageService = MockSecureStorageService();
-
-    when(mockSecureStorageService.save(any, any)).thenAnswer((_) async {});
+    mockSaveEstimatedDeliveryUseCase = MockSaveEstimatedDeliveryUseCase();
 
     cubit = CheckoutCubit(
       mockPlaceOrderUseCase,
       mockGetDeliveryFeeUseCase,
       mockGetAllUserAddressesUseCase,
-      mockSecureStorageService,
+      mockSaveEstimatedDeliveryUseCase,
     );
   });
 

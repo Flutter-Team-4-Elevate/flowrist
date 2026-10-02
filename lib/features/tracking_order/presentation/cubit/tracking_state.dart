@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../domain/entities/order_tracking_entity.dart';
 
 class TrackingState extends Equatable {
@@ -9,6 +8,7 @@ class TrackingState extends Equatable {
   final String? errorMessage;
   final OrderTrackingEntity? tracking;
   final DateTime? estimatedDeliveryAt;
+  final DateTime? lastUpdatedAt;
 
   const TrackingState({
     this.isLoading = false,
@@ -17,6 +17,7 @@ class TrackingState extends Equatable {
     this.errorMessage,
     this.tracking,
     this.estimatedDeliveryAt,
+    this.lastUpdatedAt,
   });
 
   TrackingState copyWith({
@@ -26,6 +27,7 @@ class TrackingState extends Equatable {
     String? errorMessage,
     OrderTrackingEntity? tracking,
     DateTime? estimatedDeliveryAt,
+    DateTime? lastUpdatedAt,
   }) {
     return TrackingState(
       isLoading: isLoading ?? this.isLoading,
@@ -34,6 +36,7 @@ class TrackingState extends Equatable {
       errorMessage: errorMessage,
       tracking: tracking ?? this.tracking,
       estimatedDeliveryAt: estimatedDeliveryAt ?? this.estimatedDeliveryAt,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 
@@ -45,5 +48,6 @@ class TrackingState extends Equatable {
     errorMessage,
     tracking,
     estimatedDeliveryAt,
+    lastUpdatedAt,
   ];
 }

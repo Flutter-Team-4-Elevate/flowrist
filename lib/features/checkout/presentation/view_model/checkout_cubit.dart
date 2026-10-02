@@ -1,13 +1,12 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
-import 'package:flowrist/config/storage/secure_storage_service.dart';
-import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/get_delivery_fee_use_case.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/place_order_use_case.dart';
+import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_case.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
 import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
@@ -21,12 +20,13 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   final PlaceOrderUseCase _placeOrderUseCase;
   final GetDeliveryFeeUseCase _getDeliveryFeeUseCase;
   final GetAllUserAddressesUseCase _getAllUserAddressesUseCase;
-  final SecureStorageService _secureStorage;
+  final SaveEstimatedDeliveryUseCase _saveEstimatedDeliveryUseCase;
+  // final SecureStorageService _secureStorage;
   CheckoutCubit(
     this._placeOrderUseCase,
     this._getDeliveryFeeUseCase,
     this._getAllUserAddressesUseCase,
-    this._secureStorage,
+    this._saveEstimatedDeliveryUseCase,
   ) : super(CheckoutState.initial());
 
   Future<void> doEvent(CheckoutEvent event) async {
@@ -161,10 +161,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           final estimatedDeliveryAt = entity.estimatedDeliveryAt;
 
           if (estimatedDeliveryAt != null) {
-            await _secureStorage.save(
-              AppConstants.estimatedDeliveryAtKey,
-              estimatedDeliveryAt.toIso8601String(),
-            );
+            await _saveEstimatedDeliveryUseCase(estimatedDeliveryAt);
           }
 
           emit(

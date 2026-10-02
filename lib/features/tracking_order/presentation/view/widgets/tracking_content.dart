@@ -8,6 +8,7 @@ import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
+import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_extension.dart';
 import 'package:flowrist/features/tracking_order/presentation/widgets/order_status_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,12 +16,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class TrackingContent extends StatelessWidget {
-  static const Set<String> _mapDisabledStatuses = {
-    'PREPARING',
-    'ARRIVED',
-    'AWAITING_DELIVERY_CONFIRMATION',
-    'DELIVERED',
-  };
+  // static const Set<String> _mapDisabledStatuses = {
+  //   'PREPARING',
+  //   'ARRIVED',
+  //   'AWAITING_DELIVERY_CONFIRMATION',
+  //   'DELIVERED',
+  // };
 
   final OrderTrackingEntity tracking;
   final DateTime? estimatedDeliveryAt;
@@ -33,7 +34,7 @@ class TrackingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isMapDisabled = _mapDisabledStatuses.contains(tracking.status);
+    // final isMapDisabled = _mapDisabledStatuses.contains(tracking.status);
 
     final driver = tracking.driver;
 
@@ -74,10 +75,10 @@ class TrackingContent extends StatelessWidget {
             const SizedBox(height: 30),
 
             _TrackingActions(
-              isMapDisabled: isMapDisabled,
               status: tracking.status,
               orderId: tracking.orderId,
               tracking: tracking,
+              estimatedDeliveryAt: estimatedDeliveryAt,
             ),
           ],
         ),
@@ -136,44 +137,44 @@ class _DriverSection extends StatelessWidget {
 }
 
 class _TrackingActions extends StatelessWidget {
-  final bool isMapDisabled;
   final String orderId;
   final String status;
   final OrderTrackingEntity tracking;
+  final DateTime? estimatedDeliveryAt;
 
   const _TrackingActions({
     required this.status,
     required this.orderId,
     required this.tracking,
-    required this.isMapDisabled,
+    this.estimatedDeliveryAt,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isMapDisabled = [
-      'ARRIVED',
-      'AWAITING_DELIVERY_CONFIRMATION',
-      'DELIVERED',
-    ].contains(status);
+    final isMapEnabled = status.isMapEnabled;
+    final isAwaitingDeliveryConfirmation =
+        status.isAwaitingDeliveryConfirmation;
 
-    final isDelivered = status == 'AWAITING_DELIVERY_CONFIRMATION';
-
-    if (isDelivered) {
+    if (isAwaitingDeliveryConfirmation) {
       return Row(
         children: [
           Expanded(
             child: AppButton(
               text: 'Show map',
-              onPressed: isMapDisabled
+              onPressed: isMapEnabled
                   ? null
                   : () {
-                      context.push(AppRoutes.trackingMap, extra: tracking);
+                      context.push(
+                        AppRoutes.trackingMap,
+                        extra: TrackingMapArgs(
+                          tracking: tracking,
+                          estimatedDeliveryAt: estimatedDeliveryAt,
+                        ),
+                      );
                     },
             ),
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: BlocBuilder<TrackingCubit, TrackingState>(
               buildWhen: (previous, current) =>
@@ -207,12 +208,28 @@ class _TrackingActions extends StatelessWidget {
       width: double.infinity,
       child: AppButton(
         text: 'Show map',
-        onPressed: isMapDisabled
+        onPressed: isMapEnabled
             ? null
             : () {
-                context.push(AppRoutes.trackingMap, extra: tracking);
+                context.push(
+                  AppRoutes.trackingMap,
+                  extra: TrackingMapArgs(
+                    tracking: tracking,
+                    estimatedDeliveryAt: estimatedDeliveryAt,
+                  ),
+                );
               },
       ),
     );
   }
+}
+
+class TrackingMapArgs {
+  final OrderTrackingEntity tracking;
+  final DateTime? estimatedDeliveryAt;
+
+  const TrackingMapArgs({
+    required this.tracking,
+    required this.estimatedDeliveryAt,
+  });
 }
