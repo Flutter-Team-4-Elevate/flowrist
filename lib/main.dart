@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flowrist/config/di/di.dart';
-import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/l10n/cubit/app_language_cubit.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
@@ -27,11 +26,7 @@ Future<void> main() async {
   await _loadEnvironmentVariables();
 
   configureDependencies();
-
   Bloc.observer = FlowristBlocObserver();
-
-  // Initialize local notifications + FCM listeners.
-  await getIt<PushNotificationsServices>().init();
 
   runApp(
     MultiBlocProvider(

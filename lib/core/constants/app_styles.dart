@@ -108,7 +108,11 @@ abstract final class AppStyles {
     fontSize: 20,
     color: AppColors.blackBase,
   );
-
+  static final TextStyle medium24 = GoogleFonts.inter(
+    fontWeight: FontWeight.w500,
+    fontSize: 24,
+    color: AppColors.blackBase,
+  );
   static final TextStyle semiBold12Underline = GoogleFonts.inter(
     fontWeight: FontWeight.w600,
     fontSize: 12,

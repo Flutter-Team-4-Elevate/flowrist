@@ -1,5 +1,4 @@
 import 'package:flowrist/config/di/di.dart';
-import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/features/splash/presentation/view/flower.dart';
@@ -21,13 +20,6 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
 
     _checkSession();
-    _requestNotificationPermission();
-  }
-
-  Future<void> _requestNotificationPermission() async {
-    final pushNotifications = getIt<PushNotificationsServices>();
-
-    await pushNotifications.requestPermission();
   }
 
   Future<void> _checkSession() async {

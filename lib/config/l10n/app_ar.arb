@@ -204,5 +204,24 @@
   "currentPassword": "كلمة المرور الحالية",
   "confirmNewPassword": "تأكيد كلمة المرور",
   "invalidPassword": "كلمة المرور غير صحيحة",
-  "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً."
+  "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً.",
+   "waitingForDriver": "في انتظار المندوب",
+  "waitingForDriverDescription": "تم تسجيل طلبك بنجاح. نحن في انتظار قبول أحد مندوبي التوصيل لطلبك.",
+  "estimatedArrival": "موعد الوصول المتوقع",
+  "deliveryHeroDescription": "مندوب توصيل طلبك اليوم",
+  "showMap": "عرض الخريطة",
+  "orderDelivered": "تأكيد استلام الطلب",
+  "apartment": "المنزل",
+  "flower": "متجر الزهور",
+  "driver": "مندوب التوصيل",
+  "orderPlacedSuccessfully": "تم تسجيل طلبك بنجاح!",
+  "placed": "تم تسجيل الطلب",
+  "preparing": "جارٍ تجهيز الطلب",
+  "pickedUp": "تم استلام الطلب من المتجر",
+  "outForDelivery": "الطلب في الطريق",
+  "arrived": "وصل المندوب",
+  "awaitingDeliveryConfirmation": "في انتظار تأكيد الاستلام",
+  "delivered": "تم التوصيل",
+  "unknownDeliveryTime": "غير متاح"
+
 }
