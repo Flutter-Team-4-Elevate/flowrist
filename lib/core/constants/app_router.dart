@@ -192,31 +192,24 @@ abstract final class AppRouter {
         path: AppRoutes.trackingMap,
         parentNavigatorKey: rootNavigatorKey,
         builder: (context, state) {
-          final args = state.extra is TrackingMapArgs
-              ? state.extra as TrackingMapArgs
-              : null;
+          final args = state.extra;
 
-          if (args == null) {
+          if (args is! TrackingMapArgs) {
             return const Scaffold(
-              body: Center(child: Text('Estimated data is required')),
+              body: Center(child: Text('Tracking map data is missing.')),
             );
           }
 
-          return TrackingMap(
-            tracking: args.tracking,
-            estimatedDeliveryAt: args.estimatedDeliveryAt,
+          return BlocProvider.value(
+            value: args.trackingCubit,
+            child: TrackingMap(
+              tracking: args.tracking,
+              estimatedDeliveryAt: args.estimatedDeliveryAt,
+              routePoints: args.routePoints,
+            ),
           );
         },
       ),
-      // GoRoute(
-      //   path: AppRoutes.successOrder,
-      //   parentNavigatorKey: rootNavigatorKey,
-      //   builder: (context, state) {
-      //     final orderId = state.extra as String;
-
-      //     return SuccessOrder(orderId: orderId);
-      //   },
-      // ),
       GoRoute(
         path: AppRoutes.checkOut,
         builder: (context, state) {

@@ -6,6 +6,7 @@ import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_
 import 'package:flowrist/features/tracking_order/domain/entities/tracking_destination_entity.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/get_estimated_delivery_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/get_route_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/watch_order_tracking_use_case.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
@@ -20,6 +21,7 @@ import 'tracking_cubit_test.mocks.dart';
   WatchOrderTrackingUseCase,
   ConfirmDeliveryUseCase,
   GetEstimatedDeliveryUseCase,
+  GetRouteUseCase,
 ])
 void main() {
   provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
@@ -27,11 +29,13 @@ void main() {
   late MockWatchOrderTrackingUseCase mockWatchOrderTrackingUseCase;
   late MockConfirmDeliveryUseCase mockConfirmDeliveryUseCase;
   late MockGetEstimatedDeliveryUseCase mockGetEstimatedDeliveryUseCase;
+  late MockGetRouteUseCase getRouteUseCase;
   late TrackingCubit cubit;
   setUp(() {
     mockWatchOrderTrackingUseCase = MockWatchOrderTrackingUseCase();
     mockConfirmDeliveryUseCase = MockConfirmDeliveryUseCase();
     mockGetEstimatedDeliveryUseCase = MockGetEstimatedDeliveryUseCase();
+    getRouteUseCase = MockGetRouteUseCase();
 
     when(mockGetEstimatedDeliveryUseCase()).thenAnswer((_) async => null);
 
@@ -39,6 +43,7 @@ void main() {
       mockWatchOrderTrackingUseCase,
       mockConfirmDeliveryUseCase,
       mockGetEstimatedDeliveryUseCase,
+      getRouteUseCase,
     );
   });
 
@@ -72,6 +77,7 @@ void main() {
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
+          getRouteUseCase,
         );
       },
       act: (cubit) {
@@ -105,6 +111,7 @@ void main() {
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
+          getRouteUseCase,
         );
       },
       act: (cubit) async {
@@ -142,6 +149,7 @@ void main() {
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
+          getRouteUseCase,
         );
       },
       act: (cubit) async {
@@ -185,6 +193,7 @@ void main() {
           mockWatchOrderTrackingUseCase,
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
+          getRouteUseCase,
         );
       },
       act: (cubit) async {

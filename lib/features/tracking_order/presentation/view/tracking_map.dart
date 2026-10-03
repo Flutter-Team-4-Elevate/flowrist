@@ -6,9 +6,11 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_entity.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
+import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -18,80 +20,18 @@ class TrackingMap extends StatefulWidget {
     super.key,
     required this.tracking,
     required this.estimatedDeliveryAt,
+    required this.routePoints,
   });
 
   final OrderTrackingEntity tracking;
   final DateTime? estimatedDeliveryAt;
+  final List<LatLng> routePoints;
 
   @override
   State<TrackingMap> createState() => _TrackingMapState();
 }
 
 class _TrackingMapState extends State<TrackingMap> {
-  LatLng? _userLocation;
-
-  LatLng? get _storeLocation {
-    final location = widget.tracking.storeLocation;
-
-    if (location == null) {
-      return null;
-    }
-
-    return LatLng(location.lat, location.lng);
-  }
-
-  LatLng get _destination {
-    return LatLng(
-      widget.tracking.destination.lat,
-      widget.tracking.destination.lng,
-    );
-  }
-
-  LatLng? get _driverLocation {
-    final location = widget.tracking.lastKnownLocation;
-
-    if (location == null) {
-      return null;
-    }
-
-    return LatLng(location.lat, location.lng);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getUserLocation();
-  }
-
-  Future<void> _getUserLocation() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!serviceEnabled) {
-      return;
-    }
-
-    var permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      return;
-    }
-
-    final position = await Geolocator.getCurrentPosition();
-
-    if (!mounted) {
-      return;
-    }
-
-    setState(() {
-      _userLocation = LatLng(position.latitude, position.longitude);
-    });
-  }
-
   Widget _labelPin({required IconData icon, required String label}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -123,16 +63,30 @@ class _TrackingMapState extends State<TrackingMap> {
     );
   }
 
-  Widget _buildMap() {
+  Widget _buildMap({
+    required OrderTrackingEntity tracking,
+    required List<LatLng> routePoints,
+    required LatLng? userLocation,
+  }) {
     final l10n = AppLocalizations.of(context)!;
 
-    final storeLocation = _storeLocation;
-    final driverLocation = _driverLocation;
+    final storeLocation = tracking.storeLocation == null
+        ? null
+        : LatLng(tracking.storeLocation!.lat, tracking.storeLocation!.lng);
 
-    // The API destination is the actual apartment/order destination.
-    final apartment = _destination;
+    final driverLocation = tracking.lastKnownLocation == null
+        ? null
+        : LatLng(
+            tracking.lastKnownLocation!.lat,
+            tracking.lastKnownLocation!.lng,
+          );
 
-    final coordinates = <LatLng>[apartment];
+    final destination = LatLng(
+      tracking.destination.lat,
+      tracking.destination.lng,
+    );
+
+    final coordinates = <LatLng>[destination];
 
     if (storeLocation != null) {
       coordinates.add(storeLocation);
@@ -142,19 +96,43 @@ class _TrackingMapState extends State<TrackingMap> {
       coordinates.add(driverLocation);
     }
 
-    final routePoints = <LatLng>[apartment];
-
-    if (driverLocation != null) {
-      routePoints.add(driverLocation);
+    if (userLocation != null) {
+      coordinates.add(userLocation);
     }
 
-    if (storeLocation != null) {
-      routePoints.add(storeLocation);
+    if (routePoints.isNotEmpty) {
+      coordinates.addAll(routePoints);
     }
+
+    debugPrint(
+      '🗺️ MAP DRIVER: '
+      '${tracking.lastKnownLocation?.lat}, '
+      '${tracking.lastKnownLocation?.lng}',
+    );
+
+    debugPrint(
+      '🗺️ MAP CLIENT: '
+      '${tracking.destination.lat}, '
+      '${tracking.destination.lng}',
+    );
+
+    debugPrint(
+      '🗺️ MAP STORE: '
+      '${tracking.storeLocation?.lat}, '
+      '${tracking.storeLocation?.lng}',
+    );
+
+    debugPrint(
+      '🗺️ MAP USER: '
+      '${userLocation?.latitude}, '
+      '${userLocation?.longitude}',
+    );
+
+    debugPrint('🗺️ MAP ROUTE POINTS: ${routePoints.length}');
 
     return FlutterMap(
       options: MapOptions(
-        initialCenter: storeLocation ?? apartment,
+        initialCenter: driverLocation ?? storeLocation ?? destination,
         initialZoom: 14,
         initialCameraFit: CameraFit.coordinates(
           coordinates: coordinates,
@@ -171,26 +149,30 @@ class _TrackingMapState extends State<TrackingMap> {
           userAgentPackageName: 'com.elevate.t5.flowrist',
         ),
 
-        PolylineLayer(
-          polylines: [
-            Polyline(
-              points: routePoints,
-              strokeWidth: 3,
-              color: AppColors.primaryPink,
-            ),
-          ],
-        ),
+        // OSRM road route.
+        if (routePoints.length >= 2)
+          PolylineLayer(
+            polylines: [
+              Polyline(
+                points: routePoints,
+                strokeWidth: 4,
+                color: AppColors.primaryPink,
+              ),
+            ],
+          ),
 
         MarkerLayer(
           markers: [
+            // Destination
             Marker(
-              point: apartment,
+              point: destination,
               width: 100,
               height: 60,
               alignment: Alignment.topCenter,
               child: _labelPin(icon: Icons.home_rounded, label: l10n.apartment),
             ),
 
+            // Store
             if (storeLocation != null)
               Marker(
                 point: storeLocation,
@@ -200,6 +182,7 @@ class _TrackingMapState extends State<TrackingMap> {
                 child: _labelPin(icon: Icons.local_florist, label: l10n.flower),
               ),
 
+            // Driver
             if (driverLocation != null)
               Marker(
                 point: driverLocation,
@@ -208,9 +191,10 @@ class _TrackingMapState extends State<TrackingMap> {
                 child: Image.asset(AppImages.flowerTrackingOrderMotorcycle),
               ),
 
-            if (_userLocation != null)
+            // Current user location
+            if (userLocation != null)
               Marker(
-                point: _userLocation!,
+                point: userLocation,
                 width: 40,
                 height: 40,
                 child: const Icon(
@@ -225,16 +209,19 @@ class _TrackingMapState extends State<TrackingMap> {
     );
   }
 
-  Widget _buildOrderInfo() {
+  Widget _buildOrderInfo({
+    required OrderTrackingEntity tracking,
+    required DateTime? estimatedDeliveryAt,
+  }) {
     final l10n = AppLocalizations.of(context)!;
 
-    final driverName = widget.tracking.driver?.name ?? l10n.driver;
+    final driverName = tracking.driver?.name ?? l10n.driver;
 
-    final deliveryTime = widget.estimatedDeliveryAt == null
+    final deliveryTime = estimatedDeliveryAt == null
         ? '--'
         : DateFormat(
             Endpoints.dateFormatDelivery,
-          ).format(widget.estimatedDeliveryAt!.toLocal());
+          ).format(estimatedDeliveryAt.toLocal());
 
     return Padding(
       padding: const EdgeInsets.all(AppDimensions.defaultScreenPadding),
@@ -242,7 +229,6 @@ class _TrackingMapState extends State<TrackingMap> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l10n.estimatedArrival, style: AppStyles.regular14Inter),
-
           Text(deliveryTime, style: AppStyles.medium16InterBlack),
 
           const SizedBox(height: 30),
@@ -308,13 +294,57 @@ class _TrackingMapState extends State<TrackingMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          Expanded(child: _buildMap()),
-          _buildOrderInfo(),
-        ],
-      ),
+    return BlocBuilder<TrackingCubit, TrackingState>(
+      builder: (context, state) {
+        final tracking = state.tracking ?? widget.tracking;
+
+        final routePoints = state.routePoints.isNotEmpty
+            ? state.routePoints
+            : widget.routePoints;
+
+        final estimatedDeliveryAt =
+            state.estimatedDeliveryAt ?? widget.estimatedDeliveryAt;
+
+        final userLocation = state.userLocation;
+
+        debugPrint('🔄 MAP REBUILT');
+
+        debugPrint(
+          '📍 CURRENT DRIVER: '
+          '${tracking.lastKnownLocation?.lat}, '
+          '${tracking.lastKnownLocation?.lng}',
+        );
+
+        debugPrint(
+          '📍 CURRENT USER: '
+          '${userLocation?.latitude}, '
+          '${userLocation?.longitude}',
+        );
+
+        debugPrint(
+          '🛣️ CURRENT ROUTE: '
+          '${routePoints.length}',
+        );
+
+        return Scaffold(
+          body: Column(
+            children: [
+              Expanded(
+                child: _buildMap(
+                  tracking: tracking,
+                  routePoints: routePoints,
+                  userLocation: userLocation,
+                ),
+              ),
+
+              _buildOrderInfo(
+                tracking: tracking,
+                estimatedDeliveryAt: estimatedDeliveryAt,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
