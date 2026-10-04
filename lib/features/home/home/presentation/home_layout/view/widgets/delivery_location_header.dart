@@ -31,13 +31,9 @@ class DeliveryLocationHeader extends StatelessWidget {
             Transform.rotate(
               angle: 3.14 / 2,
               child: IconButton(
-                onPressed:
-                    state.addressesState.isLoading ||
-                        state.addressesState.errorMessage != null
-                    ? null
-                    : () {
-                        _showAddressBottomSheet(context);
-                      },
+                onPressed: () {
+                  _showAddressBottomSheet(context);
+                },
                 icon: Icon(
                   Icons.arrow_forward_ios,
                   size: 20,
