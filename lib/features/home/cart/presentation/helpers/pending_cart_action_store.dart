@@ -10,11 +10,16 @@ class PendingCartActionStore {
     _pendingAddToCartEvent = event;
   }
 
-  void executePendingActionIfAny(CartCubit cartCubit) {
-    if (_pendingAddToCartEvent != null) {
-      cartCubit.doEvent(_pendingAddToCartEvent!);
-      _pendingAddToCartEvent = null;
+  Future<void> executePendingActionIfAny(CartCubit cartCubit) async {
+    final event = _pendingAddToCartEvent;
+
+    if (event == null) {
+      return;
     }
+
+    _pendingAddToCartEvent = null;
+
+    await cartCubit.doEvent(event);
   }
 
   void clear() {

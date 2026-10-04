@@ -54,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
 
     final loginCubit = context.read<LoginCubit>();
 
-    _subscription = loginCubit.uiStream.listen((event) {
+    _subscription = loginCubit.uiStream.listen((event) async {
       if (!mounted) {
         return;
       }
@@ -72,8 +72,11 @@ class _LoginViewState extends State<LoginView> {
 
         case LoginSuccess():
           final cartCubit = context.read<CartCubit>();
-          cartCubit.doEvent(GetCartEvent());
-          getIt<PendingCartActionStore>().executePendingActionIfAny(cartCubit);
+          await cartCubit.doEvent(GetCartEvent());
+          await getIt<PendingCartActionStore>().executePendingActionIfAny(
+            cartCubit,
+          );
+          // ignore: use_build_context_synchronously
           context.go(AppRoutes.homeTab);
 
         case GuestLoginSuccess():
