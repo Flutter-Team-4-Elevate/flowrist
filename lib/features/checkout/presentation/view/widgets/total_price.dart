@@ -75,7 +75,15 @@ class TotalPrice extends StatelessWidget {
         final isCash = state.selectedPaymentMethod == Endpoints.cash;
 
         if (isCash) {
-          await _handleOrderSuccess(context);
+          final order = placeOrderState.data;
+
+          if (order == null) {
+            if (!context.mounted) return;
+
+            _showMessage(context, 'Invalid order response.');
+            return;
+          }
+          await _handleOrderSuccess(context, order.orderId);
           return;
         }
 
@@ -119,7 +127,7 @@ class TotalPrice extends StatelessWidget {
         // =========================================================
 
         if (paymentResult == true) {
-          await _handleOrderSuccess(context);
+          await _handleOrderSuccess(context, order.orderId);
           return;
         }
 
@@ -185,7 +193,7 @@ class TotalPrice extends StatelessWidget {
     );
   }
 
-  Future<void> _handleOrderSuccess(BuildContext context) async {
+  Future<void> _handleOrderSuccess(BuildContext context, String orderId) async {
     final cartCubit = context.read<CartCubit>();
 
     // Refresh cart after successful order.
@@ -207,7 +215,7 @@ class TotalPrice extends StatelessWidget {
     // =========================================================
 
     if (cartState.data != null && cartState.data!.items.isEmpty) {
-      context.go(AppRoutes.successOrder);
+      context.go(AppRoutes.trackOrder, extra: orderId);
 
       return;
     }

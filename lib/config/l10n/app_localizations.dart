@@ -1333,6 +1333,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password changed successfully. Please log in again.'**
   String get passwordChangedSuccess;
+
+  /// No description provided for @waitingForDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for driver'**
+  String get waitingForDriver;
+
+  /// No description provided for @waitingForDriverDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order has been placed. We are waiting for a driver to accept it.'**
+  String get waitingForDriverDescription;
+
+  /// No description provided for @estimatedArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated arrival'**
+  String get estimatedArrival;
+
+  /// No description provided for @deliveryHeroDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Is your delivery hero for today'**
+  String get deliveryHeroDescription;
+
+  /// No description provided for @showMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Show map'**
+  String get showMap;
+
+  /// No description provided for @orderDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Delivered'**
+  String get orderDelivered;
+
+  /// No description provided for @apartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Apartment'**
+  String get apartment;
+
+  /// No description provided for @flower.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower'**
+  String get flower;
+
+  /// No description provided for @driver.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get driver;
+
+  /// No description provided for @orderPlacedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order placed successfully!'**
+  String get orderPlacedSuccessfully;
+
+  /// No description provided for @placed.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed'**
+  String get placed;
+
+  /// No description provided for @preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing'**
+  String get preparing;
+
+  /// No description provided for @pickedUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up'**
+  String get pickedUp;
+
+  /// No description provided for @outForDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Out for delivery'**
+  String get outForDelivery;
+
+  /// No description provided for @arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get arrived;
+
+  /// No description provided for @awaitingDeliveryConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting delivery confirmation'**
+  String get awaitingDeliveryConfirmation;
+
+  /// No description provided for @delivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get delivered;
+
+  /// No description provided for @unknownDeliveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get unknownDeliveryTime;
+
+  /// No description provided for @confirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming...'**
+  String get confirming;
+
+  /// No description provided for @noDataTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'No data, please try again'**
+  String get noDataTryAgain;
 }
 
 class _AppLocalizationsDelegate

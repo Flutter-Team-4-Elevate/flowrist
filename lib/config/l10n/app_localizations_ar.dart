@@ -647,4 +647,65 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get passwordChangedSuccess =>
       'تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً.';
+
+  @override
+  String get waitingForDriver => 'في انتظار المندوب';
+
+  @override
+  String get waitingForDriverDescription =>
+      'تم تسجيل طلبك بنجاح. نحن في انتظار قبول أحد مندوبي التوصيل لطلبك.';
+
+  @override
+  String get estimatedArrival => 'موعد الوصول المتوقع';
+
+  @override
+  String get deliveryHeroDescription => 'مندوب توصيل طلبك اليوم';
+
+  @override
+  String get showMap => 'عرض الخريطة';
+
+  @override
+  String get orderDelivered => 'تأكيد استلام الطلب';
+
+  @override
+  String get apartment => 'المنزل';
+
+  @override
+  String get flower => 'متجر الزهور';
+
+  @override
+  String get driver => 'مندوب التوصيل';
+
+  @override
+  String get orderPlacedSuccessfully => 'تم تسجيل طلبك بنجاح!';
+
+  @override
+  String get placed => 'تم تسجيل الطلب';
+
+  @override
+  String get preparing => 'جارٍ تجهيز الطلب';
+
+  @override
+  String get pickedUp => 'تم استلام الطلب من المتجر';
+
+  @override
+  String get outForDelivery => 'الطلب في الطريق';
+
+  @override
+  String get arrived => 'وصل المندوب';
+
+  @override
+  String get awaitingDeliveryConfirmation => 'في انتظار تأكيد الاستلام';
+
+  @override
+  String get delivered => 'تم التوصيل';
+
+  @override
+  String get unknownDeliveryTime => 'غير متاح';
+
+  @override
+  String get confirming => 'جارٍ التأكيد...';
+
+  @override
+  String get noDataTryAgain => 'لا توجد بيانات، يرجى المحاولة مرة أخرى';
 }

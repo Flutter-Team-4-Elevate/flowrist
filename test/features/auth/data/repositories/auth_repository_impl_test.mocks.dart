@@ -6,6 +6,7 @@
 
 import 'dart:async' as _i8;
 
+import 'package:firebase_messaging/firebase_messaging.dart' as _i15;
 import 'package:flowrist/config/device_id/device_id_services.dart' as _i13;
 import 'package:flowrist/config/notifications/notification_service.dart'
     as _i14;
@@ -299,6 +300,14 @@ class MockPushNotificationsServices extends _i1.Mock
   MockPushNotificationsServices() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i8.Stream<_i15.RemoteMessage> get messages =>
+      (super.noSuchMethod(
+            Invocation.getter(#messages),
+            returnValue: _i8.Stream<_i15.RemoteMessage>.empty(),
+          )
+          as _i8.Stream<_i15.RemoteMessage>);
 
   @override
   _i8.Future<String?> getFcmToken() =>

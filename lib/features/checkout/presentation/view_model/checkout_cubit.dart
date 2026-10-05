@@ -6,6 +6,7 @@ import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_o
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/get_delivery_fee_use_case.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/place_order_use_case.dart';
+import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_case.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
 import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
@@ -19,11 +20,13 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   final PlaceOrderUseCase _placeOrderUseCase;
   final GetDeliveryFeeUseCase _getDeliveryFeeUseCase;
   final GetAllUserAddressesUseCase _getAllUserAddressesUseCase;
-
+  final SaveEstimatedDeliveryUseCase _saveEstimatedDeliveryUseCase;
+  // final SecureStorageService _secureStorage;
   CheckoutCubit(
     this._placeOrderUseCase,
     this._getDeliveryFeeUseCase,
     this._getAllUserAddressesUseCase,
+    this._saveEstimatedDeliveryUseCase,
   ) : super(CheckoutState.initial());
 
   Future<void> doEvent(CheckoutEvent event) async {
@@ -153,6 +156,12 @@ class CheckoutCubit extends Cubit<CheckoutState> {
               ),
             );
             return;
+          }
+
+          final estimatedDeliveryAt = entity.estimatedDeliveryAt;
+
+          if (estimatedDeliveryAt != null) {
+            await _saveEstimatedDeliveryUseCase(estimatedDeliveryAt);
           }
 
           emit(

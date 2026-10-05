@@ -6,6 +6,7 @@ import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_o
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/get_delivery_fee_use_case.dart';
 import 'package:flowrist/features/checkout/domain/use_cases/place_order_use_case.dart';
+import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_case.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
@@ -21,11 +22,13 @@ import 'checkout_cubit_test.mocks.dart';
   PlaceOrderUseCase,
   GetDeliveryFeeUseCase,
   GetAllUserAddressesUseCase,
+  SaveEstimatedDeliveryUseCase,
 ])
 void main() {
   late MockPlaceOrderUseCase mockPlaceOrderUseCase;
   late MockGetDeliveryFeeUseCase mockGetDeliveryFeeUseCase;
   late MockGetAllUserAddressesUseCase mockGetAllUserAddressesUseCase;
+  late MockSaveEstimatedDeliveryUseCase mockSaveEstimatedDeliveryUseCase;
   late CheckoutCubit cubit;
 
   const addressId = 'address-123';
@@ -118,11 +121,13 @@ void main() {
     mockPlaceOrderUseCase = MockPlaceOrderUseCase();
     mockGetDeliveryFeeUseCase = MockGetDeliveryFeeUseCase();
     mockGetAllUserAddressesUseCase = MockGetAllUserAddressesUseCase();
+    mockSaveEstimatedDeliveryUseCase = MockSaveEstimatedDeliveryUseCase();
 
     cubit = CheckoutCubit(
       mockPlaceOrderUseCase,
       mockGetDeliveryFeeUseCase,
       mockGetAllUserAddressesUseCase,
+      mockSaveEstimatedDeliveryUseCase,
     );
   });
 

@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flowrist/config/device_id/device_id_services.dart';
 import 'package:flowrist/config/notifications/local_notification_service.dart';
 import 'package:flowrist/firebase_options.dart';
@@ -17,11 +16,16 @@ class PushNotificationsServices {
   final LocalNotificationService _localNotificationService;
 
   String? _fcmToken;
+
   StreamSubscription<String>? _tokenRefreshSubscription;
   StreamSubscription<RemoteMessage>? _foregroundSubscription;
 
   bool _initialized = false;
   bool _permissionRequestedThisSession = false;
+  bool _disposed = false;
+
+  final StreamController<RemoteMessage> _messageController =
+      StreamController<RemoteMessage>.broadcast();
 
   PushNotificationsServices(
     this._messaging,
@@ -30,7 +34,11 @@ class PushNotificationsServices {
     this._localNotificationService,
   );
 
+  Stream<RemoteMessage> get messages => _messageController.stream;
+
   Future<String?> getFcmToken() async {
+    if (_disposed) return null;
+
     try {
       if (_fcmToken != null && _fcmToken!.isNotEmpty) {
         return _fcmToken;
@@ -49,7 +57,7 @@ class PushNotificationsServices {
   }
 
   Future<void> init() async {
-    if (_initialized) {
+    if (_initialized || _disposed) {
       return;
     }
 
@@ -65,7 +73,6 @@ class PushNotificationsServices {
 
       FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
 
-      // Request notification permission when the app starts.
       await requestPermission();
     } catch (error, stackTrace) {
       log(
@@ -76,12 +83,9 @@ class PushNotificationsServices {
     }
   }
 
-  /// Requests OS notification permission.
-  ///
-  /// This should NOT be called automatically from [init].
-  /// Call it from Home once per app session or when the user
-  /// explicitly enables notifications from Profile.
   Future<bool> requestPermission() async {
+    if (_disposed) return false;
+
     if (_permissionRequestedThisSession) {
       return true;
     }
@@ -116,26 +120,36 @@ class PushNotificationsServices {
   }
 
   Future<void> _syncCurrentToken() async {
+    if (_disposed) return;
+
     final token = await getFcmToken();
 
-    if (token == null || token.isEmpty) {
+    if (token == null || token.isEmpty || _disposed) {
       return;
     }
 
     final deviceId = await _deviceIdService.getDeviceId();
 
+    if (_disposed) return;
+
     await _updateFcmTokenUseCase.call(deviceId: deviceId, fcmToken: token);
   }
 
   void _listenToTokenRefresh() {
+    if (_disposed) return;
+
     _tokenRefreshSubscription ??= _messaging.onTokenRefresh.listen(
       (newToken) async {
+        if (_disposed) return;
+
         try {
           _fcmToken = newToken;
 
           log('FCM TOKEN UPDATED: $newToken');
 
           final deviceId = await _deviceIdService.getDeviceId();
+
+          if (_disposed) return;
 
           await _updateFcmTokenUseCase.call(
             deviceId: deviceId,
@@ -160,9 +174,20 @@ class PushNotificationsServices {
   }
 
   void _listenToForegroundMessages() {
+    if (_disposed) return;
+
     _foregroundSubscription ??= FirebaseMessaging.onMessage.listen(
-      (remoteMessage) async {
-        await _localNotificationService.showBasicNotification(remoteMessage);
+      (remoteMessage) {
+        if (_disposed) return;
+
+        log(
+          'Foreground FCM received: '
+          '${remoteMessage.messageId}',
+        );
+
+        if (!_messageController.isClosed) {
+          _messageController.add(remoteMessage);
+        }
       },
       onError: (Object error, StackTrace stackTrace) {
         log(
@@ -184,10 +209,16 @@ class PushNotificationsServices {
   }
 
   Future<void> dispose() async {
+    if (_disposed) return;
+
+    _disposed = true;
+
     await _tokenRefreshSubscription?.cancel();
     await _foregroundSubscription?.cancel();
 
     _tokenRefreshSubscription = null;
     _foregroundSubscription = null;
+
+    await _messageController.close();
   }
 }
