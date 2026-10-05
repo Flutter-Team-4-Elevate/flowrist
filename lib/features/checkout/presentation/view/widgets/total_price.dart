@@ -194,53 +194,19 @@ class TotalPrice extends StatelessWidget {
   }
 
   Future<void> _handleOrderSuccess(BuildContext context, String orderId) async {
-    final cartCubit = context.read<CartCubit>();
-
-    // Refresh cart after successful order.
-    await cartCubit.doEvent(GetCartEvent());
-
     if (!context.mounted) return;
 
-    final cartState = cartCubit.state.cart;
+    // Navigate immediately after successful order/payment.
+    context.go(AppRoutes.trackOrder, extra: orderId);
 
-    // =========================================================
-    // CART IS EMPTY
-    // =========================================================
+    // Refresh cart in the background.
     //
-    // After successful order your API returns:
-    //
-    // items: []
-    //
-    // Therefore go directly to success screen.
-    // =========================================================
-
-    if (cartState.data != null && cartState.data!.items.isEmpty) {
-      context.go(AppRoutes.trackOrder, extra: orderId);
-
-      return;
+    // Do not await this before navigation.
+    try {
+      await context.read<CartCubit>().doEvent(GetCartEvent());
+    } catch (e) {
+      debugPrint('Failed to refresh cart after order: $e');
     }
-
-    // =========================================================
-    // CART DATA IS NULL
-    // =========================================================
-
-    if (cartState.data == null) {
-      _showMessage(
-        context,
-        'Order placed successfully, but the cart could not be refreshed.',
-      );
-
-      return;
-    }
-
-    // =========================================================
-    // CART STILL HAS ITEMS
-    // =========================================================
-
-    _showMessage(
-      context,
-      'Order placed successfully, but the cart is not empty.',
-    );
   }
 
   void _placeOrder(BuildContext context) {

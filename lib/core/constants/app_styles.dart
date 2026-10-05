@@ -24,14 +24,14 @@ abstract final class AppStyles {
   static final TextStyle regular12Underline = GoogleFonts.inter(
     fontWeight: FontWeight.w400,
     fontSize: 12,
-    color: AppColors.blackBase,
+    // color: AppColors.blackBase,
     decoration: TextDecoration.underline,
   );
 
   static final TextStyle regular13 = GoogleFonts.inter(
     fontWeight: FontWeight.w400,
     fontSize: 13,
-    color: AppColors.blackBase,
+    // color: AppColors.blackBase,
   );
   static final TextStyle regular13Grey = GoogleFonts.inter(
     fontWeight: FontWeight.w400,
@@ -42,7 +42,7 @@ abstract final class AppStyles {
   static final TextStyle regular13W500 = GoogleFonts.inter(
     fontWeight: FontWeight.w500,
     fontSize: 13,
-    color: AppColors.blackBase,
+    // color: AppColors.blackBase,
   );
 
   static final TextStyle regular14Roboto = GoogleFonts.roboto(
@@ -59,7 +59,7 @@ abstract final class AppStyles {
   static final TextStyle regular14InterW500 = GoogleFonts.inter(
     fontWeight: FontWeight.w500,
     fontSize: 14,
-    color: AppColors.blackBase,
+    // color: AppColors.blackBase,
   );
 
   static final TextStyle regular16 = GoogleFonts.inter(
