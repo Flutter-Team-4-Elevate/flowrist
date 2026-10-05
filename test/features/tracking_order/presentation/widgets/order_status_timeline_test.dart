@@ -41,7 +41,8 @@ void main() {
       tester,
     ) async {
       await pump(tester);
-      expect(find.text('No Data please try again'), findsOneWidget);
+      final l10n = l10nOf(tester, TrackOrderDetails);
+      expect(find.text(l10n.noDataTryAgain), findsOneWidget);
     });
 
     testWidgets('shows WaitingForDriverView when status is PLACED', (
