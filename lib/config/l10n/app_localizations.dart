@@ -1441,6 +1441,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not available'**
   String get unknownDeliveryTime;
+
+  /// No description provided for @confirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming...'**
+  String get confirming;
+
+  /// No description provided for @noDataTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'No data, please try again'**
+  String get noDataTryAgain;
 }
 
 class _AppLocalizationsDelegate

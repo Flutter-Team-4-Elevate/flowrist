@@ -705,4 +705,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unknownDeliveryTime => 'Not available';
+
+  @override
+  String get confirming => 'Confirming...';
+
+  @override
+  String get noDataTryAgain => 'No data, please try again';
 }

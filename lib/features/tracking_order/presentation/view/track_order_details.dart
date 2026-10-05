@@ -39,11 +39,8 @@ class TrackOrderDetails extends StatelessWidget {
           final tracking = state.tracking;
 
           if (tracking == null) {
-            return const Center(
-              child: Text(
-                'No Data please try again',
-                textAlign: TextAlign.center,
-              ),
+            return Center(
+              child: Text(l10n.noDataTryAgain, textAlign: TextAlign.center),
             );
           }
 
