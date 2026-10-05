@@ -702,4 +702,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get unknownDeliveryTime => 'غير متاح';
+
+  @override
+  String get confirming => 'جارٍ التأكيد...';
+
+  @override
+  String get noDataTryAgain => 'لا توجد بيانات، يرجى المحاولة مرة أخرى';
 }

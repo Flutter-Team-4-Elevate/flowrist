@@ -1,27 +1,35 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/features/tracking_order/domain/entities/tracking_timeline_entity.dart';
 import 'package:intl/intl.dart';
 
 extension TrackingTimelineExtension on TrackingTimelineEntity {
-  String get displayTitle {
+  String displayTitle(AppLocalizations l10n) {
     switch (status) {
       case 'PLACED':
-        return 'Received your order';
+        return l10n.placed;
       case 'PREPARING':
-        return 'Preparing your order';
+        return l10n.preparing;
       case 'PICKED_UP':
-        return 'Picked up';
+        return l10n.pickedUp;
       case 'OUT_FOR_DELIVERY':
-        return 'Out for delivery';
+        return l10n.outForDelivery;
+      case 'ARRIVED':
+        return l10n.arrived;
+      case 'AWAITING_DELIVERY_CONFIRMATION':
+        return l10n.awaitingDeliveryConfirmation;
       case 'DELIVERED':
-        return 'Delivered';
+        return l10n.delivered;
       default:
         return status;
     }
   }
 
-  String get formattedDate {
+  String formattedDate([String? locale]) {
     if (occurredAt == null) return '';
 
-    return DateFormat('dd MMM yyyy - HH:mm').format(occurredAt!.toLocal());
+    return DateFormat(
+      'dd MMM yyyy - HH:mm',
+      locale,
+    ).format(occurredAt!.toLocal());
   }
 }

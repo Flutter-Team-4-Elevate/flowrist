@@ -222,5 +222,7 @@
   "arrived": "Arrived",
   "awaitingDeliveryConfirmation": "Awaiting delivery confirmation",
   "delivered": "Delivered",
-  "unknownDeliveryTime": "Not available"
+  "unknownDeliveryTime": "Not available",
+  "confirming": "Confirming...",
+  "noDataTryAgain": "No data, please try again"
 }

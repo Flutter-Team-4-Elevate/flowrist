@@ -1,3 +1,4 @@
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_router.dart';
@@ -28,12 +29,14 @@ class TrackingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final driver = tracking.driver;
 
     final deliveryTime = estimatedDeliveryAt == null
-        ? '--'
+        ? l10n.unknownDeliveryTime
         : DateFormat(
             Endpoints.dateFormatDelivery,
+            Localizations.localeOf(context).toString(),
           ).format(estimatedDeliveryAt!.toLocal());
 
     return SingleChildScrollView(
@@ -42,7 +45,7 @@ class TrackingContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Estimated arrival', style: AppStyles.regular14Inter),
+            Text(l10n.estimatedArrival, style: AppStyles.regular14Inter),
 
             Text(deliveryTime, style: AppStyles.medium16InterBlack),
 
@@ -86,6 +89,8 @@ class _DriverSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Row(
       children: [
         const SizedBox(width: 20),
@@ -98,15 +103,22 @@ class _DriverSection extends StatelessWidget {
 
         const SizedBox(width: 20),
 
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(driverName, style: AppStyles.regular14InterW500),
-            Text('Is your delivery hero for today', style: AppStyles.regular13),
-          ],
+        // Expanded fixes the horizontal overflow.
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                driverName,
+                style: AppStyles.regular14InterW500,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Text(l10n.deliveryHeroDescription, style: AppStyles.regular13),
+            ],
+          ),
         ),
 
-        const Spacer(),
+        const SizedBox(width: 10),
 
         SizedBox(
           height: 18,
@@ -158,23 +170,22 @@ class _TrackingActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isMapEnabled = status.isMapEnabled;
 
     final isAwaitingDeliveryConfirmation =
         status.isAwaitingDeliveryConfirmation;
 
+    // Condition fixed: the button is enabled WHEN the map is enabled.
+    final VoidCallback? onShowMap = isMapEnabled
+        ? () => _openTrackingMap(context)
+        : null;
+
     if (isAwaitingDeliveryConfirmation) {
       return Row(
         children: [
           Expanded(
-            child: AppButton(
-              text: 'Show map',
-              onPressed: isMapEnabled
-                  ? null
-                  : () {
-                      _openTrackingMap(context);
-                    },
-            ),
+            child: AppButton(text: l10n.showMap, onPressed: onShowMap),
           ),
 
           const SizedBox(width: 12),
@@ -188,10 +199,10 @@ class _TrackingActions extends StatelessWidget {
               builder: (context, state) {
                 return AppButton(
                   text: state.isConfirmingDelivery
-                      ? 'Confirming...'
+                      ? l10n.confirming
                       : state.isDeliveryConfirmed
-                      ? 'Delivered'
-                      : 'Order Delivered',
+                      ? l10n.delivered
+                      : l10n.orderDelivered,
                   onPressed:
                       state.isConfirmingDelivery || state.isDeliveryConfirmed
                       ? null
@@ -210,14 +221,7 @@ class _TrackingActions extends StatelessWidget {
 
     return SizedBox(
       width: double.infinity,
-      child: AppButton(
-        text: 'Show map',
-        onPressed: isMapEnabled
-            ? null
-            : () {
-                _openTrackingMap(context);
-              },
-      ),
+      child: AppButton(text: l10n.showMap, onPressed: onShowMap),
     );
   }
 }

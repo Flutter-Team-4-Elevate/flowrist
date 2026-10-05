@@ -222,6 +222,8 @@
   "arrived": "وصل المندوب",
   "awaitingDeliveryConfirmation": "في انتظار تأكيد الاستلام",
   "delivered": "تم التوصيل",
-  "unknownDeliveryTime": "غير متاح"
+  "unknownDeliveryTime": "غير متاح",
+  "confirming": "جارٍ التأكيد...",
+  "noDataTryAgain": "لا توجد بيانات، يرجى المحاولة مرة أخرى"
 
 }
