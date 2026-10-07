@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/notifications/local_notification_service.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_notification_data_source.dart';
@@ -15,10 +17,13 @@ class TrackingRepositoryImpl implements TrackingRepository {
   final TrackingRemoteDataSource _remoteDataSource;
   final TrackingNotificationDataSource _notificationDataSource;
   final SecureStorageService _secureStorage;
+  final LocalNotificationService _localNotificationService;
+
   TrackingRepositoryImpl(
     this._remoteDataSource,
     this._notificationDataSource,
     this._secureStorage,
+    this._localNotificationService,
   );
 
   final Map<String, OrderTrackingEntity> _currentTracking = {};
@@ -29,6 +34,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
   final Map<String, Timer> _pollingTimers = {};
 
   StreamSubscription<TrackingUpdateEntity>? _notificationSubscription;
+
+  // ============================================================
+  // ORDER TRACKING
+  // ============================================================
 
   @override
   Stream<BaseResponse<OrderTrackingEntity>> watchOrderTracking(String orderId) {
@@ -90,6 +99,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
     }
   }
 
+  // ============================================================
+  // POLLING
+  // ============================================================
+
   void _startPolling(String orderId) {
     if (_pollingTimers.containsKey(orderId)) {
       return;
@@ -100,6 +113,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
       (_) => _getOrderTracking(orderId),
     );
   }
+
+  // ============================================================
+  // FCM TRACKING UPDATE
+  // ============================================================
 
   void _startNotificationListener() {
     if (_notificationSubscription != null) {
@@ -119,6 +136,10 @@ class TrackingRepositoryImpl implements TrackingRepository {
     await _getOrderTracking(update.orderId);
   }
 
+  // ============================================================
+  // STREAM CLEANUP
+  // ============================================================
+
   Future<void> _onTrackingStreamCancelled(String orderId) async {
     _pollingTimers.remove(orderId)?.cancel();
 
@@ -137,13 +158,66 @@ class TrackingRepositoryImpl implements TrackingRepository {
 
   Future<void> _stopNotificationListener() async {
     await _notificationSubscription?.cancel();
+
     _notificationSubscription = null;
   }
+
+  // ============================================================
+  // CONFIRM DELIVERY
+  // ============================================================
 
   @override
   Future<BaseResponse<void>> confirmDelivery(String orderId) {
     return _remoteDataSource.confirmDelivery(orderId);
   }
+
+  // ============================================================
+  // ESTIMATED DELIVERY
+  // ============================================================
+
+  @override
+  Future<DateTime?> getEstimatedDeliveryAt() async {
+    final savedValue = await _secureStorage.get(
+      AppConstants.estimatedDeliveryAtKey,
+    );
+
+    if (savedValue.isEmpty) {
+      return null;
+    }
+
+    return DateTime.tryParse(savedValue);
+  }
+
+  // ============================================================
+  // LIVE ORDER NOTIFICATION
+  // ============================================================
+
+  @override
+  Future<void> showOrderTrackingNotification({
+    required String orderNumber,
+    required String status,
+    required int completedSteps,
+    required int totalSteps,
+  }) async {
+    if (status == 'DELIVERED') {
+      await stopOrderTrackingNotification();
+      return;
+    }
+
+    await _localNotificationService.showOrderTrackingNotification(
+      orderNumber: orderNumber,
+      status: status,
+    );
+  }
+
+  @override
+  Future<void> stopOrderTrackingNotification() async {
+    await _localNotificationService.stopLiveOrderNotification();
+  }
+
+  // ============================================================
+  // DISPOSE
+  // ============================================================
 
   Future<void> dispose() async {
     await _stopNotificationListener();
@@ -164,18 +238,5 @@ class TrackingRepositoryImpl implements TrackingRepository {
 
     _controllers.clear();
     _currentTracking.clear();
-  }
-
-  @override
-  Future<DateTime?> getEstimatedDeliveryAt() async {
-    final savedValue = await _secureStorage.get(
-      AppConstants.estimatedDeliveryAtKey,
-    );
-
-    if (savedValue.isEmpty) {
-      return null;
-    }
-
-    return DateTime.tryParse(savedValue);
   }
 }

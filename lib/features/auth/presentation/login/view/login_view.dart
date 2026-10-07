@@ -228,6 +228,7 @@ class _LoginViewState extends State<LoginView> {
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
                                 context.push(AppRoutes.signUp);
+                                // Navigator.push(context,MaterialPageRoute(builder: (context) => const NotificationUi()));
                               },
                           ),
                         ],

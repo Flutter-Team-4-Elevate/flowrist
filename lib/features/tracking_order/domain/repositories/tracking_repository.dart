@@ -5,4 +5,12 @@ abstract interface class TrackingRepository {
   Stream<BaseResponse<OrderTrackingEntity>> watchOrderTracking(String orderId);
   Future<BaseResponse<void>> confirmDelivery(String orderId);
   Future<DateTime?> getEstimatedDeliveryAt();
+  Future<void> showOrderTrackingNotification({
+    required String orderNumber,
+    required String status,
+    required int completedSteps,
+    required int totalSteps,
+  });
+
+  Future<void> stopOrderTrackingNotification();
 }
