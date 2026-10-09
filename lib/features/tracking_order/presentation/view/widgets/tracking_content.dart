@@ -45,9 +45,21 @@ class TrackingContent extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.estimatedArrival, style: AppStyles.regular14Inter),
+            Text(
+              l10n.estimatedArrival,
+              style: AppStyles.regular14Inter.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: .7),
+              ),
+            ),
 
-            Text(deliveryTime, style: AppStyles.medium16InterBlack),
+            Text(
+              deliveryTime,
+              style: AppStyles.medium16InterBlack.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
 
             const SizedBox(height: 40),
 
@@ -110,10 +122,17 @@ class _DriverSection extends StatelessWidget {
             children: [
               Text(
                 driverName,
-                style: AppStyles.regular14InterW500,
+                style: AppStyles.regular14InterW500.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
-              Text(l10n.deliveryHeroDescription, style: AppStyles.regular13),
+              Text(
+                l10n.deliveryHeroDescription,
+                style: AppStyles.regular13.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
         ),

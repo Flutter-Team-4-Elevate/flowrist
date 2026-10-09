@@ -5,6 +5,8 @@ import 'package:flowrist/features/tracking_order/domain/entities/order_tracking_
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/get_estimated_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/get_route_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/stop_order_tracking_notification_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/update_order_tracking_notification_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/watch_order_tracking_use_case.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_state.dart';
@@ -20,7 +22,11 @@ class TrackingCubit extends Cubit<TrackingState> {
   final ConfirmDeliveryUseCase _confirmDeliveryUseCase;
   final GetEstimatedDeliveryUseCase _getEstimatedDeliveryUseCase;
   final GetRouteUseCase _getRouteUseCase;
+  final UpdateOrderTrackingNotificationUseCase
+  _updateOrderTrackingNotificationUseCase;
 
+  final StopOrderTrackingNotificationUseCase
+  _stopOrderTrackingNotificationUseCase;
   StreamSubscription<BaseResponse<OrderTrackingEntity>>? _trackingSubscription;
 
   LatLng? _lastRoutedDriverLocation;
@@ -30,6 +36,8 @@ class TrackingCubit extends Cubit<TrackingState> {
     this._confirmDeliveryUseCase,
     this._getEstimatedDeliveryUseCase,
     this._getRouteUseCase,
+    this._updateOrderTrackingNotificationUseCase,
+    this._stopOrderTrackingNotificationUseCase,
   ) : super(const TrackingState());
 
   Future<void> doEvent(TrackingEvent event) async {
@@ -83,6 +91,10 @@ class TrackingCubit extends Cubit<TrackingState> {
         case SuccessResponse<OrderTrackingEntity>():
           final tracking = response.data;
 
+          if (tracking == null) {
+            return;
+          }
+
           emit(
             state.copyWith(
               isLoading: false,
@@ -92,7 +104,9 @@ class TrackingCubit extends Cubit<TrackingState> {
             ),
           );
 
-          await _updateRoute(tracking!);
+          await _handleTrackingNotification(tracking);
+
+          await _updateRoute(tracking);
 
         case ErrorResponse<OrderTrackingEntity>():
           emit(
@@ -258,5 +272,25 @@ class TrackingCubit extends Cubit<TrackingState> {
     await _trackingSubscription?.cancel();
 
     return super.close();
+  }
+
+  Future<void> _handleTrackingNotification(OrderTrackingEntity tracking) async {
+    if (tracking.status == 'DELIVERED') {
+      await _stopOrderTrackingNotificationUseCase();
+      return;
+    }
+
+    final completedSteps = tracking.timeline
+        .where((item) => item.isCompleted)
+        .length;
+
+    final totalSteps = tracking.timeline.length;
+
+    await _updateOrderTrackingNotificationUseCase(
+      orderNumber: tracking.orderNumber,
+      status: tracking.status,
+      completedSteps: completedSteps,
+      totalSteps: totalSteps,
+    );
   }
 }

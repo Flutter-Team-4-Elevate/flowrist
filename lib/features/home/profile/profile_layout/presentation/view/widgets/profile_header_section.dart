@@ -1,4 +1,3 @@
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -36,20 +35,36 @@ class ProfileHeaderSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(userName, style: AppStyles.medium18Inter),
+            Text(
+              userName,
+              style: AppStyles.medium18Inter.copyWith(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: .8),
+              ),
+            ),
             const SizedBox(width: 6),
             GestureDetector(
               onTap: onEditName,
-              child: const Icon(
+              child: Icon(
                 Icons.edit_outlined,
                 size: 16,
-                color: AppColors.grey,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: .8),
               ),
             ),
           ],
         ),
         const SizedBox(height: 4),
-        Text(userEmail, style: AppStyles.regular14Inter),
+        Text(
+          userEmail,
+          style: AppStyles.regular14Inter.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .8),
+          ),
+        ),
         SizedBox(height: screenSize.height * 0.025),
       ],
     );

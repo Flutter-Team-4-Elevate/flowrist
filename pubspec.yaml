@@ -73,6 +73,7 @@ flutter:
   assets:
     - assets/images/
     - shorebird.yaml
+    - .env
   fonts:
     - family: Inter
       fonts:

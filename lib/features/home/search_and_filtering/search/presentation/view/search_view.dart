@@ -1,5 +1,4 @@
 import 'package:flowrist/config/di/di.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/ui/widgets/products_shimmer.dart';
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/cubit/search_cubit.dart';
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/cubit/search_state.dart';
@@ -38,7 +37,6 @@ class _SearchViewState extends State<SearchView> {
     return BlocProvider(
       create: (_) => getIt<SearchCubit>(),
       child: Scaffold(
-        backgroundColor: AppColors.whiteBase,
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
@@ -48,9 +46,9 @@ class _SearchViewState extends State<SearchView> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_new,
-                        color: AppColors.blackBase,
+                        color: Theme.of(context).colorScheme.onSurface,
                         size: 20,
                       ),
                       onPressed: () => context.pop(),

@@ -28,14 +28,16 @@ class ProductPriceAndStatus extends StatelessWidget {
               children: [
                 Text(
                   '${currentPrice.toStringAsFixed(0)} ${l10n.egp}',
-                  style: AppStyles.bold20Inter,
+                  style: AppStyles.bold20Inter.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 if (hasDiscount) ...[
                   const SizedBox(width: 8),
                   Text(
                     '${product.price.toStringAsFixed(0)} ${l10n.egp}',
                     style: AppStyles.regular14Inter.copyWith(
-                      color: AppColors.white70,
+                      color: Theme.of(context).colorScheme.outline,
                       decoration: TextDecoration.lineThrough,
                     ),
                   ),
@@ -43,16 +45,28 @@ class ProductPriceAndStatus extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 4),
-            Text(l10n.allPricesIncludeTax, style: AppStyles.regular12Inter),
+            Text(
+              l10n.allPricesIncludeTax,
+              style: AppStyles.regular12Inter.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
         Row(
           children: [
-            Text('${l10n.status}: ', style: AppStyles.semiBold14),
+            Text(
+              '${l10n.status}: ',
+              style: AppStyles.semiBold14.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             Text(
               product.inStock ? l10n.productInStock : l10n.productOutOfStock,
               style: AppStyles.regular14InterW500.copyWith(
-                color: product.inStock ? AppColors.grey : AppColors.red,
+                color: product.inStock
+                    ? Theme.of(context).colorScheme.outline
+                    : AppColors.red,
               ),
             ),
           ],

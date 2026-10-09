@@ -35,26 +35,31 @@ class _MyOrdersView extends StatelessWidget {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios,
-              color: AppColors.blackBase,
+              color: Theme.of(context).colorScheme.onSurface,
               size: 20,
             ),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
-          title: Text(locale.myOrders, style: AppStyles.medium18Inter),
+          title: Text(
+            locale.myOrders,
+            style: AppStyles.medium18Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           titleSpacing: 0,
           bottom: TabBar(
             indicatorSize: TabBarIndicatorSize.tab,
             indicatorColor: AppColors.purpleBase,
             indicatorWeight: 3,
             labelColor: AppColors.purpleBase,
-            unselectedLabelColor: AppColors.grey20,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .8),
             labelStyle: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 16,

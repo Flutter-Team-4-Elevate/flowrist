@@ -5,11 +5,13 @@ import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/core/ui/theme/theme_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_events.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_state.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/edit_profile_view.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/change_language_bottom_sheet.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/dark_mode_bottom_sheet.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/logout_dialog.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_app_bar.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
@@ -61,7 +63,6 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
       listenWhen: (prev, current) => prev.logoutState != current.logoutState,
       listener: _handleLogoutState,
       child: Scaffold(
-        backgroundColor: AppColors.whiteBase,
         body: SafeArea(
           child: Column(
             children: [
@@ -77,7 +78,14 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
                       _buildSettingsSection(context, l10n, itemPadding),
                       _buildLogoutSection(context, l10n, itemPadding),
                       SizedBox(height: screenHeight * 0.03),
-                      Text(l10n.app_version, style: AppStyles.regular12Inter),
+                      Text(
+                        l10n.app_version,
+                        style: AppStyles.regular12Inter.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: .7),
+                        ),
+                      ),
                       SizedBox(height: screenHeight * 0.02),
                     ],
                   ),
@@ -207,12 +215,14 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
             title: Text(
               l10n.notification,
               style: AppStyles.regular14Inter.copyWith(
-                color: AppColors.blackBase,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
-            trailing: const Icon(
+            trailing: Icon(
               Icons.arrow_forward_ios,
-              color: AppColors.grey,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: .7),
               size: 16,
             ),
           ),
@@ -244,6 +254,32 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
             ),
           ),
           onTap: () => ChangeLanguageBottomSheet.show(context),
+        ),
+        ProfileMenuItem(
+          horizontalPadding: itemPadding,
+          icon: switch (context.watch<ThemeCubit>().state) {
+            ThemeMode.light => Icons.light_mode_outlined,
+            ThemeMode.dark => Icons.dark_mode_outlined,
+            ThemeMode.system => Icons.settings_brightness_outlined,
+          },
+          title: 'Appearance',
+          trailing: BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
+              final String themeText = switch (themeMode) {
+                ThemeMode.light => 'Light',
+                ThemeMode.dark => 'Dark',
+                ThemeMode.system => 'System default',
+              };
+
+              return Text(
+                themeText,
+                style: AppStyles.regular13W500.copyWith(
+                  color: AppColors.purpleBase,
+                ),
+              );
+            },
+          ),
+          onTap: () => DarkModeBottomSheet.show(context),
         ),
         ProfileMenuItem(
           horizontalPadding: itemPadding,
@@ -289,9 +325,11 @@ class _ProfileTabViewContentState extends State<_ProfileTabViewContent> {
           horizontalPadding: itemPadding,
           icon: Icons.logout,
           title: l10n.logOut,
-          trailing: const Icon(
+          trailing: Icon(
             Icons.arrow_forward_ios,
-            color: AppColors.grey,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .7),
             size: 16,
           ),
           onTap: () => LogoutDialog.show(

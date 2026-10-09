@@ -67,10 +67,20 @@ class OrderStatusItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppStyles.regular14Inter),
+                Text(
+                  title,
+                  style: AppStyles.regular14Inter.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
                 if (date.isNotEmpty) ...[
                   const SizedBox(height: 6),
-                  Text(date, style: AppStyles.regular13),
+                  Text(
+                    date,
+                    style: AppStyles.regular13.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ],
             ),

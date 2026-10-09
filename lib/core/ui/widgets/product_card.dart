@@ -35,9 +35,12 @@ class ProductCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.whiteBase,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.white70, width: 0.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 0.5,
+        ),
       ),
       child: Column(
         children: [
@@ -161,7 +164,7 @@ class ProductCard extends StatelessWidget {
         return Container(
           height: 38,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(

@@ -121,7 +121,10 @@ class OccasionRailSection extends StatelessWidget {
                         item.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppStyles.medium18Inter.copyWith(fontSize: 15),
+                        style: AppStyles.medium18Inter.copyWith(
+                          fontSize: 15,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ],
                   ),

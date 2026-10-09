@@ -17,7 +17,12 @@ class SectionTitle extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: AppStyles.medium18Inter),
+          Text(
+            title,
+            style: AppStyles.medium18Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           TextButton(
             onPressed: onViewAll,
             child: Text(

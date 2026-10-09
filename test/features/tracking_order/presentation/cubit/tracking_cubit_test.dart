@@ -7,6 +7,8 @@ import 'package:flowrist/features/tracking_order/domain/entities/tracking_destin
 import 'package:flowrist/features/tracking_order/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/get_estimated_delivery_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/get_route_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/stop_order_tracking_notification_use_case.dart';
+import 'package:flowrist/features/tracking_order/domain/use_cases/update_order_tracking_notification_use_case.dart';
 import 'package:flowrist/features/tracking_order/domain/use_cases/watch_order_tracking_use_case.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_cubit.dart';
 import 'package:flowrist/features/tracking_order/presentation/cubit/tracking_event.dart';
@@ -22,6 +24,8 @@ import 'tracking_cubit_test.mocks.dart';
   ConfirmDeliveryUseCase,
   GetEstimatedDeliveryUseCase,
   GetRouteUseCase,
+  UpdateOrderTrackingNotificationUseCase,
+  StopOrderTrackingNotificationUseCase,
 ])
 void main() {
   provideDummy<BaseResponse<dynamic>>(SuccessResponse<dynamic>(null));
@@ -30,13 +34,20 @@ void main() {
   late MockConfirmDeliveryUseCase mockConfirmDeliveryUseCase;
   late MockGetEstimatedDeliveryUseCase mockGetEstimatedDeliveryUseCase;
   late MockGetRouteUseCase getRouteUseCase;
+  late MockUpdateOrderTrackingNotificationUseCase
+  updateOrderTrackingNotificationUseCase;
+  late MockStopOrderTrackingNotificationUseCase
+  stopOrderTrackingNotificationUseCase;
   late TrackingCubit cubit;
   setUp(() {
     mockWatchOrderTrackingUseCase = MockWatchOrderTrackingUseCase();
     mockConfirmDeliveryUseCase = MockConfirmDeliveryUseCase();
     mockGetEstimatedDeliveryUseCase = MockGetEstimatedDeliveryUseCase();
     getRouteUseCase = MockGetRouteUseCase();
-
+    updateOrderTrackingNotificationUseCase =
+        MockUpdateOrderTrackingNotificationUseCase();
+    stopOrderTrackingNotificationUseCase =
+        MockStopOrderTrackingNotificationUseCase();
     when(mockGetEstimatedDeliveryUseCase()).thenAnswer((_) async => null);
 
     cubit = TrackingCubit(
@@ -44,6 +55,8 @@ void main() {
       mockConfirmDeliveryUseCase,
       mockGetEstimatedDeliveryUseCase,
       getRouteUseCase,
+      updateOrderTrackingNotificationUseCase,
+      stopOrderTrackingNotificationUseCase,
     );
   });
 
@@ -78,6 +91,8 @@ void main() {
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
           getRouteUseCase,
+          updateOrderTrackingNotificationUseCase,
+          stopOrderTrackingNotificationUseCase,
         );
       },
       act: (cubit) {
@@ -112,6 +127,8 @@ void main() {
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
           getRouteUseCase,
+          updateOrderTrackingNotificationUseCase,
+          stopOrderTrackingNotificationUseCase,
         );
       },
       act: (cubit) async {
@@ -150,6 +167,8 @@ void main() {
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
           getRouteUseCase,
+          updateOrderTrackingNotificationUseCase,
+          stopOrderTrackingNotificationUseCase,
         );
       },
       act: (cubit) async {
@@ -194,6 +213,8 @@ void main() {
           mockConfirmDeliveryUseCase,
           mockGetEstimatedDeliveryUseCase,
           getRouteUseCase,
+          updateOrderTrackingNotificationUseCase,
+          stopOrderTrackingNotificationUseCase,
         );
       },
       act: (cubit) async {

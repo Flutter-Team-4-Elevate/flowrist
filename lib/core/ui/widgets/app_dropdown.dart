@@ -33,8 +33,11 @@ class AppDropdown<T> extends StatelessWidget {
         border: const OutlineInputBorder(
           borderSide: BorderSide(color: AppColors.black, width: 1),
         ),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.black, width: 1),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.onSurface,
+            width: 1,
+          ),
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -70,12 +73,12 @@ class AppDropdown<T> extends StatelessWidget {
                         ),
                       )
                     : null,
-                icon: const Icon(
+                icon: Icon(
                   Icons.keyboard_arrow_down,
-                  color: AppColors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 style: AppStyles.regular14Inter.copyWith(
-                  color: AppColors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 onChanged: onChanged,
                 items: items.map((T item) {

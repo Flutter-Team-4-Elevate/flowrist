@@ -39,19 +39,22 @@ class SavedAddressItemCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.white60.withAlpha(80), width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+          width: 1,
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(top: 2),
             child: Icon(
               Icons.location_on_outlined,
               size: 24,
-              color: AppColors.blackBase,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(width: 12),
@@ -61,14 +64,20 @@ class SavedAddressItemCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppStyles.medium16InterBlack,
+                  style: AppStyles.medium16InterBlack.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 6),
                 Text(
                   _formatSubtitle(),
-                  style: AppStyles.regular13Grey,
+                  style: AppStyles.regular13Grey.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.8),
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -106,9 +115,11 @@ class SavedAddressItemCard extends StatelessWidget {
               const SizedBox(width: 4),
               IconButton(
                 onPressed: onEdit,
-                icon: const Icon(
+                icon: Icon(
                   Icons.edit_outlined,
-                  color: AppColors.grey,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.8),
                   size: 20,
                 ),
                 constraints: const BoxConstraints(),

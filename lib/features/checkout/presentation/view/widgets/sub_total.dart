@@ -1,4 +1,3 @@
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SubTotal extends StatelessWidget {
@@ -20,10 +19,12 @@ class SubTotal extends StatelessWidget {
           title,
           style:
               textStyle ??
-              const TextStyle(
+              TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppColors.grey,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: .7),
               ),
         ),
 
@@ -34,7 +35,9 @@ class SubTotal extends StatelessWidget {
               TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: AppColors.grey,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: .7),
               ),
         ),
       ],

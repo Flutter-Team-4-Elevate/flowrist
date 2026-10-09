@@ -126,7 +126,6 @@ class _EditProfileViewState extends State<EditProfileView> {
           prev.updateProfileState != current.updateProfileState,
       listener: (context, state) => _handleUpdateState(context, state, l10n),
       child: Scaffold(
-        backgroundColor: AppColors.whiteBase,
         appBar: _buildAppBar(l10n),
         body: SafeArea(
           child: SingleChildScrollView(
@@ -153,7 +152,12 @@ class _EditProfileViewState extends State<EditProfileView> {
 
   PreferredSizeWidget _buildAppBar(AppLocalizations l10n) {
     return AppBar(
-      title: Text(l10n.editProfile, style: AppStyles.medium18Inter),
+      title: Text(
+        l10n.editProfile,
+        style: AppStyles.medium18Inter.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
       titleSpacing: 0,
       centerTitle: false,
       leading: IconButton(

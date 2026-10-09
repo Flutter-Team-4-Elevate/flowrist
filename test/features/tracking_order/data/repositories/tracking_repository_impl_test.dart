@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/notifications/local_notification_service.dart';
 import 'package:flowrist/config/storage/secure_storage_service.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_notification_data_source.dart';
 import 'package:flowrist/features/tracking_order/data/data_sources/contract/remote/tracking_remote_data_source.dart';
@@ -20,6 +21,7 @@ import 'tracking_repository_impl_test.mocks.dart' hide MockSecureStorageService;
   TrackingRemoteDataSource,
   TrackingNotificationDataSource,
   SecureStorageService,
+  LocalNotificationService,
 ])
 void main() {
   provideDummy<BaseResponse<OrderTrackingModel>>(
@@ -31,14 +33,14 @@ void main() {
   late MockTrackingNotificationDataSource mockNotificationDataSource;
   late MockSecureStorageService mockSecureStorage;
   late TrackingRepositoryImpl repository;
-
+  late MockLocalNotificationService localNotificationService;
   late StreamController<TrackingUpdateEntity> notificationController;
 
   setUp(() {
     mockRemoteDataSource = MockTrackingRemoteDataSource();
     mockNotificationDataSource = MockTrackingNotificationDataSource();
     mockSecureStorage = MockSecureStorageService();
-
+    localNotificationService = MockLocalNotificationService();
     notificationController = StreamController<TrackingUpdateEntity>.broadcast();
 
     when(
@@ -49,6 +51,7 @@ void main() {
       mockRemoteDataSource,
       mockNotificationDataSource,
       mockSecureStorage,
+      localNotificationService,
     );
   });
 

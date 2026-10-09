@@ -64,4 +64,20 @@ abstract final class AppColors {
   static const Color amber10 = Color(0xFFFEF3E7);
   static const Color amber90 = Color(0xFF914D16);
   static const Color amber100 = Color(0xFF452A10);
+
+  // Theme-aware semantic colors
+
+  // Light mode
+  static const Color lightBackground = Color(0xFFF9F9F9);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightText = Color(0xFF0C1015);
+  static const Color lightSecondaryText = Color(0xFF535353);
+  static const Color lightBorder = Color(0xFFa6a6a6);
+
+  // Dark mode
+  static const Color darkBackground = Color(0xFF221126);
+  static const Color darkSurface = Color(0xFF221126);
+  static const Color darkText = Color(0xFFF5F5F5);
+  static const Color darkSecondaryText = Color(0xFFBDBDBD);
+  static const Color darkBorder = Color(0xFFd0d0d0);
 }

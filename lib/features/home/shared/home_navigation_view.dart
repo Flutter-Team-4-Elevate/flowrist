@@ -47,7 +47,7 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
     final token = await sessionService.getToken();
 
     if (!isGuest && token.isNotEmpty && mounted) {
-      context.read<CartCubit>().doEvent(GetCartEvent());
+      await context.read<CartCubit>().doEvent(GetCartEvent());
     }
   }
 

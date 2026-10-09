@@ -40,7 +40,9 @@ class TrackingView extends StatelessWidget {
                 child: Text(
                   l10n.orderPlacedSuccessfully,
                   textAlign: TextAlign.center,
-                  style: AppStyles.medium24,
+                  style: AppStyles.medium24.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ),
               const SizedBox(height: 70),

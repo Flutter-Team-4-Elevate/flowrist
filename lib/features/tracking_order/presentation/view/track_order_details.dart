@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
@@ -89,7 +88,9 @@ class WaitingForDriverView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.purple20.withValues(alpha: 0.3),
+                color: Theme.of(
+                  context,
+                ).colorScheme.primaryContainer.withValues(alpha: 0.8),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -99,7 +100,7 @@ class WaitingForDriverView extends StatelessWidget {
                     height: 8,
                     width: 8,
                     decoration: BoxDecoration(
-                      color: AppColors.purpleBase,
+                      color: Theme.of(context).colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -120,7 +121,9 @@ class WaitingForDriverView extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 320),
               child: Text(
                 l10n.waitingForDriverDescription,
-                style: AppStyles.regular14Inter,
+                style: AppStyles.regular14Inter.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
                 textAlign: TextAlign.center,
               ),
             ),
