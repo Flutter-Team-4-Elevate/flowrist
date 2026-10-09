@@ -106,6 +106,7 @@ void main() {
         state.selectedGovernorate,
         state.selectedCity,
         state.saveAddressState,
+        state.addressToEdit,
       ]);
     });
   });
