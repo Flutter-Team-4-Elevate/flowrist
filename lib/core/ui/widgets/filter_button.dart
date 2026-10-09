@@ -16,7 +16,10 @@ class FilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveColor =
-        iconColor ?? (isSelected ? AppColors.purpleBase : AppColors.white70);
+        iconColor ??
+        (isSelected
+            ? AppColors.purpleBase
+            : Theme.of(context).colorScheme.outline);
 
     return SizedBox(
       height: 50,

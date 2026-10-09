@@ -64,9 +64,13 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           prev.changePasswordState != current.changePasswordState,
       listener: (context, state) => _handleState(context, state, l10n),
       child: Scaffold(
-        backgroundColor: AppColors.whiteBase,
         appBar: AppBar(
-          title: Text(l10n.resetPassword, style: AppStyles.medium18Inter),
+          title: Text(
+            l10n.resetPassword,
+            style: AppStyles.medium18Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           titleSpacing: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, size: 20),

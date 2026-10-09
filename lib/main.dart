@@ -6,6 +6,7 @@ import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/core/ui/theme/app_theme.dart';
+import 'package:flowrist/core/ui/theme/theme_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
 import 'package:flowrist/firebase_options.dart';
@@ -35,6 +36,7 @@ Future<void> main() async {
         BlocProvider(create: (_) => getIt<AddressesViewModel>()),
         BlocProvider(create: (_) => getIt<AppLanguageCubit>()),
         BlocProvider<HomeCubit>(create: (_) => getIt<HomeCubit>()),
+        BlocProvider(create: (_) => ThemeCubit()),
       ],
       child: const FlowristApp(),
     ),
@@ -111,6 +113,8 @@ class _FlowristAppState extends State<FlowristApp> with WidgetsBindingObserver {
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: context.watch<ThemeCubit>().state,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         return BlocListener<CartCubit, CartState>(

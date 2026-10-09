@@ -29,9 +29,9 @@ class OrderCardWidget extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.white60),
+          border: Border.all(color: Theme.of(context).colorScheme.outline),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -93,21 +93,31 @@ class OrderCardWidget extends StatelessWidget {
       children: [
         Text(
           order.rawStatus,
-          style: AppStyles.regular13Grey,
+          style: AppStyles.regular13Grey.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .8),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: 4),
         Text(
           '${locale.egp} ${order.total.toStringAsFixed(0)}',
-          style: AppStyles.medium16InterBlack,
+          style: AppStyles.medium16InterBlack.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 4),
         Text(
           isCompleted
               ? '${locale.deliveredOn} $formattedDate'
               : '${locale.orderNumberPrefix} ${order.orderNumber}',
-          style: AppStyles.regular12Roboto,
+          style: AppStyles.regular12Roboto.copyWith(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .7),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

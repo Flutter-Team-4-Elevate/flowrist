@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/cubit/search_cubit.dart';
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/cubit/search_events.dart';
@@ -20,13 +19,20 @@ class SearchInputField extends StatelessWidget {
       height: screenHeight * 0.058,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: AppColors.whiteBase,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.white70, width: 1),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, color: AppColors.white70, size: 24),
+          Icon(
+            Icons.search,
+            color: Theme.of(context).colorScheme.outline,
+            size: 24,
+          ),
           const SizedBox(width: 8),
           Expanded(child: _buildTextField(context, l10n.search)),
           _buildClearButton(context),
@@ -40,7 +46,9 @@ class SearchInputField extends StatelessWidget {
       controller: controller,
       autofocus: true,
       textInputAction: TextInputAction.search,
-      style: AppStyles.regular14Inter,
+      style: AppStyles.regular14Inter.copyWith(
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: AppStyles.regular14Roboto,
@@ -65,9 +73,9 @@ class SearchInputField extends StatelessWidget {
             controller.clear();
             context.read<SearchCubit>().doEvent(const ClearSearchEvent());
           },
-          child: const Icon(
+          child: Icon(
             Icons.cancel_outlined,
-            color: AppColors.white70,
+            color: Theme.of(context).colorScheme.outline,
             size: 20,
           ),
         );

@@ -13,7 +13,7 @@ class ChangeLanguageBottomSheet extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -44,7 +44,7 @@ class ChangeLanguageBottomSheet extends StatelessWidget {
               width: screenWidth * 0.12,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.white60,
+                color: Theme.of(context).colorScheme.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +34,9 @@ class ProfileAppBar extends StatelessWidget {
             children: [
               IconButton(
                 onPressed: onNotificationTap,
-                icon: const Icon(
+                icon: Icon(
                   Icons.notifications_none,
-                  color: AppColors.blackBase,
+                  color: Theme.of(context).colorScheme.onSurface,
                   size: 26,
                 ),
               ),

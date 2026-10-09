@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_address.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/delivery_time.dart';
 import 'package:flowrist/features/checkout/presentation/view/widgets/gift_methods.dart';
@@ -203,7 +202,7 @@ class _SectionDivider extends StatelessWidget {
     return Container(
       height: 24,
       width: double.infinity,
-      color: AppColors.white60,
+      color: Theme.of(context).colorScheme.outline.withValues(alpha: .4),
     );
   }
 }

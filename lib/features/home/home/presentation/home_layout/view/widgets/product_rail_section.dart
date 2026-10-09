@@ -90,6 +90,7 @@ class ProductRailSection extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.regular12Inter.copyWith(
                                 fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
 
@@ -97,9 +98,10 @@ class ProductRailSection extends StatelessWidget {
 
                             Text(
                               '\$${item.price.toStringAsFixed(2)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           ],

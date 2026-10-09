@@ -28,9 +28,12 @@ class CartItemCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: AppColors.whiteBase,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.grey, width: 0.5),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline,
+          width: 0.5,
+        ),
       ),
       child: Row(
         children: [
@@ -47,7 +50,9 @@ class CartItemCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         item.productName,
-                        style: AppStyles.medium16InterBlack,
+                        style: AppStyles.medium16InterBlack.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -62,7 +67,11 @@ class CartItemCard extends StatelessWidget {
 
                 Text(
                   '${localization.availableStock}: ${item.availableStock}',
-                  style: AppStyles.regular13Grey,
+                  style: AppStyles.regular13Grey.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: .8),
+                  ),
                 ),
 
                 const SizedBox(height: 25),
@@ -71,27 +80,34 @@ class CartItemCard extends StatelessWidget {
                   children: [
                     Text(
                       '${localization.egp} ${item.unitPrice}',
-                      style: AppStyles.semiBold14,
+                      style: AppStyles.semiBold14.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
 
                     const Spacer(),
 
                     IconButton(
                       onPressed: isLoading ? null : onDecrease,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.remove,
-                        color: AppColors.blackBase,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
 
                     Text(
                       item.quantity.toString(),
-                      style: AppStyles.regular14Inter,
+                      style: AppStyles.regular14Inter.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
 
                     IconButton(
                       onPressed: isLoading ? null : onIncrease,
-                      icon: const Icon(Icons.add, color: AppColors.blackBase),
+                      icon: Icon(
+                        Icons.add,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   ],
                 ),

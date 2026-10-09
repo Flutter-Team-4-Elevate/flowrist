@@ -1,4 +1,3 @@
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class GiftTextField extends StatelessWidget {
@@ -26,12 +25,17 @@ class GiftTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: AppColors.white70,
+            color: Theme.of(context).colorScheme.outline,
           ),
         ),
         label: Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.grey),
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .7),
+          ),
         ),
       ),
     );

@@ -22,10 +22,12 @@ class LanguageCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected ? AppColors.purpleBase : AppColors.white60,
+            color: isSelected
+                ? AppColors.purpleBase
+                : Theme.of(context).colorScheme.outline,
             width: 1.5,
           ),
         ),
@@ -37,7 +39,9 @@ class LanguageCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? AppColors.blackBase : AppColors.black50,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
             CustomRadioButton(isSelected: isSelected),

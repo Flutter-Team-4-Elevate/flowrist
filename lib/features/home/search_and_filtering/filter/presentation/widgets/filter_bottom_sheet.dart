@@ -45,8 +45,8 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         horizontal: mediaQuery.width * 0.05,
         vertical: mediaQuery.height * 0.02,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -58,7 +58,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               width: 48,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.white60,
+                color: Theme.of(context).colorScheme.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -131,10 +131,12 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
         margin: const EdgeInsets.symmetric(vertical: 5),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? AppColors.purpleBase : AppColors.white50,
+            color: isSelected
+                ? AppColors.purpleBase
+                : Theme.of(context).colorScheme.outline.withValues(alpha: .3),
             width: 1,
           ),
         ),
@@ -146,7 +148,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               style: isSelected
                   ? AppStyles.regular14InterW500
                   : AppStyles.regular14Inter.copyWith(
-                      color: AppColors.blackBase,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
             ),
             Container(
@@ -155,7 +157,11 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isSelected ? AppColors.purpleBase : AppColors.white70,
+                  color: isSelected
+                      ? AppColors.purpleBase
+                      : Theme.of(
+                          context,
+                        ).colorScheme.outline.withValues(alpha: .3),
                   width: 2,
                 ),
               ),
