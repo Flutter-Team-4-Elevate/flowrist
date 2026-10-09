@@ -20,11 +20,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/addresses/domain/entities/address_entity.dart';
 import '../../features/addresses/presentation/saved_addresses/view/saved_addresses_view.dart';
 import '../../features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
 import '../../features/addresses/presentation/view_model/add_address_view_model.dart';
 import '../../features/home/shared/product_details/presentation/view/products_details_screen.dart';
-import '../../shared/addresses/domain/entities/address_entity.dart';
 
 abstract final class AppRoutes {
   static const splash = '/';

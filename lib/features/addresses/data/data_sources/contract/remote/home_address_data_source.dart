@@ -1,5 +1,5 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/shared/addresses/data/models/address_model.dart';
+import 'package:flowrist/features/addresses/data/models/address_model.dart';
 
 import '../../../models/default_address_response_model.dart';
 

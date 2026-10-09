@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import 'address_model.dart';
 
 part 'address_api_response_model.g.dart';

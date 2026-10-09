@@ -1,8 +1,8 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/shared/addresses/data/data_sources/contract/remote/home_address_data_source.dart';
-import 'package:flowrist/shared/addresses/data/models/address_model.dart';
-import 'package:flowrist/shared/addresses/data/repositories/addresses_repository_impl.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/data/data_sources/contract/remote/home_address_data_source.dart';
+import 'package:flowrist/features/addresses/data/models/address_model.dart';
+import 'package:flowrist/features/addresses/data/repositories/addresses_repository_impl.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

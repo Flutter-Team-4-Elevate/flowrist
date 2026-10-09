@@ -2,6 +2,7 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/core/config/app_config.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/service_status_entity.dart';
@@ -18,7 +19,6 @@ import 'package:flowrist/features/addresses/domain/use_cases/save_address_use_ca
 import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_case.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';

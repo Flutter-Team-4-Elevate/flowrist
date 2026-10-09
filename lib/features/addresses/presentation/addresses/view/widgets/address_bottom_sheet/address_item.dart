@@ -1,6 +1,6 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/material.dart';
 
 class AddressItem extends StatelessWidget {

@@ -1,11 +1,11 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/presentation/view/widgets/add_address_form_view.dart';
 import 'package:flowrist/features/addresses/presentation/view/widgets/address_warning_view.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

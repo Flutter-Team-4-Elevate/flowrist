@@ -1,5 +1,7 @@
 import 'package:flowrist/config/api_error_handler/api_error_handler.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/config/location_service/location_service.dart';
+import 'package:flowrist/config/permission_handler/permission_handler.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/features/addresses/data/mappers/permission_status_mapper.dart';
 import 'package:flowrist/features/addresses/data/mappers/service_status_mapper.dart';
@@ -9,9 +11,6 @@ import 'package:flowrist/features/addresses/domain/entities/service_status_entit
 import 'package:flowrist/features/addresses/domain/repositories/location_repository.dart';
 import 'package:injectable/injectable.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-import '../data_sources/location_service.dart';
-import '../data_sources/permission_handler.dart';
 
 @Injectable(as: LocationRepository)
 class LocationRepositoryImpl implements LocationRepository {
@@ -105,4 +104,3 @@ class LocationRepositoryImpl implements LocationRepository {
     }
   }
 }
-

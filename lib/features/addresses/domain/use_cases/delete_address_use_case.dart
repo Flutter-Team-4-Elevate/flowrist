@@ -1,5 +1,5 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/shared/addresses/domain/repositories/addresses_repository.dart';
+import 'package:flowrist/features/addresses/domain/repositories/addresses_repository.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable

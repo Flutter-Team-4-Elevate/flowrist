@@ -1,5 +1,5 @@
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 
 import '../../../../shared/domain/entities/city_entity.dart';
 import '../../../../shared/domain/entities/governorate_entity.dart';

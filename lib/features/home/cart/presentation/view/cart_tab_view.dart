@@ -3,12 +3,12 @@ import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/core/ui/widgets/cart_item_card.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_state.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_view_model.dart';
 import 'package:flowrist/features/home/cart/domain/entities/cart_item_entity.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_state.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

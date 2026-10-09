@@ -1,12 +1,12 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/delete_address_use_case.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_event.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_state.dart';
 import 'package:flowrist/features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
-import 'package:flowrist/shared/addresses/domain/use_cases/delete_address_use_case.dart';
-import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

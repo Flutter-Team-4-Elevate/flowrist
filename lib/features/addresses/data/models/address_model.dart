@@ -1,4 +1,4 @@
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'address_model.g.dart';

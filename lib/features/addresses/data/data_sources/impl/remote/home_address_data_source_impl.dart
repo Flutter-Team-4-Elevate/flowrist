@@ -1,9 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flowrist/config/api_error_handler/api_error_handler.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/shared/addresses/data/client/addresses_api_client.dart';
-import 'package:flowrist/shared/addresses/data/data_sources/contract/remote/home_address_data_source.dart';
-import 'package:flowrist/shared/addresses/data/models/address_model.dart';
+import 'package:flowrist/features/addresses/data/api_client/addresses_api_client.dart';
+import 'package:flowrist/features/addresses/data/data_sources/contract/remote/home_address_data_source.dart';
+import 'package:flowrist/features/addresses/data/models/address_model.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../models/default_address_response_model.dart';
