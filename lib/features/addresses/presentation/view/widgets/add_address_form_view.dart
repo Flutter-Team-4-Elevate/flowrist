@@ -1,12 +1,14 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
+import 'package0:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/core/ui/widgets/app_dropdown.dart';
 import 'package:flowrist/core/ui/widgets/app_text_field.dart';
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/presentation/view/widgets/address_map_widget.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
@@ -14,9 +16,6 @@ import 'package:flowrist/features/addresses/presentation/view_model/add_address_
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../domain/entities/add_address_request_entity.dart';
-import '../../../domain/entities/coordinates_entity.dart';
 
 class AddAddressFormView extends StatefulWidget {
   final bool showSoftPermissionBanner;
@@ -62,29 +61,12 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return BlocListener<AddAddressViewModel, AddAddressState>(
+      listenWhen: (prev, curr) => prev.userLocation != curr.userLocation,
       listener: (context, state) {
         if (state.userLocation != null &&
             !state.userLocation!.isLoading &&
             state.userLocation!.data != null) {
           _addressController.text = state.userLocation!.data!;
-        }
-
-        if (!state.saveAddressState.isLoading &&
-            state.saveAddressState.data == true) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(localizations.addressSavedSuccessfully)),
-          );
-          Navigator.of(context).pop();
-        } else if (!state.saveAddressState.isLoading &&
-            state.saveAddressState.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.saveAddressState.errorMessage ??
-                    localizations.generalValidationError,
-              ),
-            ),
-          );
         }
       },
       child: BlocBuilder<AddAddressViewModel, AddAddressState>(
