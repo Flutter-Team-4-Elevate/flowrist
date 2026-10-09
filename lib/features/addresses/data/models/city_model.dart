@@ -1,4 +1,4 @@
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'city_model.g.dart';

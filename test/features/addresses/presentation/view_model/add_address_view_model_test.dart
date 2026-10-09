@@ -5,7 +5,9 @@ import 'package:flowrist/core/config/app_config.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
 import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/service_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/check_location_permission_use_case.dart';
@@ -22,8 +24,6 @@ import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

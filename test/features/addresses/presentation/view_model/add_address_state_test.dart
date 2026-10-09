@@ -1,9 +1,9 @@
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

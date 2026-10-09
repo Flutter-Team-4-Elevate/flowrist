@@ -6,12 +6,12 @@ import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/core/ui/widgets/app_dropdown.dart';
 import 'package:flowrist/core/ui/widgets/app_text_field.dart';
 import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/presentation/view/widgets/address_map_widget.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

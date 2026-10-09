@@ -4,6 +4,7 @@ import 'package:flowrist/core/config/app_config.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/service_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/check_location_permission_use_case.dart';
@@ -23,9 +24,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../shared/domain/entities/city_entity.dart';
-import '../../../../shared/domain/entities/governorate_entity.dart';
 import '../../data/models/add_address_request_model.dart';
+import '../../domain/entities/city_entity.dart';
 
 @injectable
 class AddAddressViewModel extends Cubit<AddAddressState> {
