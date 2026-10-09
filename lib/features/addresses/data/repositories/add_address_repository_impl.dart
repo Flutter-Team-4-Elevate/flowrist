@@ -1,12 +1,12 @@
 import 'package:flowrist/config/api_error_handler/api_error_handler.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
+import 'package:flowrist/features/addresses/data/data_sources/contract/remote/add_address_remote_data_source.dart';
+import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
+import 'package:flowrist/features/addresses/domain/repositories/add_address_repository.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../domain/repositories/add_address_repository.dart';
-import '../data_sources/contract/remote/add_address_remote_data_source.dart';
-import '../models/add_address_request_model.dart';
 
 @Injectable(as: AddAddressRepository)
 class AddAddressRepositoryImpl implements AddAddressRepository {
@@ -37,9 +37,9 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
   }
 
   @override
-  Future<BaseResponse<void>> saveAddress(AddAddressRequestModel request) async {
+  Future<BaseResponse<void>> saveAddress(AddAddressRequestEntity request) async {
     try {
-      await _remoteDataSource.saveAddress(request);
+      await _remoteDataSource.saveAddress(request.toModel());
       return SuccessResponse(null);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException<void>(e);
@@ -49,13 +49,29 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
   @override
   Future<BaseResponse<void>> updateAddress(
     String addressId,
-    AddAddressRequestModel request,
+    AddAddressRequestEntity request,
   ) async {
     try {
-      await _remoteDataSource.updateAddress(addressId, request);
+      await _remoteDataSource.updateAddress(addressId, request.toModel());
       return SuccessResponse(null);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException<void>(e);
     }
+  }
+}
+
+extension AddAddressRequestEntityX on AddAddressRequestEntity {
+  AddAddressRequestModel toModel() {
+    return AddAddressRequestModel(
+      recipientName: recipientName,
+      recipientPhone: recipientPhone,
+      addressLine: addressLine,
+      governorateId: governorateId,
+      cityId: cityId,
+      area: area,
+      lat: lat,
+      lng: lng,
+      label: label,
+    );
   }
 }

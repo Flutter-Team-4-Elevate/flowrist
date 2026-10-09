@@ -24,7 +24,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../data/models/add_address_request_model.dart';
+import '../../domain/entities/add_address_request_entity.dart';
 import '../../domain/entities/city_entity.dart';
 
 @injectable
@@ -104,8 +104,10 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     }
   }
 
-  void _updateAddress(String addressId,
-      AddAddressRequestModel request,) async {
+  void _updateAddress(
+    String addressId,
+    AddAddressRequestEntity request,
+  ) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _updateAddressUseCase(addressId, request);
     switch (response) {
@@ -133,7 +135,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     );
   }
 
-  void _saveAddress(AddAddressRequestModel request) async {
+  void _saveAddress(AddAddressRequestEntity request) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _saveAddressUseCase(request);
     switch (response) {

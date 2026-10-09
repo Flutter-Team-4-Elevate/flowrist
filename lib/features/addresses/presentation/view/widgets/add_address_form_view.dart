@@ -15,7 +15,7 @@ import 'package:flowrist/features/addresses/presentation/view_model/add_address_
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/add_address_request_model.dart';
+import '../../../domain/entities/add_address_request_entity.dart';
 import '../../../domain/entities/coordinates_entity.dart';
 
 class AddAddressFormView extends StatefulWidget {
@@ -488,7 +488,7 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
                     return;
                   }
 
-                  final request = AddAddressRequestModel(
+                  final request = AddAddressRequestEntity(
                     recipientName: _nameController.text,
                     recipientPhone: _phoneController.text,
                     addressLine: _addressController.text,
