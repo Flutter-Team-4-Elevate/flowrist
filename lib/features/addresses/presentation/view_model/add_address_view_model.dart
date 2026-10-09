@@ -124,13 +124,30 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
   }
 
   void _initializeForEdit(AddressEntity address) {
+    GovernorateEntity? selectedGov = state.selectedGovernorate;
+    CityEntity? selectedCity = state.selectedCity;
+
+    if (state.governoratesState.data != null &&
+        state.governoratesState.data!.isNotEmpty) {
+      selectedGov ??= _findMatchingGovernorate(
+        state.governoratesState.data!,
+        address,
+      );
+    }
+    if (state.citiesState.data != null && state.citiesState.data!.isNotEmpty) {
+      selectedCity ??= _findMatchingCity(state.citiesState.data!, address);
+    }
+
     emit(
       state.copyWith(
+        addressToEdit: address,
         selectedLocation: CoordinatesEntity(
           latitude: address.lat,
           longitude: address.lng,
         ),
         userLocation: BaseState.success(address.addressLine),
+        selectedGovernorate: selectedGov,
+        selectedCity: selectedCity,
       ),
     );
   }
@@ -164,13 +181,20 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
         return;
       }
 
+      final governorates = response.data!;
+      final selectedGov = state.selectedGovernorate ??
+          _findMatchingGovernorate(governorates, state.addressToEdit) ??
+          governorates.first;
+
       emit(
         state.copyWith(
-          governoratesState: BaseState.success(response.data!),
-          selectedGovernorate: response.data![0],
+          governoratesState: BaseState.success(governorates),
+          selectedGovernorate: selectedGov,
         ),
       );
-      _loadCities(response.data![0].id!);
+      if (selectedGov.id != null) {
+        _loadCities(selectedGov.id!);
+      }
     } else if (response is ErrorResponse<List<GovernorateEntity>>) {
       emit(
         state.copyWith(
@@ -193,15 +217,50 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
         return;
       }
 
+      final cities = response.data!;
+      final selectedCity = state.selectedCity ??
+          _findMatchingCity(cities, state.addressToEdit) ??
+          cities.first;
+
       emit(
         state.copyWith(
-          citiesState: BaseState.success(response.data!),
-          selectedCity: response.data![0],
+          citiesState: BaseState.success(cities),
+          selectedCity: selectedCity,
         ),
       );
     } else if (response is ErrorResponse<List<CityEntity>>) {
       emit(state.copyWith(citiesState: BaseState.error(response.errorMessage)));
     }
+  }
+
+  GovernorateEntity? _findMatchingGovernorate(
+    List<GovernorateEntity> governorates,
+    AddressEntity? address,
+  ) {
+    if (address == null) return null;
+    final cityLower = address.city.trim().toLowerCase();
+    for (final gov in governorates) {
+      if ((gov.nameEn?.toLowerCase() == cityLower) ||
+          (gov.nameAr?.toLowerCase() == cityLower)) {
+        return gov;
+      }
+    }
+    return governorates.isNotEmpty ? governorates.first : null;
+  }
+
+  CityEntity? _findMatchingCity(
+    List<CityEntity> cities,
+    AddressEntity? address,
+  ) {
+    if (address == null) return null;
+    final areaLower = address.area.trim().toLowerCase();
+    for (final city in cities) {
+      if ((city.nameEn?.toLowerCase() == areaLower) ||
+          (city.nameAr?.toLowerCase() == areaLower)) {
+        return city;
+      }
+    }
+    return cities.isNotEmpty ? cities.first : null;
   }
 
   void _selectGovernorate(GovernorateEntity governorate) {

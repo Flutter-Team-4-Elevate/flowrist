@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
@@ -17,6 +18,7 @@ class AddAddressState extends Equatable {
   final GovernorateEntity? selectedGovernorate;
   final CityEntity? selectedCity;
   final BaseState<bool> saveAddressState;
+  final AddressEntity? addressToEdit;
 
   const AddAddressState({
     required this.locationPermission,
@@ -30,6 +32,7 @@ class AddAddressState extends Equatable {
     this.selectedGovernorate,
     this.selectedCity,
     required this.saveAddressState,
+    this.addressToEdit,
   });
 
   AddAddressState.initial()
@@ -43,7 +46,8 @@ class AddAddressState extends Equatable {
       citiesState = BaseState.initial(),
       selectedGovernorate = null,
       selectedCity = null,
-      saveAddressState = BaseState.initial();
+      saveAddressState = BaseState.initial(),
+      addressToEdit = null;
 
   AddAddressState copyWith({
     BaseState<PermissionStatusEntity>? locationPermission,
@@ -57,6 +61,7 @@ class AddAddressState extends Equatable {
     GovernorateEntity? selectedGovernorate,
     CityEntity? selectedCity,
     BaseState<bool>? saveAddressState,
+    AddressEntity? addressToEdit,
   }) {
     return AddAddressState(
       locationPermission: locationPermission ?? this.locationPermission,
@@ -70,6 +75,7 @@ class AddAddressState extends Equatable {
       selectedGovernorate: selectedGovernorate ?? this.selectedGovernorate,
       selectedCity: selectedCity ?? this.selectedCity,
       saveAddressState: saveAddressState ?? this.saveAddressState,
+      addressToEdit: addressToEdit ?? this.addressToEdit,
     );
   }
 
@@ -86,5 +92,6 @@ class AddAddressState extends Equatable {
     selectedGovernorate,
     selectedCity,
     saveAddressState,
+    addressToEdit,
   ];
 }
