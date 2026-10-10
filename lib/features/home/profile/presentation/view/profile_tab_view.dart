@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+// TODO: This view is dummy for testing only and will be implemented later
+// TODO: Exclude this file from analysis & review
 class ProfileTabView extends StatelessWidget {
   const ProfileTabView({super.key});
 

@@ -439,4 +439,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get savedAddress => 'Saved address';
+
+  @override
+  String get deleteAddress => 'Delete Address';
+
+  @override
+  String get deleteAddressConfirmation =>
+      'Are you sure you want to delete this address?';
+
+  @override
+  String get delete => 'Delete';
 }

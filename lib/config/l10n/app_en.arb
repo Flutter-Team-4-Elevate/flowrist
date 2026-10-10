@@ -138,6 +138,8 @@
   "oldest": "Old",
   "filter": "Filter",
   "clear": "Clear",
-  "selectCityAndArea": "Please select city and area",
-  "savedAddress": "Saved address"
+  "savedAddress": "Saved address",
+  "deleteAddress": "Delete Address",
+  "deleteAddressConfirmation": "Are you sure you want to delete this address?",
+  "delete": "Delete"
 }

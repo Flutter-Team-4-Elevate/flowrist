@@ -14,8 +14,10 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
   final GetAllUserAddressesUseCase _getAllUserAddressesUseCase;
   final DeleteAddressUseCase _deleteAddressUseCase;
 
-  SavedAddressesViewModel(this._getAllUserAddressesUseCase,
-      this._deleteAddressUseCase,) : super(SavedAddressesState.initial());
+  SavedAddressesViewModel(
+    this._getAllUserAddressesUseCase,
+    this._deleteAddressUseCase,
+  ) : super(SavedAddressesState.initial());
 
   Future<void> doEvent(SavedAddressesEvent event) async {
     switch (event) {
@@ -36,36 +38,26 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
       ),
     );
 
-    try {
-      final response = await _getAllUserAddressesUseCase();
+    final response = await _getAllUserAddressesUseCase();
 
-      switch (response) {
-        case SuccessResponse<List<AddressEntity>>():
-          emit(
-            state.copyWith(
-              addressesState: BaseState<List<AddressEntity>>.success(
-                response.data ?? const [],
-              ),
+    switch (response) {
+      case SuccessResponse<List<AddressEntity>>():
+        emit(
+          state.copyWith(
+            addressesState: BaseState<List<AddressEntity>>.success(
+              response.data ?? const [],
             ),
-          );
-
-        case ErrorResponse<List<AddressEntity>>():
-          emit(
-            state.copyWith(
-              addressesState: BaseState<List<AddressEntity>>.error(
-                response.errorMessage,
-              ),
-            ),
-          );
-      }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          addressesState: BaseState<List<AddressEntity>>.error(
-            e.toString(),
           ),
-        ),
-      );
+        );
+
+      case ErrorResponse<List<AddressEntity>>():
+        emit(
+          state.copyWith(
+            addressesState: BaseState<List<AddressEntity>>.error(
+              response.errorMessage,
+            ),
+          ),
+        );
     }
   }
 
@@ -77,41 +69,29 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
       ),
     );
 
-    try {
-      final response = await _deleteAddressUseCase(addressId);
+    final response = await _deleteAddressUseCase(addressId);
 
-      switch (response) {
-        case SuccessResponse<String>():
-          final updatedList = (state.addressesState.data ?? [])
-              .where((address) => address.id != addressId)
-              .toList();
+    switch (response) {
+      case SuccessResponse<String>():
+        final updatedList = (state.addressesState.data ?? [])
+            .where((address) => address.id != addressId)
+            .toList();
 
-          emit(
-            state.copyWith(
-              deletingAddressId: () => null,
-              deleteAddressState: BaseState<String?>.success(response.data),
-              addressesState: state.addressesState.copyWith(
-                data: updatedList,
-              ),
-            ),
-          );
+        emit(
+          state.copyWith(
+            deletingAddressId: () => null,
+            deleteAddressState: BaseState<String?>.success(response.data),
+            addressesState: state.addressesState.copyWith(data: updatedList),
+          ),
+        );
 
-        case ErrorResponse<String>():
-          emit(
-            state.copyWith(
-              deletingAddressId: () => null,
-              deleteAddressState: BaseState<String?>.error(
-                  response.errorMessage),
-            ),
-          );
-      }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          deletingAddressId: () => null,
-          deleteAddressState: BaseState<String?>.error(e.toString()),
-        ),
-      );
+      case ErrorResponse<String>():
+        emit(
+          state.copyWith(
+            deletingAddressId: () => null,
+            deleteAddressState: BaseState<String?>.error(response.errorMessage),
+          ),
+        );
     }
   }
 }

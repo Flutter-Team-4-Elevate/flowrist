@@ -10,5 +10,5 @@ abstract interface class AddressesRemoteDataSource {
     String addressId,
   );
 
-  Future<BaseResponse<String>> deleteAddress(String addressId,);
+  Future<BaseResponse<String>> deleteAddress(String addressId);
 }

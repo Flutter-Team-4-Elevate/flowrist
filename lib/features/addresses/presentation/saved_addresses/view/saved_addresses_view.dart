@@ -1,3 +1,4 @@
+import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
@@ -29,37 +30,38 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
 
   Future<void> _navigateToAddAddress() async {
     final result = await context.push(AppRoutes.addAddress);
-    if ((result == true || mounted) && mounted) {
+    if (result == true && mounted) {
       context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
     }
   }
 
   Future<void> _navigateToEditAddress(AddressEntity address) async {
     final result = await context.push(AppRoutes.addAddress, extra: address);
-    if ((result == true || mounted) && mounted) {
+    if (result == true && mounted) {
       context.read<SavedAddressesViewModel>().doEvent(GetSavedAddressesEvent());
     }
   }
 
-  void _showDeleteConfirmationDialog(String addressId) {
+  void _showDeleteConfirmationDialog(String addressId,
+      AppLocalizations localizations,) {
     showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete Address'),
-          content: const Text(
-            'Are you sure you want to delete this address?',
+          title: Text(localizations.deleteAddress),
+          content: Text(
+            localizations.deleteAddressConfirmation,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text('Cancel'),
+              child: Text(localizations.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text(
-                'Delete',
-                style: TextStyle(color: AppColors.red),
+              child: Text(
+                localizations.delete,
+                style: const TextStyle(color: AppColors.red),
               ),
             ),
           ],
@@ -197,12 +199,22 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                         (address) =>
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16),
-                          child: SavedAddressItemCard(
-                            address: address,
-                            isDeleting: state.deletingAddressId == address.id,
-                            onDelete: () =>
-                                _showDeleteConfirmationDialog(address.id),
-                            onEdit: () => _navigateToEditAddress(address),
+                          child: BlocSelector<
+                              SavedAddressesViewModel,
+                              SavedAddressesState,
+                              BaseState<String?>>(
+                            selector: (state) => state.deleteAddressState,
+                            builder: (context, state) =>
+                                SavedAddressItemCard(
+                                  address: address,
+                                  isDeleting: state.data == address.id,
+                                  onDelete: () =>
+                                      _showDeleteConfirmationDialog(
+                                        address.id,
+                                        localizations,
+                                      ),
+                                  onEdit: () => _navigateToEditAddress(address),
+                                ),
                           ),
                         ),
                   ),

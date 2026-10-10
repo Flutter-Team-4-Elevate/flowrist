@@ -1,5 +1,5 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package0:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
@@ -489,6 +489,7 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
                         state.selectedLocation?.longitude ??
                         widget.addressToEdit?.lng ??
                         0.0,
+                    // TODO: Khalil: if the field is something mandatory in the API request then add a TextFormField for the user to enter the label they want you can also add an auto-fill behavior to it, for example you get the label somehow from the address line
                     label: widget.addressToEdit?.label ?? "home",
                   );
 
