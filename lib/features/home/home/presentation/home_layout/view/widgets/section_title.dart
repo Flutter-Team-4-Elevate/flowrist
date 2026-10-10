@@ -19,7 +19,9 @@ class SectionTitle extends StatelessWidget {
         children: [
           Text(
             title,
-            style:    AppStyles.medium18Inter
+            style: AppStyles.medium18Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           TextButton(
             onPressed: onViewAll,

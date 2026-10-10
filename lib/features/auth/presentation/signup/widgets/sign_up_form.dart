@@ -1,6 +1,7 @@
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_colors.dart';
+import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_text_field.dart';
@@ -12,6 +13,7 @@ import 'package:flowrist/features/auth/presentation/signup/widgets/gender_sectio
 import 'package:flowrist/features/auth/presentation/signup/widgets/name_fields.dart';
 import 'package:flowrist/features/auth/presentation/signup/widgets/password_fields.dart';
 import 'package:flowrist/features/auth/presentation/signup/widgets/signup_submit_button.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -32,11 +34,18 @@ class SignUpFormState extends State<SignUpForm> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-
+  late final TapGestureRecognizer _termsRecognizer;
   Gender _selectedGender = Gender.female;
 
   @override
+  void initState() {
+    super.initState();
+    _termsRecognizer = TapGestureRecognizer();
+  }
+
+  @override
   void dispose() {
+    _termsRecognizer.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _emailController.dispose();
@@ -149,16 +158,10 @@ class SignUpFormState extends State<SignUpForm> {
     messenger.hideCurrentSnackBar();
 
     if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(state.errorMessage!),
-        ),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(state.errorMessage!)));
     } else if (state.data != null) {
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(localizations.registrationSuccessful),
-        ),
+        SnackBar(content: Text(localizations.registrationSuccessful)),
       );
       context.go(AppRoutes.login);
     }
@@ -173,6 +176,16 @@ class SignUpFormState extends State<SignUpForm> {
           TextSpan(
             text: localizations.termsAndConditions,
             style: AppStyles.semiBold12Underline,
+            recognizer: _termsRecognizer
+              ..onTap = () {
+                context.push(
+                  AppRoutes.webView,
+                  extra: {
+                    AppConstants.title: localizations.termsAndConditions,
+                    AppConstants.url: AppConstants.termsAndConditionsUrl,
+                  },
+                );
+              },
           ),
         ],
       ),

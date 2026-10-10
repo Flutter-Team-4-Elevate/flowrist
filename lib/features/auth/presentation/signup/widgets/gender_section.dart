@@ -31,12 +31,12 @@ class GenderSection extends StatelessWidget {
       children: [
         Text(localizations.gender, style: AppStyles.medium18Inter),
         SizedBox(width: screenWidth * 0.04),
-        Expanded(child: _buildRadioGroup()),
+        Expanded(child: _buildRadioGroup(context)),
       ],
     );
   }
 
-  Widget _buildRadioGroup() {
+  Widget _buildRadioGroup(BuildContext context) {
     return RadioGroup<Gender>(
       groupValue: selectedGender,
       onChanged: (val) {
@@ -44,20 +44,25 @@ class GenderSection extends StatelessWidget {
       },
       child: Row(
         children: [
-          _buildRadioOption(localizations.female, Gender.female),
+          _buildRadioOption(localizations.female, Gender.female, context),
           SizedBox(width: screenWidth * 0.03),
-          _buildRadioOption(localizations.male, Gender.male),
+          _buildRadioOption(localizations.male, Gender.male, context),
         ],
       ),
     );
   }
 
-  Widget _buildRadioOption(String title, Gender value) {
+  Widget _buildRadioOption(String title, Gender value, BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Radio<Gender>(value: value, activeColor: AppColors.purpleBase),
-        Text(title, style: AppStyles.regular14Inter),
+        Text(
+          title,
+          style: AppStyles.regular14Inter.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
       ],
     );
   }

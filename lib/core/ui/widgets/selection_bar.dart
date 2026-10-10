@@ -41,14 +41,16 @@ class SelectionBar extends StatelessWidget {
                     width: 3,
                     color: isSelected
                         ? AppColors.purple60
-                        : AppColors.white70,
+                        : Theme.of(context).colorScheme.outline,
                   ),
                 ),
               ),
               child: Text(
                 items[index],
                 style: AppStyles.regular16.copyWith(
-                  color: isSelected ? AppColors.purple60 : AppColors.white70,
+                  color: isSelected
+                      ? AppColors.purple60
+                      : Theme.of(context).colorScheme.outline,
                 ),
               ),
             ),

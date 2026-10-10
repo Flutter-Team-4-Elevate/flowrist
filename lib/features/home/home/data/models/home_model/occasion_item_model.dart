@@ -1,9 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
-
 part 'occasion_item_model.g.dart';
 
- 
 @JsonSerializable()
 class OccasionItemModel {
   final String id;
@@ -16,11 +14,8 @@ class OccasionItemModel {
     required this.imageUrl,
   });
 
-  factory OccasionItemModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory OccasionItemModel.fromJson(Map<String, dynamic> json) =>
       _$OccasionItemModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$OccasionItemModelToJson(this);
+  Map<String, dynamic> toJson() => _$OccasionItemModelToJson(this);
 }

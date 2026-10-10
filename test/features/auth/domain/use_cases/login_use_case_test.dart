@@ -32,11 +32,7 @@ void main() {
     test(
       'Test call repository with correct params and return success response',
       () async {
-        final params = LoginParams(
-          email: 'test@test.com',
-          password: '123456',
-          fcmToken: '',
-        );
+        final params = LoginParams(email: 'test@test.com', password: '123456');
 
         final loginEntity = LoginEntity(
           user: UserEntity(
@@ -71,7 +67,6 @@ void main() {
         final params = LoginParams(
           email: 'test@test.com',
           password: 'wrongPassword',
-          fcmToken: '',
         );
 
         final expectedResponse = ErrorResponse<LoginEntity>(

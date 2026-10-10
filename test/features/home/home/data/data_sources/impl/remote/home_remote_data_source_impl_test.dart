@@ -21,62 +21,51 @@ void main() {
   });
 
   group('HomeRemoteDataSourceImpl', () {
-    test(
-      'should return SuccessResponse when getHomeLayout succeeds',
-      () async {
-        // Arrange
-        final homeData = <HomeResponseModel>[];
+    test('should return SuccessResponse when getHomeLayout succeeds', () async {
+      // Arrange
+      final homeData = <HomeResponseModel>[];
 
-        final response = HomeApiResponseModel(
-          status: true,
-          code: 200,
-          message: 'Home layout retrieved',
-          data: homeData,
-        );
+      final response = HomeApiResponseModel(
+        status: true,
+        code: 200,
+        message: 'Home layout retrieved',
+        data: homeData,
+      );
 
-        when(mockApiClient.getHomeLayout())
-            .thenAnswer((_) async => response);
+      when(mockApiClient.getHomeLayout()).thenAnswer((_) async => response);
 
-        // Act
-        final result = await dataSource.getHomeLayout();
+      // Act
+      final result = await dataSource.getHomeLayout();
 
-        // Assert
-        expect(
-          result,
-          isA<SuccessResponse<List<HomeResponseModel>>>(),
-        );
+      // Assert
+      expect(result, isA<SuccessResponse<List<HomeResponseModel>>>());
 
-        final successResponse =
-            result as SuccessResponse<List<HomeResponseModel>>;
+      final successResponse =
+          result as SuccessResponse<List<HomeResponseModel>>;
 
-        expect(successResponse.data, homeData);
+      expect(successResponse.data, homeData);
 
-        verify(mockApiClient.getHomeLayout()).called(1);
-      },
-    );
+      verify(mockApiClient.getHomeLayout()).called(1);
+    });
 
-    test(
-      'should call getHomeLayout only once',
-      () async {
-        // Arrange
-        final response = HomeApiResponseModel(
-          status: true,
-          code: 200,
-          message: 'Home layout retrieved',
-          data: [],
-        );
+    test('should call getHomeLayout only once', () async {
+      // Arrange
+      final response = HomeApiResponseModel(
+        status: true,
+        code: 200,
+        message: 'Home layout retrieved',
+        data: [],
+      );
 
-        when(mockApiClient.getHomeLayout())
-            .thenAnswer((_) async => response);
+      when(mockApiClient.getHomeLayout()).thenAnswer((_) async => response);
 
-        // Act
-        await dataSource.getHomeLayout();
+      // Act
+      await dataSource.getHomeLayout();
 
-        // Assert
-        verify(mockApiClient.getHomeLayout()).called(1);
-        verifyNoMoreInteractions(mockApiClient);
-      },
-    );
+      // Assert
+      verify(mockApiClient.getHomeLayout()).called(1);
+      verifyNoMoreInteractions(mockApiClient);
+    });
 
     test(
       'should return ErrorResponse when getHomeLayout throws exception',
@@ -84,17 +73,13 @@ void main() {
         // Arrange
         final exception = Exception('Something went wrong');
 
-        when(mockApiClient.getHomeLayout())
-            .thenThrow(exception);
+        when(mockApiClient.getHomeLayout()).thenThrow(exception);
 
         // Act
         final result = await dataSource.getHomeLayout();
 
         // Assert
-        expect(
-          result,
-          isA<ErrorResponse<List<HomeResponseModel>>>(),
-        );
+        expect(result, isA<ErrorResponse<List<HomeResponseModel>>>());
 
         verify(mockApiClient.getHomeLayout()).called(1);
       },

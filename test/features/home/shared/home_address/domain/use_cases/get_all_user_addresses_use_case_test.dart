@@ -20,9 +20,7 @@ void main() {
   setUp(() {
     mockRepository = MockAddressesRepository();
 
-    useCase = GetAllUserAddressesUseCase(
-      mockRepository,
-    );
+    useCase = GetAllUserAddressesUseCase(mockRepository);
   });
 
   group('GetAllUserAddressesUseCase', () {
@@ -45,16 +43,13 @@ void main() {
           isServiceable: true,
         );
 
-        final expectedResponse =
-            SuccessResponse<List<AddressEntity>>(
-          [address],
-        );
+        final expectedResponse = SuccessResponse<List<AddressEntity>>([
+          address,
+        ]);
 
         when(
           mockRepository.getAllUserAddresses(),
-        ).thenAnswer(
-          (_) async => expectedResponse,
-        );
+        ).thenAnswer((_) async => expectedResponse);
 
         // Act
         final result = await useCase();
@@ -62,13 +57,9 @@ void main() {
         // Assert
         expect(result, same(expectedResponse));
 
-        expect(
-          result,
-          isA<SuccessResponse<List<AddressEntity>>>(),
-        );
+        expect(result, isA<SuccessResponse<List<AddressEntity>>>());
 
-        final success =
-            result as SuccessResponse<List<AddressEntity>>;
+        final success = result as SuccessResponse<List<AddressEntity>>;
 
         expect(success.data, isNotNull);
         expect(success.data!.length, 1);
@@ -88,9 +79,7 @@ void main() {
         expect(resultAddress.storeId, isNull);
         expect(resultAddress.isServiceable, true);
 
-        verify(
-          mockRepository.getAllUserAddresses(),
-        ).called(1);
+        verify(mockRepository.getAllUserAddresses()).called(1);
       },
     );
 
@@ -100,16 +89,13 @@ void main() {
         // Arrange
         const errorMessage = 'Failed to get user addresses';
 
-        final expectedResponse =
-            ErrorResponse<List<AddressEntity>>(
+        final expectedResponse = ErrorResponse<List<AddressEntity>>(
           errorMessage,
         );
 
         when(
           mockRepository.getAllUserAddresses(),
-        ).thenAnswer(
-          (_) async => expectedResponse,
-        );
+        ).thenAnswer((_) async => expectedResponse);
 
         // Act
         final result = await useCase();
@@ -117,19 +103,13 @@ void main() {
         // Assert
         expect(result, same(expectedResponse));
 
-        expect(
-          result,
-          isA<ErrorResponse<List<AddressEntity>>>(),
-        );
+        expect(result, isA<ErrorResponse<List<AddressEntity>>>());
 
-        final error =
-            result as ErrorResponse<List<AddressEntity>>;
+        final error = result as ErrorResponse<List<AddressEntity>>;
 
         expect(error.errorMessage, errorMessage);
 
-        verify(
-          mockRepository.getAllUserAddresses(),
-        ).called(1);
+        verify(mockRepository.getAllUserAddresses()).called(1);
       },
     );
 
@@ -137,14 +117,11 @@ void main() {
       'should return empty list when repository returns empty list',
       () async {
         // Arrange
-        final expectedResponse =
-            SuccessResponse<List<AddressEntity>>([]);
+        final expectedResponse = SuccessResponse<List<AddressEntity>>([]);
 
         when(
           mockRepository.getAllUserAddresses(),
-        ).thenAnswer(
-          (_) async => expectedResponse,
-        );
+        ).thenAnswer((_) async => expectedResponse);
 
         // Act
         final result = await useCase();
@@ -152,14 +129,11 @@ void main() {
         // Assert
         expect(result, same(expectedResponse));
 
-        final success =
-            result as SuccessResponse<List<AddressEntity>>;
+        final success = result as SuccessResponse<List<AddressEntity>>;
 
         expect(success.data, isEmpty);
 
-        verify(
-          mockRepository.getAllUserAddresses(),
-        ).called(1);
+        verify(mockRepository.getAllUserAddresses()).called(1);
       },
     );
   });

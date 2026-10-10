@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 
@@ -33,8 +32,7 @@ class LocationService {
       );
 
       return position;
-    } catch (e, stackTrace) {
-      debugPrintStack(stackTrace: stackTrace);
+    } catch (_) {
       return null;
     }
   }

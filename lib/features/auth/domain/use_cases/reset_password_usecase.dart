@@ -9,12 +9,14 @@ class ResetPasswordUseCase {
   ResetPasswordUseCase(this._repository);
 
   Future<BaseResponse<void>> execute({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   }) {
     return _repository.resetPassword(
-      email: email,
-      newPassword: newPassword,
+      otpToken: otpToken,
+      password: password,
+      confirmPassword: confirmPassword,
     );
   }
 }

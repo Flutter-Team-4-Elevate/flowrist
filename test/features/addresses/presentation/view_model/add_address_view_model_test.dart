@@ -24,6 +24,8 @@ import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
+import 'package:flowrist/shared/domain/entities/city_entity.dart';
+import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -688,9 +690,9 @@ void main() {
         when(mockGetGovernorates()).thenAnswer(
           (_) async => SuccessResponse<List<GovernorateEntity>>([tGovernorate]),
         );
-        when(mockGetCities(tGovernorate.id!)).thenAnswer(
-              (_) async => SuccessResponse<List<CityEntity>>([tCity]),
-        );
+        when(
+          mockGetCities(tGovernorate.id!),
+        ).thenAnswer((_) async => SuccessResponse<List<CityEntity>>([tCity]));
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(GetGovernoratesEvent()),
@@ -859,15 +861,14 @@ void main() {
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(SaveAddressEvent(tRequest)),
-      expect: () =>
-      [
+      expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.isLoading,
+          (s) => s.saveAddressState.isLoading,
           'saveAddressState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.data,
+          (s) => s.saveAddressState.data,
           'saveAddressState.data',
           isTrue,
         ),
@@ -886,15 +887,14 @@ void main() {
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(SaveAddressEvent(tRequest)),
-      expect: () =>
-      [
+      expect: () => [
         isA<AddAddressState>().having(
               (s) => s.saveAddressState.isLoading,
           'saveAddressState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.errorMessage,
+          (s) => s.saveAddressState.errorMessage,
           'saveAddressState.errorMessage',
           'Failed to save',
         ),
@@ -912,8 +912,7 @@ void main() {
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(GetGovernoratesEvent()),
-      expect: () =>
-      [
+      expect: () => [
         isA<AddAddressState>().having(
               (s) => s.governoratesState.isLoading,
           'governoratesState.isLoading',
@@ -936,8 +935,7 @@ void main() {
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(GetCitiesEvent(1)),
-      expect: () =>
-      [
+      expect: () => [
         isA<AddAddressState>().having(
               (s) => s.citiesState.isLoading,
           'citiesState.isLoading',
@@ -954,16 +952,16 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'SelectGovernorateEvent does not load cities if governorate id is null',
       build: () => buildViewModel(),
-      act: (cubit) =>
-          cubit.doEvent(
-            SelectGovernorateEvent(
-                GovernorateEntity(id: null, nameEn: 'Unknown')),
-          ),
-      expect: () =>
-      [
+      act: (cubit) => cubit.doEvent(
+        SelectGovernorateEvent(GovernorateEntity(id: null, nameEn: 'Unknown')),
+      ),
+      expect: () => [
         isA<AddAddressState>()
-            .having((s) => s.selectedGovernorate?.id, 'selectedGovernorate.id',
-            isNull)
+            .having(
+              (s) => s.selectedGovernorate?.id,
+              'selectedGovernorate.id',
+              isNull,
+            )
             .having((s) => s.selectedCity, 'selectedCity', isNull),
       ],
       verify: (_) {

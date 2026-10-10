@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:flutter/material.dart';
+
 abstract final class AppColors {
   static const Color white = Color(0xFFFFFFFF);
   static const Color whiteBase = Color(0xFFf9f9f9);
@@ -25,6 +27,7 @@ abstract final class AppColors {
   static const Color purple80 = Color(0xFF690f35);
   static const Color purple90 = Color(0xFF460a23);
   static const Color purple100 = Color(0xFF2a0615);
+  static const Color primaryPink = Color(0xFFD5136B);
 
   static const Color black = Color(0xFF000000);
   static const Color blackBase = Color(0xFF0c1015);
@@ -61,4 +64,20 @@ abstract final class AppColors {
   static const Color amber10 = Color(0xFFFEF3E7);
   static const Color amber90 = Color(0xFF914D16);
   static const Color amber100 = Color(0xFF452A10);
+
+  // Theme-aware semantic colors
+
+  // Light mode
+  static const Color lightBackground = Color(0xFFF9F9F9);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightText = Color(0xFF0C1015);
+  static const Color lightSecondaryText = Color(0xFF535353);
+  static const Color lightBorder = Color(0xFFa6a6a6);
+
+  // Dark mode
+  static const Color darkBackground = Color(0xFF221126);
+  static const Color darkSurface = Color(0xFF221126);
+  static const Color darkText = Color(0xFFF5F5F5);
+  static const Color darkSecondaryText = Color(0xFFBDBDBD);
+  static const Color darkBorder = Color(0xFFd0d0d0);
 }

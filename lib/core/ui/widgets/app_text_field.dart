@@ -1,6 +1,5 @@
 import 'package:flowrist/config/form_validator/form_validator.dart';
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -47,8 +46,11 @@ class AppTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       decoration: InputDecoration(
-        border: const OutlineInputBorder(
-          borderSide: BorderSide(color: AppColors.black, width: 1),
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
         floatingLabelBehavior: FloatingLabelBehavior.always,
         labelStyle: labelStyle,

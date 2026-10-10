@@ -8,11 +8,7 @@ class ForgetPasswordUseCase {
 
   ForgetPasswordUseCase(this._repository);
 
-  Future<BaseResponse<void>> execute({
-    required String email,
-  }) {
-    return _repository.forgotPassword(
-      email: email,
-    );
+  Future<BaseResponse<void>> execute({required String email}) {
+    return _repository.forgotPassword(email: email);
   }
 }

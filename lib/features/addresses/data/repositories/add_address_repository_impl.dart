@@ -58,6 +58,19 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
       return ApiErrorHandler.handleException<void>(e);
     }
   }
+
+  @override
+  Future<BaseResponse<void>> updateAddress(
+    String addressId,
+    AddAddressRequestModel request,
+  ) async {
+    try {
+      await _remoteDataSource.updateAddress(addressId, request);
+      return SuccessResponse(null);
+    } on Exception catch (e) {
+      return ApiErrorHandler.handleException<void>(e);
+    }
+  }
 }
 
 extension AddAddressRequestEntityX on AddAddressRequestEntity {

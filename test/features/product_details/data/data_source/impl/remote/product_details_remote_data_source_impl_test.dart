@@ -32,40 +32,27 @@ void main() {
       'https://example.com/products/pink-rose-bouquet-2.jpg',
     ],
     description:
-    'A beautiful bouquet of 15 fresh pink roses wrapped in elegant white paper.',
-    includes: [
-      'Pink roses: 15',
-      'White wrap',
-    ],
+        'A beautiful bouquet of 15 fresh pink roses wrapped in elegant white paper.',
+    includes: ['Pink roses: 15', 'White wrap'],
     availabilityStatus: 'IN_STOCK',
     availableStock: 10,
-    categoryIds: [
-      '11111111-1111-1111-1111-111111111111',
-    ],
+    categoryIds: ['11111111-1111-1111-1111-111111111111'],
     occasionIds: [
       '22222222-2222-2222-2222-000000000003',
       '22222222-2222-2222-2222-000000000001',
     ],
-    createdAt: DateTime.parse(
-      '2026-08-14T00:47:42.5841309',
-    ),
-    updatedAt: DateTime.parse(
-      '2026-08-14T00:47:42.5841309',
-    ),
-    lastChangedBy:
-    '33333333-3333-3333-3333-333333333333',
+    createdAt: DateTime.parse('2026-08-14T00:47:42.5841309'),
+    updatedAt: DateTime.parse('2026-08-14T00:47:42.5841309'),
+    lastChangedBy: '33333333-3333-3333-3333-333333333333',
   );
 
   test(
     'should return SuccessResponse when API returns product successfully',
-        () async {
-      const productId =
-          '33333333-3333-3333-3333-333333333333';
+    () async {
+      const productId = '33333333-3333-3333-3333-333333333333';
 
-      when(
-        mockApiClient.getProductDetails(productId),
-      ).thenAnswer(
-            (_) async => ProductDetailsResponseDto(
+      when(mockApiClient.getProductDetails(productId)).thenAnswer(
+        (_) async => ProductDetailsResponseDto(
           status: true,
           code: 200,
           message: 'Product retrieved',
@@ -73,94 +60,56 @@ void main() {
         ),
       );
 
-      final result =
-      await dataSource.getProductDetails(productId);
+      final result = await dataSource.getProductDetails(productId);
 
-      expect(
-        result,
-        isA<SuccessResponse<ProductDetailsRequestDto>>(),
-      );
+      expect(result, isA<SuccessResponse<ProductDetailsRequestDto>>());
 
-      final success =
-      result as SuccessResponse<ProductDetailsRequestDto>;
+      final success = result as SuccessResponse<ProductDetailsRequestDto>;
 
       expect(success.data, product);
 
-      verify(
-        mockApiClient.getProductDetails(productId),
-      ).called(1);
+      verify(mockApiClient.getProductDetails(productId)).called(1);
     },
   );
 
-  test(
-    'should return ErrorResponse when API returns an error',
-        () async {
-      const productId = 'invalid-id';
+  test('should return ErrorResponse when API returns an error', () async {
+    const productId = 'invalid-id';
 
-      when(
-        mockApiClient.getProductDetails(productId),
-      ).thenAnswer(
-            (_) async => const ProductDetailsResponseDto(
-          status: false,
-          code: 404,
-          message: 'Product not found',
-          data: null,
-        ),
-      );
+    when(mockApiClient.getProductDetails(productId)).thenAnswer(
+      (_) async => const ProductDetailsResponseDto(
+        status: false,
+        code: 404,
+        message: 'Product not found',
+        data: null,
+      ),
+    );
 
-      final result =
-      await dataSource.getProductDetails(productId);
+    final result = await dataSource.getProductDetails(productId);
 
-      expect(
-        result,
-        isA<ErrorResponse<ProductDetailsRequestDto>>(),
-      );
+    expect(result, isA<ErrorResponse<ProductDetailsRequestDto>>());
 
-      final error =
-      result as ErrorResponse<ProductDetailsRequestDto>;
+    final error = result as ErrorResponse<ProductDetailsRequestDto>;
 
-      expect(
-        error.errorMessage,
-        'Product not found',
-      );
+    expect(error.errorMessage, 'Product not found');
 
-      verify(
-        mockApiClient.getProductDetails(productId),
-      ).called(1);
-    },
-  );
+    verify(mockApiClient.getProductDetails(productId)).called(1);
+  });
 
-  test(
-    'should return ErrorResponse when API throws an exception',
-        () async {
-      const productId =
-          '33333333-3333-3333-3333-333333333333';
+  test('should return ErrorResponse when API throws an exception', () async {
+    const productId = '33333333-3333-3333-3333-333333333333';
 
-      when(
-        mockApiClient.getProductDetails(productId),
-      ).thenThrow(
-        Exception('Network error'),
-      );
+    when(
+      mockApiClient.getProductDetails(productId),
+    ).thenThrow(Exception('Network error'));
 
-      final result =
-      await dataSource.getProductDetails(productId);
+    final result = await dataSource.getProductDetails(productId);
 
-      expect(
-        result,
-        isA<ErrorResponse<ProductDetailsRequestDto>>(),
-      );
+    expect(result, isA<ErrorResponse<ProductDetailsRequestDto>>());
 
-      final error =
-      result as ErrorResponse<ProductDetailsRequestDto>;
+    final error = result as ErrorResponse<ProductDetailsRequestDto>;
 
-      expect(
-        error.errorMessage,
-        contains('Network error'),
-      );
+    expect(error.errorMessage, contains('Network error'));
 
-      verify(
-        mockApiClient.getProductDetails(productId),
-      ).called(1);
-    },
-  );
+    verify(mockApiClient.getProductDetails(productId)).called(1);
+  });
 }

@@ -14,11 +14,8 @@ class CategoryItemModel {
     required this.iconUrl,
   });
 
-  factory CategoryItemModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory CategoryItemModel.fromJson(Map<String, dynamic> json) =>
       _$CategoryItemModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$CategoryItemModelToJson(this);
+  Map<String, dynamic> toJson() => _$CategoryItemModelToJson(this);
 }

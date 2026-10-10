@@ -37,7 +37,6 @@ class LocationService {
   }
 
   String formatAddress(Placemark placemark) {
-
     return placemark.street ?? '';
   }
 }

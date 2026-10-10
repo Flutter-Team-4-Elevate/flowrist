@@ -1,8 +1,7 @@
 import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/session/session_service.dart';
-import 'package:flowrist/core/constants/app_dimensions.dart';
 import 'package:flowrist/core/constants/app_router.dart';
-import 'package:flowrist/gallery_view.dart';
+import 'package:flowrist/features/splash/presentation/view/flower.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,6 +18,7 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
+
     _checkSession();
   }
 
@@ -50,20 +50,6 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsetsDirectional.only(
-            start: AppDimensions.defaultScreenPadding,
-          ),
-          child: IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.arrow_back_ios_new),
-          ),
-        ),
-        title: const Text('Gallery Screen'),
-      ),
-      body: const GalleryView(),
-    );
+    return const Scaffold(body: FlowerView());
   }
 }

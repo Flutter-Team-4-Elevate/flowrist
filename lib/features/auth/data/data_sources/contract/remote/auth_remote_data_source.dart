@@ -19,7 +19,8 @@ abstract interface class AuthRemoteDataSource {
   });
 
   Future<ResetPasswordResponseDto> resetPassword({
-    required String email,
-    required String newPassword,
+    required String otpToken,
+    required String password,
+    required String confirmPassword,
   });
 }

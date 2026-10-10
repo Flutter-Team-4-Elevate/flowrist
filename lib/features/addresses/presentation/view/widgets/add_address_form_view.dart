@@ -68,6 +68,24 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
             state.userLocation!.data != null) {
           _addressController.text = state.userLocation!.data!;
         }
+
+        if (!state.saveAddressState.isLoading &&
+            state.saveAddressState.data == true) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(localizations.addressSavedSuccessfully)),
+          );
+          Navigator.of(context).pop(true);
+        } else if (!state.saveAddressState.isLoading &&
+            state.saveAddressState.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                state.saveAddressState.errorMessage ??
+                    localizations.generalValidationError,
+              ),
+            ),
+          );
+        }
       },
       child: BlocBuilder<AddAddressViewModel, AddAddressState>(
         builder: (context, state) {

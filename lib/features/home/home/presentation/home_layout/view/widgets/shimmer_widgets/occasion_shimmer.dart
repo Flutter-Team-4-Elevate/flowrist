@@ -1,16 +1,13 @@
 import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+
 class OccasionShimmer extends StatelessWidget {
   const OccasionShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(
-        top: 12,
-        left: 16,
-        bottom: 24,
-      ),
+      padding: const EdgeInsets.only(top: 12, left: 16, bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

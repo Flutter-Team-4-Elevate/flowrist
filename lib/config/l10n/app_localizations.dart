@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_ar.dart';
 import 'app_localizations_en.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('ar'),
+    Locale('en'),
+  ];
 
   /// No description provided for @login.
   ///
@@ -357,6 +361,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forgot Password?'**
   String get forgotPassword;
+
+  /// No description provided for @forgetPasswordText.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password'**
+  String get forgetPasswordText;
 
   /// No description provided for @forgotPasswordDescription.
   ///
@@ -910,6 +920,540 @@ abstract class AppLocalizations {
   /// **'Clear'**
   String get clear;
 
+  /// No description provided for @activeSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Sessions'**
+  String get activeSessions;
+
+  /// No description provided for @noActiveSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No active sessions found'**
+  String get noActiveSessions;
+
+  /// No description provided for @thisDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'This Device'**
+  String get thisDevice;
+
+  /// No description provided for @activeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Now'**
+  String get activeNow;
+
+  /// No description provided for @revoke.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get revoke;
+
+  /// No description provided for @logOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logOut;
+
+  /// No description provided for @logOutEverywhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out everywhere'**
+  String get logOutEverywhere;
+
+  /// No description provided for @revokeSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke Session'**
+  String get revokeSessionTitle;
+
+  /// No description provided for @revokeSessionConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to log out from this device?'**
+  String get revokeSessionConfirmation;
+
+  /// No description provided for @revokeAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out everywhere'**
+  String get revokeAllTitle;
+
+  /// No description provided for @revokeAllConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'This will revoke all active sessions except your current device. Continue?'**
+  String get revokeAllConfirmation;
+
+  /// No description provided for @sessionRevokedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Session revoked successfully'**
+  String get sessionRevokedSuccessfully;
+
+  /// No description provided for @currentSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Session'**
+  String get currentSession;
+
+  /// No description provided for @allSessionsRevokedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'All sessions revoked successfully'**
+  String get allSessionsRevokedSuccessfully;
+
+  /// No description provided for @myOrders.
+  ///
+  /// In en, this message translates to:
+  /// **'My orders'**
+  String get myOrders;
+
+  /// No description provided for @active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get active;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @trackOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Track order'**
+  String get trackOrder;
+
+  /// No description provided for @reorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reorder'**
+  String get reorder;
+
+  /// No description provided for @deliveredOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered on'**
+  String get deliveredOn;
+
+  /// No description provided for @noOrdersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No orders found'**
+  String get noOrdersFound;
+
+  /// No description provided for @orderNumberPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Order number:'**
+  String get orderNumberPrefix;
+
+  /// No description provided for @orderDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Details'**
+  String get orderDetails;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @paymentMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Method'**
+  String get paymentMethod;
+
+  /// No description provided for @paymentStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Status'**
+  String get paymentStatus;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @deliveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery time'**
+  String get deliveryTime;
+
+  /// No description provided for @instantArriveBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Instant, Arrive by'**
+  String get instantArriveBy;
+
+  /// No description provided for @deliveryAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery address'**
+  String get deliveryAddress;
+
+  /// No description provided for @addNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New'**
+  String get addNew;
+
+  /// No description provided for @cashOnDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash on delivery'**
+  String get cashOnDelivery;
+
+  /// No description provided for @creditCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit card'**
+  String get creditCard;
+
+  /// No description provided for @itIsAGift.
+  ///
+  /// In en, this message translates to:
+  /// **'It is a gift'**
+  String get itIsAGift;
+
+  /// No description provided for @enterTheName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the name'**
+  String get enterTheName;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @enterThePhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the phone number'**
+  String get enterThePhoneNumber;
+
+  /// No description provided for @placeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Place order'**
+  String get placeOrder;
+
+  /// No description provided for @couldnotopenpaymentpage.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open payment page'**
+  String get couldnotopenpaymentpage;
+
+  /// No description provided for @paymentsessionURLismissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment session URL is missing'**
+  String get paymentsessionURLismissing;
+
+  /// No description provided for @invalidpaymentURL.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid payment URL'**
+  String get invalidpaymentURL;
+
+  /// No description provided for @pleaseselectapaymentmethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a payment method'**
+  String get pleaseselectapaymentmethod;
+
+  /// No description provided for @pleaseenterrecipientname.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter recipient name'**
+  String get pleaseenterrecipientname;
+
+  /// No description provided for @pleaseenterrecipientphone.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter recipient phone'**
+  String get pleaseenterrecipientphone;
+
+  /// No description provided for @notification.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification'**
+  String get notification;
+
+  /// No description provided for @language.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// No description provided for @current_language.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get current_language;
+
+  /// No description provided for @about_us.
+  ///
+  /// In en, this message translates to:
+  /// **'About us'**
+  String get about_us;
+
+  /// No description provided for @terms_and_conditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & conditions'**
+  String get terms_and_conditions;
+
+  /// No description provided for @app_version.
+  ///
+  /// In en, this message translates to:
+  /// **'v 6.3.0 - (446)'**
+  String get app_version;
+
+  /// No description provided for @savedAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved address'**
+  String get savedAddress;
+
+  /// No description provided for @orderDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Order date'**
+  String get orderDate;
+
+  /// No description provided for @orderIdRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Order ID is required'**
+  String get orderIdRequired;
+
+  /// No description provided for @confirmLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm logout!!'**
+  String get confirmLogout;
+
+  /// No description provided for @changeLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Language'**
+  String get changeLanguage;
+
+  /// No description provided for @arabic.
+  ///
+  /// In en, this message translates to:
+  /// **'Arabic'**
+  String get arabic;
+
+  /// No description provided for @english.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// No description provided for @allPricesIncludeTax.
+  ///
+  /// In en, this message translates to:
+  /// **'All prices include tax'**
+  String get allPricesIncludeTax;
+
+  /// No description provided for @connectionErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get connectionErrorMessage;
+
+  /// No description provided for @noAddressSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No address selected'**
+  String get noAddressSelected;
+
+  /// No description provided for @payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment'**
+  String get payment;
+
+  /// No description provided for @editProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get editProfile;
+
+  /// No description provided for @change.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// No description provided for @update.
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// No description provided for @profileUpdatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get currentPassword;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @invalidPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid password'**
+  String get invalidPassword;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password changed successfully. Please log in again.'**
+  String get passwordChangedSuccess;
+
+  /// No description provided for @waitingForDriver.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for driver'**
+  String get waitingForDriver;
+
+  /// No description provided for @waitingForDriverDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order has been placed. We are waiting for a driver to accept it.'**
+  String get waitingForDriverDescription;
+
+  /// No description provided for @estimatedArrival.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated arrival'**
+  String get estimatedArrival;
+
+  /// No description provided for @deliveryHeroDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Is your delivery hero for today'**
+  String get deliveryHeroDescription;
+
+  /// No description provided for @showMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Show map'**
+  String get showMap;
+
+  /// No description provided for @orderDelivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Order Delivered'**
+  String get orderDelivered;
+
+  /// No description provided for @apartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Apartment'**
+  String get apartment;
+
+  /// No description provided for @flower.
+  ///
+  /// In en, this message translates to:
+  /// **'Flower'**
+  String get flower;
+
+  /// No description provided for @driver.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver'**
+  String get driver;
+
+  /// No description provided for @orderPlacedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Your order placed successfully!'**
+  String get orderPlacedSuccessfully;
+
+  /// No description provided for @placed.
+  ///
+  /// In en, this message translates to:
+  /// **'Placed'**
+  String get placed;
+
+  /// No description provided for @preparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing'**
+  String get preparing;
+
+  /// No description provided for @pickedUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked up'**
+  String get pickedUp;
+
+  /// No description provided for @outForDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Out for delivery'**
+  String get outForDelivery;
+
+  /// No description provided for @arrived.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrived'**
+  String get arrived;
+
+  /// No description provided for @awaitingDeliveryConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting delivery confirmation'**
+  String get awaitingDeliveryConfirmation;
+
+  /// No description provided for @delivered.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get delivered;
+
+  /// No description provided for @unknownDeliveryTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get unknownDeliveryTime;
+
+  /// No description provided for @confirming.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming...'**
+  String get confirming;
+
+  /// No description provided for @noDataTryAgain.
+  ///
+  /// In en, this message translates to:
+  /// **'No data, please try again'**
+  String get noDataTryAgain;
+
   /// No description provided for @savedAddress.
   ///
   /// In en, this message translates to:
@@ -946,7 +1490,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['ar', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -955,6 +1499,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'ar':
+      return AppLocalizationsAr();
     case 'en':
       return AppLocalizationsEn();
   }

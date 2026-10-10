@@ -15,6 +15,6 @@ abstract class ProductDetailsApiClient {
 
   @GET('${Endpoints.productDetails}/{id}')
   Future<ProductDetailsResponseDto> getProductDetails(
-      @Path('id') String productId,
-      );
+    @Path('id') String productId,
+  );
 }

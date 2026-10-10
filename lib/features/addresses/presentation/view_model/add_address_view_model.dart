@@ -53,7 +53,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     this._getGovernoratesUseCase,
     this._getCitiesUseCase,
     this._saveAddressUseCase,
-      this._updateAddressUseCase,
+    this._updateAddressUseCase,
     this._appConfig,
   ) : super(AddAddressState.initial()) {
     _checkMapConfig();

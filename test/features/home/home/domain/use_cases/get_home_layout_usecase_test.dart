@@ -39,7 +39,8 @@ void main() {
             isEnabled: true,
             payload: BannerPayloadEntity(
               imageUrl: 'https://example.com/banner.jpg',
-              clickAction: 'flowerapp://promotions', type: '',
+              clickAction: 'flowerapp://promotions',
+              type: '',
             ),
           ),
           HomeLayoutEntity(
@@ -50,17 +51,15 @@ void main() {
             isEnabled: true,
             payload: CategoryRailPayloadEntity(
               items: [],
-              viewAllAction: 'flowerapp://categories', type: '',
+              viewAllAction: 'flowerapp://categories',
+              type: '',
             ),
           ),
         ];
 
-        final response = SuccessResponse<List<HomeLayoutEntity>>(
-          homeData,
-        );
+        final response = SuccessResponse<List<HomeLayoutEntity>>(homeData);
 
-        when(mockRepository.getHomeLayout())
-            .thenAnswer((_) async => response);
+        when(mockRepository.getHomeLayout()).thenAnswer((_) async => response);
 
         // Act
         final result = await useCase();
@@ -91,12 +90,9 @@ void main() {
         // Arrange
         const errorMessage = 'Failed to load home layout';
 
-        final response = ErrorResponse<List<HomeLayoutEntity>>(
-          errorMessage,
-        );
+        final response = ErrorResponse<List<HomeLayoutEntity>>(errorMessage);
 
-        when(mockRepository.getHomeLayout())
-            .thenAnswer((_) async => response);
+        when(mockRepository.getHomeLayout()).thenAnswer((_) async => response);
 
         // Act
         final result = await useCase();
@@ -104,13 +100,9 @@ void main() {
         // Assert
         expect(result, same(response));
 
-        expect(
-          result,
-          isA<ErrorResponse<List<HomeLayoutEntity>>>(),
-        );
+        expect(result, isA<ErrorResponse<List<HomeLayoutEntity>>>());
 
-        final errorResponse =
-            result as ErrorResponse<List<HomeLayoutEntity>>;
+        final errorResponse = result as ErrorResponse<List<HomeLayoutEntity>>;
 
         expect(errorResponse.errorMessage, errorMessage);
 

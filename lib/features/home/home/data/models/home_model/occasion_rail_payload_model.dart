@@ -1,4 +1,3 @@
- 
 import 'package:flowrist/features/home/home/data/models/home_model/home_payload_model.dart';
 import 'package:flowrist/features/home/home/domain/entities/home_entities/occasion_item_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -19,13 +18,10 @@ class OccasionRailPayloadModel extends HomePayloadModel {
     required this.viewAllAction,
   });
 
-  factory OccasionRailPayloadModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory OccasionRailPayloadModel.fromJson(Map<String, dynamic> json) =>
       _$OccasionRailPayloadModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$OccasionRailPayloadModelToJson(this);
+  Map<String, dynamic> toJson() => _$OccasionRailPayloadModelToJson(this);
 
   @override
   OccasionRailPayloadEntity toEntity() {

@@ -47,7 +47,13 @@ class _DeliveryLocationHeaderState extends State<DeliveryLocationHeader> {
 
             const SizedBox(width: 2),
 
-            Expanded(child: _buildLocationText(selectedAddress, localizations)),
+            Expanded(
+              child: _buildLocationText(
+                selectedAddress,
+                localizations,
+                context,
+              ),
+            ),
 
             Transform.rotate(
               angle: 3.14 / 2,
@@ -75,13 +81,17 @@ class _DeliveryLocationHeaderState extends State<DeliveryLocationHeader> {
   Widget _buildLocationText(
     AddressEntity? address,
     AppLocalizations localizations,
+    BuildContext context,
   ) {
     if (address == null) {
       return Text(
         localizations.deliverTo,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppStyles.medium18Inter.copyWith(fontSize: 14),
+        style: AppStyles.medium18Inter.copyWith(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       );
     }
 
@@ -90,7 +100,10 @@ class _DeliveryLocationHeaderState extends State<DeliveryLocationHeader> {
       '${address.area}-${address.addressLine}',
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: AppStyles.medium18Inter.copyWith(fontSize: 14),
+      style: AppStyles.medium18Inter.copyWith(
+        fontSize: 14,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     );
   }
 

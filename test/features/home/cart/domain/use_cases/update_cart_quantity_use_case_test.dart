@@ -15,9 +15,7 @@ void main() {
   late MockCartRepository mockRepository;
   late UpdateCartQuantityUseCase useCase;
 
-  const tRequest = UpdateCartItemRequestDto(
-    quantity: 4,
-  );
+  const tRequest = UpdateCartItemRequestDto(quantity: 4);
 
   const tCart = CartEntity(
     cartId: 'cart_123',
@@ -31,9 +29,7 @@ void main() {
   );
 
   setUpAll(() {
-    provideDummy<BaseResponse<CartEntity>>(
-      SuccessResponse<CartEntity>(tCart),
-    );
+    provideDummy<BaseResponse<CartEntity>>(SuccessResponse<CartEntity>(tCart));
   });
 
   setUp(() {
@@ -51,15 +47,10 @@ void main() {
             itemId: 'item_1',
             request: tRequest,
           ),
-        ).thenAnswer(
-          (_) async => SuccessResponse<CartEntity>(tCart),
-        );
+        ).thenAnswer((_) async => SuccessResponse<CartEntity>(tCart));
 
         // Act
-        final result = await useCase(
-          itemId: 'item_1',
-          request: tRequest,
-        );
+        final result = await useCase(itemId: 'item_1', request: tRequest);
 
         // Assert
         expect(result, isA<SuccessResponse<CartEntity>>());

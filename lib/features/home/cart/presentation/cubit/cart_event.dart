@@ -20,3 +20,5 @@ class RemoveCartItemEvent extends CartEvent {
 
   RemoveCartItemEvent({required this.itemId});
 }
+
+class ClearCartEvent extends CartEvent {}

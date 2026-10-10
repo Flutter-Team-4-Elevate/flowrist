@@ -14,8 +14,8 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<BaseResponse<ProductDetailsRequestDto>> getProductDetails(
-      String productId,
-      ) {
+    String productId,
+  ) {
     return remoteDataSource.getProductDetails(productId);
   }
 }
