@@ -37,7 +37,9 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
   }
 
   @override
-  Future<BaseResponse<void>> saveAddress(AddAddressRequestEntity request) async {
+  Future<BaseResponse<void>> saveAddress(
+    AddAddressRequestEntity request,
+  ) async {
     try {
       await _remoteDataSource.saveAddress(request.toModel());
       return SuccessResponse(null);

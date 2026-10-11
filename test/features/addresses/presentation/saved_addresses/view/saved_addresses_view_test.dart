@@ -56,64 +56,52 @@ void main() {
   }
 
   group('SavedAddressesView Widget Tests', () {
-    testWidgets('renders CircularProgressIndicator when loading and no data',
-        (tester) async {
+    testWidgets('renders CircularProgressIndicator when loading and no data', (
+      tester,
+    ) async {
       final state = SavedAddressesState.initial().copyWith(
         addressesState: BaseState.loading(),
       );
-      whenListen(
-        mockViewModel,
-        Stream.value(state),
-        initialState: state,
-      );
+      whenListen(mockViewModel, Stream.value(state), initialState: state);
 
       await tester.pumpWidget(createWidgetUnderTest());
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('renders empty view when addresses list is empty',
-        (tester) async {
+    testWidgets('renders empty view when addresses list is empty', (
+      tester,
+    ) async {
       final state = SavedAddressesState.initial().copyWith(
         addressesState: BaseState.success(const []),
       );
-      whenListen(
-        mockViewModel,
-        Stream.value(state),
-        initialState: state,
-      );
+      whenListen(mockViewModel, Stream.value(state), initialState: state);
 
       await tester.pumpWidget(createWidgetUnderTest());
 
       expect(find.byType(EmptyAddressView), findsOneWidget);
     });
 
-    testWidgets('renders address card when addresses list has data',
-        (tester) async {
+    testWidgets('renders address card when addresses list has data', (
+      tester,
+    ) async {
       final state = SavedAddressesState.initial().copyWith(
         addressesState: BaseState.success([tAddress]),
       );
-      whenListen(
-        mockViewModel,
-        Stream.value(state),
-        initialState: state,
-      );
+      whenListen(mockViewModel, Stream.value(state), initialState: state);
 
       await tester.pumpWidget(createWidgetUnderTest());
 
       expect(find.byType(SavedAddressItemCard), findsOneWidget);
     });
 
-    testWidgets('renders error message and retry button when error occurs',
-        (tester) async {
+    testWidgets('renders error message and retry button when error occurs', (
+      tester,
+    ) async {
       final state = SavedAddressesState.initial().copyWith(
         addressesState: BaseState.error('Failed to load addresses'),
       );
-      whenListen(
-        mockViewModel,
-        Stream.value(state),
-        initialState: state,
-      );
+      whenListen(mockViewModel, Stream.value(state), initialState: state);
 
       await tester.pumpWidget(createWidgetUnderTest());
 

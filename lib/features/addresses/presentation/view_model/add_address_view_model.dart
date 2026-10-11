@@ -104,10 +104,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     }
   }
 
-  void _updateAddress(
-    String addressId,
-    AddAddressRequestEntity request,
-  ) async {
+  void _updateAddress(String addressId, AddAddressRequestEntity request) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _updateAddressUseCase(addressId, request);
     switch (response) {
@@ -182,7 +179,8 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
       }
 
       final governorates = response.data!;
-      final selectedGov = state.selectedGovernorate ??
+      final selectedGov =
+          state.selectedGovernorate ??
           _findMatchingGovernorate(governorates, state.addressToEdit) ??
           governorates.first;
 
@@ -218,7 +216,8 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
       }
 
       final cities = response.data!;
-      final selectedCity = state.selectedCity ??
+      final selectedCity =
+          state.selectedCity ??
           _findMatchingCity(cities, state.addressToEdit) ??
           cities.first;
 

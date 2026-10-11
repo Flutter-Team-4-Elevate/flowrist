@@ -14,9 +14,7 @@ void main() {
   provideDummy<GetGovernoratesResponseModel>(
     const GetGovernoratesResponseModel(),
   );
-  provideDummy<GetCitiesResponseModel>(
-    const GetCitiesResponseModel(),
-  );
+  provideDummy<GetCitiesResponseModel>(const GetCitiesResponseModel());
 
   late MockAddAddressApiClient mockApiClient;
   late AddAddressRemoteDataSourceImpl dataSource;
@@ -39,65 +37,69 @@ void main() {
   );
 
   group('getGovernorates', () {
-    test('should call apiClient.getGovernorates and return GetGovernoratesResponseModel', () async {
-      // Arrange
-      const expectedResponse = GetGovernoratesResponseModel(
-        status: true,
-        code: 200,
-      );
-      when(mockApiClient.getGovernorates()).thenAnswer(
-        (_) async => expectedResponse,
-      );
+    test(
+      'should call apiClient.getGovernorates and return GetGovernoratesResponseModel',
+      () async {
+        // Arrange
+        const expectedResponse = GetGovernoratesResponseModel(
+          status: true,
+          code: 200,
+        );
+        when(
+          mockApiClient.getGovernorates(),
+        ).thenAnswer((_) async => expectedResponse);
 
-      // Act
-      final result = await dataSource.getGovernorates();
+        // Act
+        final result = await dataSource.getGovernorates();
 
-      // Assert
-      expect(result, equals(expectedResponse));
-      verify(mockApiClient.getGovernorates()).called(1);
-    });
+        // Assert
+        expect(result, equals(expectedResponse));
+        verify(mockApiClient.getGovernorates()).called(1);
+      },
+    );
 
-    test('should rethrow exception when apiClient.getGovernorates fails', () async {
-      // Arrange
-      when(mockApiClient.getGovernorates()).thenThrow(
-        Exception('API Error'),
-      );
+    test(
+      'should rethrow exception when apiClient.getGovernorates fails',
+      () async {
+        // Arrange
+        when(mockApiClient.getGovernorates()).thenThrow(Exception('API Error'));
 
-      // Act & Assert
-      expect(
-        () => dataSource.getGovernorates(),
-        throwsA(isA<Exception>()),
-      );
-      verify(mockApiClient.getGovernorates()).called(1);
-    });
+        // Act & Assert
+        expect(() => dataSource.getGovernorates(), throwsA(isA<Exception>()));
+        verify(mockApiClient.getGovernorates()).called(1);
+      },
+    );
   });
 
   group('getCities', () {
     const tGovernorateId = 1;
 
-    test('should call apiClient.getCities and return GetCitiesResponseModel', () async {
-      // Arrange
-      const expectedResponse = GetCitiesResponseModel(
-        status: true,
-        code: 200,
-      );
-      when(mockApiClient.getCities(tGovernorateId)).thenAnswer(
-        (_) async => expectedResponse,
-      );
+    test(
+      'should call apiClient.getCities and return GetCitiesResponseModel',
+      () async {
+        // Arrange
+        const expectedResponse = GetCitiesResponseModel(
+          status: true,
+          code: 200,
+        );
+        when(
+          mockApiClient.getCities(tGovernorateId),
+        ).thenAnswer((_) async => expectedResponse);
 
-      // Act
-      final result = await dataSource.getCities(tGovernorateId);
+        // Act
+        final result = await dataSource.getCities(tGovernorateId);
 
-      // Assert
-      expect(result, equals(expectedResponse));
-      verify(mockApiClient.getCities(tGovernorateId)).called(1);
-    });
+        // Assert
+        expect(result, equals(expectedResponse));
+        verify(mockApiClient.getCities(tGovernorateId)).called(1);
+      },
+    );
 
     test('should rethrow exception when apiClient.getCities fails', () async {
       // Arrange
-      when(mockApiClient.getCities(tGovernorateId)).thenThrow(
-        Exception('API Error'),
-      );
+      when(
+        mockApiClient.getCities(tGovernorateId),
+      ).thenThrow(Exception('API Error'));
 
       // Act & Assert
       expect(
@@ -109,22 +111,25 @@ void main() {
   });
 
   group('saveAddress', () {
-    test('should call apiClient.saveAddress with correct request model', () async {
-      // Arrange
-      when(mockApiClient.saveAddress(tRequestModel)).thenAnswer((_) async {});
+    test(
+      'should call apiClient.saveAddress with correct request model',
+      () async {
+        // Arrange
+        when(mockApiClient.saveAddress(tRequestModel)).thenAnswer((_) async {});
 
-      // Act
-      await dataSource.saveAddress(tRequestModel);
+        // Act
+        await dataSource.saveAddress(tRequestModel);
 
-      // Assert
-      verify(mockApiClient.saveAddress(tRequestModel)).called(1);
-    });
+        // Assert
+        verify(mockApiClient.saveAddress(tRequestModel)).called(1);
+      },
+    );
 
     test('should rethrow exception when apiClient.saveAddress fails', () async {
       // Arrange
-      when(mockApiClient.saveAddress(tRequestModel)).thenThrow(
-        Exception('Save Error'),
-      );
+      when(
+        mockApiClient.saveAddress(tRequestModel),
+      ).thenThrow(Exception('Save Error'));
 
       // Act & Assert
       expect(
@@ -140,7 +145,9 @@ void main() {
 
     test('should call apiClient.updateAddress with correct params', () async {
       // Arrange
-      when(mockApiClient.updateAddress(tAddressId, tRequestModel)).thenAnswer((_) async {});
+      when(
+        mockApiClient.updateAddress(tAddressId, tRequestModel),
+      ).thenAnswer((_) async {});
 
       // Act
       await dataSource.updateAddress(tAddressId, tRequestModel);
@@ -149,18 +156,23 @@ void main() {
       verify(mockApiClient.updateAddress(tAddressId, tRequestModel)).called(1);
     });
 
-    test('should rethrow exception when apiClient.updateAddress fails', () async {
-      // Arrange
-      when(mockApiClient.updateAddress(tAddressId, tRequestModel)).thenThrow(
-        Exception('Update Error'),
-      );
+    test(
+      'should rethrow exception when apiClient.updateAddress fails',
+      () async {
+        // Arrange
+        when(
+          mockApiClient.updateAddress(tAddressId, tRequestModel),
+        ).thenThrow(Exception('Update Error'));
 
-      // Act & Assert
-      expect(
-        () => dataSource.updateAddress(tAddressId, tRequestModel),
-        throwsA(isA<Exception>()),
-      );
-      verify(mockApiClient.updateAddress(tAddressId, tRequestModel)).called(1);
-    });
+        // Act & Assert
+        expect(
+          () => dataSource.updateAddress(tAddressId, tRequestModel),
+          throwsA(isA<Exception>()),
+        );
+        verify(
+          mockApiClient.updateAddress(tAddressId, tRequestModel),
+        ).called(1);
+      },
+    );
   });
 }

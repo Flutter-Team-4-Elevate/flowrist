@@ -1,5 +1,6 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/addresses/data/data_sources/contract/remote/add_address_remote_data_source.dart';
+import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
 import 'package:flowrist/features/addresses/data/models/city_model.dart';
 import 'package:flowrist/features/addresses/data/models/get_cities_response_model.dart';
 import 'package:flowrist/features/addresses/data/models/get_governorates_response_model.dart';
@@ -19,9 +20,7 @@ void main() {
   provideDummy<GetGovernoratesResponseModel>(
     const GetGovernoratesResponseModel(),
   );
-  provideDummy<GetCitiesResponseModel>(
-    const GetCitiesResponseModel(),
-  );
+  provideDummy<GetCitiesResponseModel>(const GetCitiesResponseModel());
 
   late MockAddAddressRemoteDataSource mockRemoteDataSource;
   late AddAddressRepositoryImpl repository;
@@ -56,6 +55,18 @@ void main() {
     label: 'home',
   );
 
+  AddAddressRequestModel tRequestModel = AddAddressRequestModel(
+    recipientName: 'John Doe',
+    recipientPhone: '0123456789',
+    addressLine: '123 Main St',
+    governorateId: 1,
+    cityId: 1,
+    area: 'Maadi',
+    lat: 30.0444,
+    lng: 31.2357,
+    label: 'home',
+  );
+
   group('getGovernorates', () {
     test(
       'should return SuccessResponse with mapped GovernorateEntity list when datasource succeeds',
@@ -66,9 +77,9 @@ void main() {
           code: 200,
           data: [tGovernorateModel],
         );
-        when(mockRemoteDataSource.getGovernorates()).thenAnswer(
-          (_) async => responseModel,
-        );
+        when(
+          mockRemoteDataSource.getGovernorates(),
+        ).thenAnswer((_) async => responseModel);
 
         // Act
         final result = await repository.getGovernorates();
@@ -89,9 +100,9 @@ void main() {
       'should return ErrorResponse when datasource throws an Exception',
       () async {
         // Arrange
-        when(mockRemoteDataSource.getGovernorates()).thenThrow(
-          Exception('Network failure'),
-        );
+        when(
+          mockRemoteDataSource.getGovernorates(),
+        ).thenThrow(Exception('Network failure'));
 
         // Act
         final result = await repository.getGovernorates();
@@ -115,9 +126,9 @@ void main() {
           code: 200,
           data: [tCityModel],
         );
-        when(mockRemoteDataSource.getCities(tGovernorateId)).thenAnswer(
-          (_) async => responseModel,
-        );
+        when(
+          mockRemoteDataSource.getCities(tGovernorateId),
+        ).thenAnswer((_) async => responseModel);
 
         // Act
         final result = await repository.getCities(tGovernorateId);
@@ -139,9 +150,9 @@ void main() {
       'should return ErrorResponse when datasource throws an Exception',
       () async {
         // Arrange
-        when(mockRemoteDataSource.getCities(tGovernorateId)).thenThrow(
-          Exception('Server error'),
-        );
+        when(
+          mockRemoteDataSource.getCities(tGovernorateId),
+        ).thenThrow(Exception('Server error'));
 
         // Act
         final result = await repository.getCities(tGovernorateId);
@@ -167,18 +178,19 @@ void main() {
         expect(result, isA<SuccessResponse<void>>());
         final captured = verify(
           mockRemoteDataSource.saveAddress(
-              captureThat(isA<AddAddressRequestEntity>())),
+            captureThat(isA<AddAddressRequestModel>()),
+          ),
         ).captured;
-        final savedEntity = captured.first as AddAddressRequestEntity;
-        expect(savedEntity.recipientName, tRequestEntity.recipientName);
-        expect(savedEntity.recipientPhone, tRequestEntity.recipientPhone);
-        expect(savedEntity.addressLine, tRequestEntity.addressLine);
-        expect(savedEntity.governorateId, tRequestEntity.governorateId);
-        expect(savedEntity.cityId, tRequestEntity.cityId);
-        expect(savedEntity.area, tRequestEntity.area);
-        expect(savedEntity.lat, tRequestEntity.lat);
-        expect(savedEntity.lng, tRequestEntity.lng);
-        expect(savedEntity.label, tRequestEntity.label);
+        final savedModel = captured.first as AddAddressRequestModel;
+        expect(savedModel.recipientName, tRequestModel.recipientName);
+        expect(savedModel.recipientPhone, tRequestModel.recipientPhone);
+        expect(savedModel.addressLine, tRequestModel.addressLine);
+        expect(savedModel.governorateId, tRequestModel.governorateId);
+        expect(savedModel.cityId, tRequestModel.cityId);
+        expect(savedModel.area, tRequestModel.area);
+        expect(savedModel.lat, tRequestModel.lat);
+        expect(savedModel.lng, tRequestModel.lng);
+        expect(savedModel.label, tRequestModel.label);
       },
     );
 
@@ -186,9 +198,9 @@ void main() {
       'should return ErrorResponse when remoteDataSource.saveAddress throws an Exception',
       () async {
         // Arrange
-        when(mockRemoteDataSource.saveAddress(any)).thenThrow(
-          Exception('Failed to save address'),
-        );
+        when(
+          mockRemoteDataSource.saveAddress(any),
+        ).thenThrow(Exception('Failed to save address'));
 
         // Act
         final result = await repository.saveAddress(tRequestEntity);
@@ -206,29 +218,34 @@ void main() {
       'should call remoteDataSource.updateAddress with converted model and return SuccessResponse',
       () async {
         // Arrange
-        when(mockRemoteDataSource.updateAddress(tAddressId, any)).thenAnswer((_) async {});
+        when(
+          mockRemoteDataSource.updateAddress(tAddressId, any),
+        ).thenAnswer((_) async {});
 
         // Act
-        final result = await repository.updateAddress(tAddressId, tRequestEntity);
+        final result = await repository.updateAddress(
+          tAddressId,
+          tRequestEntity,
+        );
 
         // Assert
         expect(result, isA<SuccessResponse<void>>());
         final captured = verify(
           mockRemoteDataSource.updateAddress(
             tAddressId,
-            captureThat(isA<AddAddressRequestEntity>()),
+            captureThat(isA<AddAddressRequestModel>()),
           ),
         ).captured;
-        final updatedEntity = captured.first as AddAddressRequestEntity;
-        expect(updatedEntity.recipientName, tRequestEntity.recipientName);
-        expect(updatedEntity.recipientPhone, tRequestEntity.recipientPhone);
-        expect(updatedEntity.addressLine, tRequestEntity.addressLine);
-        expect(updatedEntity.governorateId, tRequestEntity.governorateId);
-        expect(updatedEntity.cityId, tRequestEntity.cityId);
-        expect(updatedEntity.area, tRequestEntity.area);
-        expect(updatedEntity.lat, tRequestEntity.lat);
-        expect(updatedEntity.lng, tRequestEntity.lng);
-        expect(updatedEntity.label, tRequestEntity.label);
+        final updatedModel = captured.first as AddAddressRequestModel;
+        expect(updatedModel.recipientName, tRequestModel.recipientName);
+        expect(updatedModel.recipientPhone, tRequestModel.recipientPhone);
+        expect(updatedModel.addressLine, tRequestModel.addressLine);
+        expect(updatedModel.governorateId, tRequestModel.governorateId);
+        expect(updatedModel.cityId, tRequestModel.cityId);
+        expect(updatedModel.area, tRequestModel.area);
+        expect(updatedModel.lat, tRequestModel.lat);
+        expect(updatedModel.lng, tRequestModel.lng);
+        expect(updatedModel.label, tRequestModel.label);
       },
     );
 
@@ -236,12 +253,15 @@ void main() {
       'should return ErrorResponse when remoteDataSource.updateAddress throws an Exception',
       () async {
         // Arrange
-        when(mockRemoteDataSource.updateAddress(tAddressId, any)).thenThrow(
-          Exception('Failed to update address'),
-        );
+        when(
+          mockRemoteDataSource.updateAddress(tAddressId, any),
+        ).thenThrow(Exception('Failed to update address'));
 
         // Act
-        final result = await repository.updateAddress(tAddressId, tRequestEntity);
+        final result = await repository.updateAddress(
+          tAddressId,
+          tRequestEntity,
+        );
 
         // Assert
         expect(result, isA<ErrorResponse<void>>());

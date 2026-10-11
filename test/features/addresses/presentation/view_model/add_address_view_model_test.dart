@@ -701,18 +701,16 @@ void main() {
           isTrue,
         ),
         isA<AddAddressState>()
-            .having(
-              (s) => s.governoratesState.data,
-          'governoratesState.data',
-          [tGovernorate],
-        )
+            .having((s) => s.governoratesState.data, 'governoratesState.data', [
+              tGovernorate,
+            ])
             .having(
               (s) => s.selectedGovernorate,
-          'selectedGovernorate',
-          tGovernorate,
-        ),
+              'selectedGovernorate',
+              tGovernorate,
+            ),
         isA<AddAddressState>().having(
-              (s) => s.citiesState.isLoading,
+          (s) => s.citiesState.isLoading,
           'citiesState.isLoading',
           isTrue,
         ),
@@ -853,9 +851,9 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'emits loading then success true when save is successful',
       build: () {
-        when(mockSaveAddress(tRequest)).thenAnswer(
-              (_) async => SuccessResponse<void>(null),
-        );
+        when(
+          mockSaveAddress(tRequest),
+        ).thenAnswer((_) async => SuccessResponse<void>(null));
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(SaveAddressEvent(tRequest)),
@@ -879,15 +877,15 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'emits error when save fails',
       build: () {
-        when(mockSaveAddress(tRequest)).thenAnswer(
-              (_) async => ErrorResponse<void>('Failed to save'),
-        );
+        when(
+          mockSaveAddress(tRequest),
+        ).thenAnswer((_) async => ErrorResponse<void>('Failed to save'));
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(SaveAddressEvent(tRequest)),
       expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.isLoading,
+          (s) => s.saveAddressState.isLoading,
           'saveAddressState.isLoading',
           isTrue,
         ),
@@ -905,19 +903,19 @@ void main() {
       'GetGovernoratesEvent emits error when data is null',
       build: () {
         when(mockGetGovernorates()).thenAnswer(
-              (_) async => SuccessResponse<List<GovernorateEntity>>(null),
+          (_) async => SuccessResponse<List<GovernorateEntity>>(null),
         );
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(GetGovernoratesEvent()),
       expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.governoratesState.isLoading,
+          (s) => s.governoratesState.isLoading,
           'governoratesState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.governoratesState.errorMessage,
+          (s) => s.governoratesState.errorMessage,
           'governoratesState.errorMessage',
           AppStrings.noGovernoratesFound,
         ),
@@ -927,20 +925,20 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'GetCitiesEvent emits error when data is null',
       build: () {
-        when(mockGetCities(1)).thenAnswer(
-              (_) async => SuccessResponse<List<CityEntity>>(null),
-        );
+        when(
+          mockGetCities(1),
+        ).thenAnswer((_) async => SuccessResponse<List<CityEntity>>(null));
         return buildViewModel();
       },
       act: (cubit) => cubit.doEvent(GetCitiesEvent(1)),
       expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.citiesState.isLoading,
+          (s) => s.citiesState.isLoading,
           'citiesState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.citiesState.errorMessage,
+          (s) => s.citiesState.errorMessage,
           'citiesState.errorMessage',
           AppStrings.noCitiesFound,
         ),
@@ -985,24 +983,22 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'emits loading then success true when update is successful',
       build: () {
-        when(mockUpdateAddress(tAddressId, tUpdateReq)).thenAnswer(
-              (_) async => SuccessResponse<void>(null),
-        );
+        when(
+          mockUpdateAddress(tAddressId, tUpdateReq),
+        ).thenAnswer((_) async => SuccessResponse<void>(null));
         return buildViewModel();
       },
-      act: (cubit) =>
-          cubit.doEvent(
-            UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
-          ),
-      expect: () =>
-      [
+      act: (cubit) => cubit.doEvent(
+        UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
+      ),
+      expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.isLoading,
+          (s) => s.saveAddressState.isLoading,
           'saveAddressState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.data,
+          (s) => s.saveAddressState.data,
           'saveAddressState.data',
           isTrue,
         ),
@@ -1015,24 +1011,22 @@ void main() {
     blocTest<AddAddressViewModel, AddAddressState>(
       'emits loading then error when update fails',
       build: () {
-        when(mockUpdateAddress(tAddressId, tUpdateReq)).thenAnswer(
-              (_) async => ErrorResponse<void>('Cannot update address'),
-        );
+        when(
+          mockUpdateAddress(tAddressId, tUpdateReq),
+        ).thenAnswer((_) async => ErrorResponse<void>('Cannot update address'));
         return buildViewModel();
       },
-      act: (cubit) =>
-          cubit.doEvent(
-            UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
-          ),
-      expect: () =>
-      [
+      act: (cubit) => cubit.doEvent(
+        UpdateAddressEvent(addressId: tAddressId, request: tUpdateReq),
+      ),
+      expect: () => [
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.isLoading,
+          (s) => s.saveAddressState.isLoading,
           'saveAddressState.isLoading',
           isTrue,
         ),
         isA<AddAddressState>().having(
-              (s) => s.saveAddressState.errorMessage,
+          (s) => s.saveAddressState.errorMessage,
           'saveAddressState.errorMessage',
           'Cannot update address',
         ),
@@ -1060,11 +1054,7 @@ void main() {
       act: (cubit) => cubit.doEvent(InitializeForEditEvent(tAddressEntity)),
       expect: () => [
         isA<AddAddressState>()
-            .having(
-              (s) => s.addressToEdit,
-              'addressToEdit',
-              tAddressEntity,
-            )
+            .having((s) => s.addressToEdit, 'addressToEdit', tAddressEntity)
             .having(
               (s) => s.selectedLocation?.latitude,
               'selectedLocation.latitude',
@@ -1093,21 +1083,13 @@ void main() {
       act: (cubit) => cubit.doEvent(InitializeForEditEvent(tAddressEntity)),
       expect: () => [
         isA<AddAddressState>()
-            .having(
-              (s) => s.addressToEdit,
-              'addressToEdit',
-              tAddressEntity,
-            )
+            .having((s) => s.addressToEdit, 'addressToEdit', tAddressEntity)
             .having(
               (s) => s.selectedGovernorate,
               'selectedGovernorate',
               tGovernorate,
             )
-            .having(
-              (s) => s.selectedCity,
-              'selectedCity',
-              tCity,
-            ),
+            .having((s) => s.selectedCity, 'selectedCity', tCity),
       ],
     );
   });

@@ -28,9 +28,9 @@ class _AddAddressViewState extends State<AddAddressView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     if (widget.addressToEdit != null) {
-      context
-          .read<AddAddressViewModel>()
-          .doEvent(InitializeForEditEvent(widget.addressToEdit!));
+      context.read<AddAddressViewModel>().doEvent(
+        InitializeForEditEvent(widget.addressToEdit!),
+      );
     } else {
       context.read<AddAddressViewModel>().doEvent(CheckLocationPermission());
     }

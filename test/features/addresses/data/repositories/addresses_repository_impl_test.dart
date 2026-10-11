@@ -25,9 +25,7 @@ void main() {
       ),
     ),
   );
-  provideDummy<BaseResponse<String>>(
-    SuccessResponse<String>(''),
-  );
+  provideDummy<BaseResponse<String>>(SuccessResponse<String>(''));
 
   late MockAddressesRemoteDataSource mockRemoteDataSource;
   late AddressesRepositoryImpl repository;
@@ -81,9 +79,9 @@ void main() {
       'should return SuccessResponse with empty list when data is null',
       () async {
         // Arrange
-        when(mockRemoteDataSource.getAllUserAddresses()).thenAnswer(
-          (_) async => SuccessResponse<List<AddressModel>>(null),
-        );
+        when(
+          mockRemoteDataSource.getAllUserAddresses(),
+        ).thenAnswer((_) async => SuccessResponse<List<AddressModel>>(null));
 
         // Act
         final result = await repository.getAllUserAddresses();
@@ -130,7 +128,8 @@ void main() {
       () async {
         // Arrange
         when(mockRemoteDataSource.setDefaultAddress(tAddressId)).thenAnswer(
-          (_) async => SuccessResponse<DefaultAddressResponseModel>(tDefaultResponse),
+          (_) async =>
+              SuccessResponse<DefaultAddressResponseModel>(tDefaultResponse),
         );
 
         // Act
@@ -175,9 +174,9 @@ void main() {
       'should return SuccessResponse with message when remoteDataSource succeeds',
       () async {
         // Arrange
-        when(mockRemoteDataSource.deleteAddress(tAddressId)).thenAnswer(
-          (_) async => SuccessResponse<String>(tSuccessMessage),
-        );
+        when(
+          mockRemoteDataSource.deleteAddress(tAddressId),
+        ).thenAnswer((_) async => SuccessResponse<String>(tSuccessMessage));
 
         // Act
         final result = await repository.deleteAddress(tAddressId);
@@ -195,9 +194,9 @@ void main() {
       () async {
         // Arrange
         const errorMessage = 'Address not found';
-        when(mockRemoteDataSource.deleteAddress(tAddressId)).thenAnswer(
-          (_) async => ErrorResponse<String>(errorMessage),
-        );
+        when(
+          mockRemoteDataSource.deleteAddress(tAddressId),
+        ).thenAnswer((_) async => ErrorResponse<String>(errorMessage));
 
         // Act
         final result = await repository.deleteAddress(tAddressId);

@@ -99,7 +99,8 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
             state.copyWith(
               deletingAddressId: () => null,
               deleteAddressState: BaseState<String?>.error(
-                  response.errorMessage),
+                response.errorMessage,
+              ),
             ),
           );
       }
