@@ -1454,12 +1454,6 @@ abstract class AppLocalizations {
   /// **'No data, please try again'**
   String get noDataTryAgain;
 
-  /// No description provided for @savedAddress.
-  ///
-  /// In en, this message translates to:
-  /// **'Saved address'**
-  String get savedAddress;
-
   /// No description provided for @deleteAddress.
   ///
   /// In en, this message translates to:

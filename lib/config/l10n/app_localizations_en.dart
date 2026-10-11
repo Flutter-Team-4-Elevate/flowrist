@@ -714,9 +714,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noDataTryAgain => 'No data, please try again';
 
   @override
-  String get savedAddress => 'Saved address';
-
-  @override
   String get deleteAddress => 'Delete Address';
 
   @override

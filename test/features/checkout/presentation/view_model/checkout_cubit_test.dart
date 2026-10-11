@@ -1,6 +1,8 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
@@ -10,8 +12,6 @@ import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_cubit.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
-import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';

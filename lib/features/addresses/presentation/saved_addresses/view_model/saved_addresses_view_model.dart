@@ -38,26 +38,34 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
       ),
     );
 
-    final response = await _getAllUserAddressesUseCase();
+    try {
+      final response = await _getAllUserAddressesUseCase();
 
-    switch (response) {
-      case SuccessResponse<List<AddressEntity>>():
-        emit(
-          state.copyWith(
-            addressesState: BaseState<List<AddressEntity>>.success(
-              response.data ?? const [],
+      switch (response) {
+        case SuccessResponse<List<AddressEntity>>():
+          emit(
+            state.copyWith(
+              addressesState: BaseState<List<AddressEntity>>.success(
+                response.data ?? const [],
+              ),
             ),
-          ),
-        );
+          );
 
-      case ErrorResponse<List<AddressEntity>>():
-        emit(
-          state.copyWith(
-            addressesState: BaseState<List<AddressEntity>>.error(
-              response.errorMessage,
+        case ErrorResponse<List<AddressEntity>>():
+          emit(
+            state.copyWith(
+              addressesState: BaseState<List<AddressEntity>>.error(
+                response.errorMessage,
+              ),
             ),
-          ),
-        );
+          );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          addressesState: BaseState<List<AddressEntity>>.error(e.toString()),
+        ),
+      );
     }
   }
 
@@ -69,29 +77,39 @@ class SavedAddressesViewModel extends Cubit<SavedAddressesState> {
       ),
     );
 
-    final response = await _deleteAddressUseCase(addressId);
+    try {
+      final response = await _deleteAddressUseCase(addressId);
 
-    switch (response) {
-      case SuccessResponse<String>():
-        final updatedList = (state.addressesState.data ?? [])
-            .where((address) => address.id != addressId)
-            .toList();
+      switch (response) {
+        case SuccessResponse<String>():
+          final updatedList = (state.addressesState.data ?? [])
+              .where((address) => address.id != addressId)
+              .toList();
 
-        emit(
-          state.copyWith(
-            deletingAddressId: () => null,
-            deleteAddressState: BaseState<String?>.success(response.data),
-            addressesState: state.addressesState.copyWith(data: updatedList),
-          ),
-        );
+          emit(
+            state.copyWith(
+              deletingAddressId: () => null,
+              deleteAddressState: BaseState<String?>.success(response.data),
+              addressesState: state.addressesState.copyWith(data: updatedList),
+            ),
+          );
 
-      case ErrorResponse<String>():
-        emit(
-          state.copyWith(
-            deletingAddressId: () => null,
-            deleteAddressState: BaseState<String?>.error(response.errorMessage),
-          ),
-        );
+        case ErrorResponse<String>():
+          emit(
+            state.copyWith(
+              deletingAddressId: () => null,
+              deleteAddressState: BaseState<String?>.error(
+                  response.errorMessage),
+            ),
+          );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          deletingAddressId: () => null,
+          deleteAddressState: BaseState<String?>.error(e.toString()),
+        ),
+      );
     }
   }
 }

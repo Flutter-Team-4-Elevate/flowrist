@@ -1,6 +1,5 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/features/addresses/data/data_sources/contract/remote/add_address_remote_data_source.dart';
-import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
 import 'package:flowrist/features/addresses/data/models/city_model.dart';
 import 'package:flowrist/features/addresses/data/models/get_cities_response_model.dart';
 import 'package:flowrist/features/addresses/data/models/get_governorates_response_model.dart';
@@ -167,18 +166,19 @@ void main() {
         // Assert
         expect(result, isA<SuccessResponse<void>>());
         final captured = verify(
-          mockRemoteDataSource.saveAddress(captureThat(isA<AddAddressRequestModel>())),
+          mockRemoteDataSource.saveAddress(
+              captureThat(isA<AddAddressRequestEntity>())),
         ).captured;
-        final savedModel = captured.first as AddAddressRequestModel;
-        expect(savedModel.recipientName, tRequestEntity.recipientName);
-        expect(savedModel.recipientPhone, tRequestEntity.recipientPhone);
-        expect(savedModel.addressLine, tRequestEntity.addressLine);
-        expect(savedModel.governorateId, tRequestEntity.governorateId);
-        expect(savedModel.cityId, tRequestEntity.cityId);
-        expect(savedModel.area, tRequestEntity.area);
-        expect(savedModel.lat, tRequestEntity.lat);
-        expect(savedModel.lng, tRequestEntity.lng);
-        expect(savedModel.label, tRequestEntity.label);
+        final savedEntity = captured.first as AddAddressRequestEntity;
+        expect(savedEntity.recipientName, tRequestEntity.recipientName);
+        expect(savedEntity.recipientPhone, tRequestEntity.recipientPhone);
+        expect(savedEntity.addressLine, tRequestEntity.addressLine);
+        expect(savedEntity.governorateId, tRequestEntity.governorateId);
+        expect(savedEntity.cityId, tRequestEntity.cityId);
+        expect(savedEntity.area, tRequestEntity.area);
+        expect(savedEntity.lat, tRequestEntity.lat);
+        expect(savedEntity.lng, tRequestEntity.lng);
+        expect(savedEntity.label, tRequestEntity.label);
       },
     );
 
@@ -216,19 +216,19 @@ void main() {
         final captured = verify(
           mockRemoteDataSource.updateAddress(
             tAddressId,
-            captureThat(isA<AddAddressRequestModel>()),
+            captureThat(isA<AddAddressRequestEntity>()),
           ),
         ).captured;
-        final updatedModel = captured.first as AddAddressRequestModel;
-        expect(updatedModel.recipientName, tRequestEntity.recipientName);
-        expect(updatedModel.recipientPhone, tRequestEntity.recipientPhone);
-        expect(updatedModel.addressLine, tRequestEntity.addressLine);
-        expect(updatedModel.governorateId, tRequestEntity.governorateId);
-        expect(updatedModel.cityId, tRequestEntity.cityId);
-        expect(updatedModel.area, tRequestEntity.area);
-        expect(updatedModel.lat, tRequestEntity.lat);
-        expect(updatedModel.lng, tRequestEntity.lng);
-        expect(updatedModel.label, tRequestEntity.label);
+        final updatedEntity = captured.first as AddAddressRequestEntity;
+        expect(updatedEntity.recipientName, tRequestEntity.recipientName);
+        expect(updatedEntity.recipientPhone, tRequestEntity.recipientPhone);
+        expect(updatedEntity.addressLine, tRequestEntity.addressLine);
+        expect(updatedEntity.governorateId, tRequestEntity.governorateId);
+        expect(updatedEntity.cityId, tRequestEntity.cityId);
+        expect(updatedEntity.area, tRequestEntity.area);
+        expect(updatedEntity.lat, tRequestEntity.lat);
+        expect(updatedEntity.lng, tRequestEntity.lng);
+        expect(updatedEntity.label, tRequestEntity.label);
       },
     );
 

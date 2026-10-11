@@ -1,9 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
-
-import '../../../../shared/addresses/domain/entities/address_entity.dart';
 
 class CheckoutState extends Equatable {
   final BaseState<CardOrderEntity?> placeOrderState;

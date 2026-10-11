@@ -1,6 +1,8 @@
 import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/core/constants/endpoints.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/card_order_request_entity.dart';
 import 'package:flowrist/features/checkout/domain/entities/payment_entity/delivery_fee_entity.dart';
@@ -9,11 +11,8 @@ import 'package:flowrist/features/checkout/domain/use_cases/place_order_use_case
 import 'package:flowrist/features/checkout/domain/use_cases/saved_estimated_use_case.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_event.dart';
 import 'package:flowrist/features/checkout/presentation/view_model/checkout_state.dart';
-import 'package:flowrist/shared/addresses/domain/use_cases/get_all_user_addresses_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
-
-import '../../../../shared/addresses/domain/entities/address_entity.dart';
 
 @injectable
 class CheckoutCubit extends Cubit<CheckoutState> {
