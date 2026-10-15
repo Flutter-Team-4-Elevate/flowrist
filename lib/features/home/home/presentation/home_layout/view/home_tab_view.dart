@@ -1,4 +1,5 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
@@ -15,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeTabView extends StatefulWidget {
-  const HomeTabView({super.key});
+  const HomeTabView({super.key, required this.pushNotificationsServices});
+
+  final PushNotificationsServices pushNotificationsServices;
 
   @override
   State<HomeTabView> createState() => _HomeTabViewState();
@@ -26,18 +29,58 @@ class _HomeTabViewState extends State<HomeTabView> {
   void initState() {
     super.initState();
 
-    _loadHome();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotifications();
+      _loadInitialData();
+    });
   }
 
-  Future<void> _loadHome() async {
+  // ============================================================
+  // Notifications
+  // ============================================================
+
+  Future<void> _initializeNotifications() async {
+    await widget.pushNotificationsServices.requestPermission();
+    await widget.pushNotificationsServices.init();
+  }
+
+  Future<void> _loadInitialData() async {
     if (!mounted) return;
 
-    // Refresh home layout
+    // Load Home
     context.read<HomeCubit>().doEvent(GetHomeLayout());
 
     context.read<AddressesViewModel>().doEvent(InitializeAddress());
 
-    // Refresh cart for logged-in user
+    // Load cart
+    await _refreshCart();
+  }
+
+  // ============================================================
+  // Pull To Refresh
+  // ============================================================
+
+  Future<void> _refreshHome() async {
+    if (!mounted) return;
+
+    // Refresh Home layout
+    context.read<HomeCubit>().doEvent(GetHomeLayout());
+
+    // Refresh cart
+    await _refreshCart();
+
+    // IMPORTANT:
+    // Do NOT call InitializeAddress() here.
+    //
+    // The address state should remain untouched when the user
+    // pulls to refresh.
+  }
+
+  // ============================================================
+  // Cart
+  // ============================================================
+
+  Future<void> _refreshCart() async {
     final sessionService = getIt<SessionService>();
 
     final isGuest = await sessionService.isGuest();
@@ -46,8 +89,12 @@ class _HomeTabViewState extends State<HomeTabView> {
     if (!mounted) return;
 
     if (!isGuest && token.isNotEmpty) {
-      context.read<CartCubit>().doEvent(GetCartEvent());
+      await context.read<CartCubit>().doEvent(GetCartEvent());
     }
+  }
+
+  Future<void> _retry() async {
+    await _refreshHome();
   }
 
   @override
@@ -72,17 +119,23 @@ class _HomeTabViewState extends State<HomeTabView> {
                     width: 220,
                     fit: BoxFit.contain,
                   ),
-                  Center(
+
+                  const SizedBox(height: 16),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
                       homeState.errorMessage!,
                       textAlign: TextAlign.center,
                     ),
                   ),
+
                   const SizedBox(height: 16),
+
                   SizedBox(
                     width: 100,
                     child: ElevatedButton(
-                      onPressed: _loadHome,
+                      onPressed: _retry,
                       child: const Text('Retry'),
                     ),
                   ),
@@ -94,7 +147,7 @@ class _HomeTabViewState extends State<HomeTabView> {
           if (homeState.data == null || homeState.data!.isEmpty) {
             return Center(
               child: ElevatedButton(
-                onPressed: _loadHome,
+                onPressed: _retry,
                 child: const Text('Retry'),
               ),
             );
@@ -103,15 +156,17 @@ class _HomeTabViewState extends State<HomeTabView> {
           final sections = homeState.data!;
 
           return RefreshIndicator(
-            onRefresh: _loadHome,
+            onRefresh: _refreshHome,
             child: ListView.builder(
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: sections.length + 1,
               itemBuilder: (context, index) {
+                // Home Header
                 if (index == 0) {
                   return const HomeHeader();
                 }
 
+                // Home Sections
                 final section = sections[index - 1];
 
                 return HomeSection(section: section);

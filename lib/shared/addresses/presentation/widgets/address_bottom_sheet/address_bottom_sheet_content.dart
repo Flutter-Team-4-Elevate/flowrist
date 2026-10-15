@@ -121,9 +121,10 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
 
                 Text(
                   AppLocalizations.of(context)!.selectAddress,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
 
@@ -158,9 +159,10 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
 
                 Text(
                   AppLocalizations.of(context)!.selectAddress,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
 
@@ -287,7 +289,11 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
           await context.read<AddressesViewModel>().doEvent(RefreshAddresses());
         }
       },
-      child: const Icon(Icons.add, size: 25),
+      child: Icon(
+        Icons.add,
+        size: 25,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
     );
   }
 
@@ -309,7 +315,10 @@ class _AddressBottomSheetContentState extends State<AddressBottomSheetContent> {
           }
         },
         icon: const Icon(Icons.add, size: 25),
-        label: Text(AppLocalizations.of(context)!.addNewaddress),
+        label: Text(
+          AppLocalizations.of(context)!.addNewaddress,
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
       ),
     );
   }

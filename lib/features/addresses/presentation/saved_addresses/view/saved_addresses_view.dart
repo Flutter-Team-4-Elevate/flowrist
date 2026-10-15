@@ -111,9 +111,7 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
         }
       },
       child: Scaffold(
-        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.white,
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
@@ -122,13 +120,18 @@ class _SavedAddressesViewState extends State<SavedAddressesView> {
                 context.pop(_hasChanges);
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_back_ios_new_outlined,
-              color: AppColors.blackBase,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           titleSpacing: 0,
-          title: Text(localizations.savedAddress, style: AppStyles.bold20Inter),
+          title: Text(
+            localizations.savedAddress,
+            style: AppStyles.bold20Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ),
         body: BlocBuilder<SavedAddressesViewModel, SavedAddressesState>(
           builder: (context, state) {

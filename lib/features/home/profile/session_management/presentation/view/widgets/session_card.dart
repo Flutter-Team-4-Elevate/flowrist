@@ -38,7 +38,9 @@ class SessionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: session.isCurrent ? AppColors.lightPink : AppColors.white,
+        color: session.isCurrent
+            ? AppColors.lightPink
+            : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: session.isCurrent ? AppColors.purpleBase : AppColors.white60,
@@ -80,7 +82,11 @@ class SessionCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         deviceTitle,
-                        style: AppStyles.medium16InterBlack,
+                        style: AppStyles.medium16InterBlack.copyWith(
+                          color: session.isCurrent
+                              ? AppColors.black
+                              : Theme.of(context).colorScheme.onSurface,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

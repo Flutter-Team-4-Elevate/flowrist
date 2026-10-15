@@ -75,7 +75,15 @@ class TotalPrice extends StatelessWidget {
         final isCash = state.selectedPaymentMethod == Endpoints.cash;
 
         if (isCash) {
-          await _handleOrderSuccess(context);
+          final order = placeOrderState.data;
+
+          if (order == null) {
+            if (!context.mounted) return;
+
+            _showMessage(context, 'Invalid order response.');
+            return;
+          }
+          await _handleOrderSuccess(context, order.orderId);
           return;
         }
 
@@ -119,7 +127,7 @@ class TotalPrice extends StatelessWidget {
         // =========================================================
 
         if (paymentResult == true) {
-          await _handleOrderSuccess(context);
+          await _handleOrderSuccess(context, order.orderId);
           return;
         }
 
@@ -185,54 +193,20 @@ class TotalPrice extends StatelessWidget {
     );
   }
 
-  Future<void> _handleOrderSuccess(BuildContext context) async {
-    final cartCubit = context.read<CartCubit>();
-
-    // Refresh cart after successful order.
-    await cartCubit.doEvent(GetCartEvent());
-
+  Future<void> _handleOrderSuccess(BuildContext context, String orderId) async {
     if (!context.mounted) return;
 
-    final cartState = cartCubit.state.cart;
+    // Navigate immediately after successful order/payment.
+    context.go(AppRoutes.trackOrder, extra: orderId);
 
-    // =========================================================
-    // CART IS EMPTY
-    // =========================================================
+    // Refresh cart in the background.
     //
-    // After successful order your API returns:
-    //
-    // items: []
-    //
-    // Therefore go directly to success screen.
-    // =========================================================
-
-    if (cartState.data != null && cartState.data!.items.isEmpty) {
-      context.go(AppRoutes.successOrder);
-
-      return;
+    // Do not await this before navigation.
+    try {
+      await context.read<CartCubit>().doEvent(GetCartEvent());
+    } catch (e) {
+      debugPrint('Failed to refresh cart after order: $e');
     }
-
-    // =========================================================
-    // CART DATA IS NULL
-    // =========================================================
-
-    if (cartState.data == null) {
-      _showMessage(
-        context,
-        'Order placed successfully, but the cart could not be refreshed.',
-      );
-
-      return;
-    }
-
-    // =========================================================
-    // CART STILL HAS ITEMS
-    // =========================================================
-
-    _showMessage(
-      context,
-      'Order placed successfully, but the cart is not empty.',
-    );
   }
 
   void _placeOrder(BuildContext context) {

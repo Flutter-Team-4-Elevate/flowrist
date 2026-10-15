@@ -15,11 +15,18 @@ class ProductDescriptionSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.productDescription, style: AppStyles.semiBold14),
+        Text(
+          l10n.productDescription,
+          style: AppStyles.semiBold14.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         const SizedBox(height: 8),
         Text(
           description.isNotEmpty ? description : l10n.noProductsFound,
-          style: AppStyles.regular14InterGreyHeight15,
+          style: AppStyles.regular14InterGreyHeight15.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ],
     );
@@ -38,7 +45,12 @@ class ProductIncludesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.productIncludes, style: AppStyles.semiBold14),
+        Text(
+          l10n.productIncludes,
+          style: AppStyles.semiBold14.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         const SizedBox(height: 8),
         ...includes.map(
           (item) => Padding(
@@ -57,7 +69,9 @@ class ProductIncludesSection extends StatelessWidget {
                 Expanded(
                   child: Text(
                     item,
-                    style: AppStyles.regular14InterGreyHeight15,
+                    style: AppStyles.regular14InterGreyHeight15.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ),
               ],

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 
 class DeliveryTime extends StatelessWidget {
   const DeliveryTime({super.key, this.estimatedDeliveryAt});
-
   final DateTime? estimatedDeliveryAt;
 
   @override

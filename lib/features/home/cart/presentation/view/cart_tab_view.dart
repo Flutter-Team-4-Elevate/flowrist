@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
@@ -126,6 +125,7 @@ class _CartTabViewState extends State<CartTabView> {
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.medium18Inter.copyWith(
                                 fontSize: 14,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                           );
@@ -258,12 +258,20 @@ class _CartTabViewState extends State<CartTabView> {
                             children: [
                               Text(
                                 localization.subTotal,
-                                style: AppStyles.medium16Roboto,
+                                style: AppStyles.medium16Roboto.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withValues(alpha: .8),
+                                ),
                               ),
                               const Spacer(),
                               Text(
                                 '${localization.egp} ${cart.subtotal}',
-                                style: AppStyles.regular14Inter,
+                                style: AppStyles.regular14Inter.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                               ),
                             ],
                           ),
@@ -272,18 +280,26 @@ class _CartTabViewState extends State<CartTabView> {
                             children: [
                               Text(
                                 localization.deliveryFee,
-                                style: AppStyles.medium16Roboto,
+                                style: AppStyles.medium16Roboto.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withValues(alpha: .8),
+                                ),
                               ),
                               const Spacer(),
                               Text(
                                 '${localization.egp} ${cart.deliveryFee}',
-                                style: AppStyles.regular14Inter,
+                                style: AppStyles.regular14Inter.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                               ),
                             ],
                           ),
 
-                          const Divider(
-                            color: AppColors.white70,
+                          Divider(
+                            color: Theme.of(context).colorScheme.outline,
                             thickness: 0.5,
                           ),
 
@@ -291,12 +307,20 @@ class _CartTabViewState extends State<CartTabView> {
                             children: [
                               Text(
                                 localization.total,
-                                style: AppStyles.medium18Inter,
+                                style: AppStyles.medium18Inter.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                               ),
                               const Spacer(),
                               Text(
                                 '${localization.egp} ${cart.total}',
-                                style: AppStyles.medium18Inter,
+                                style: AppStyles.medium18Inter.copyWith(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                               ),
                             ],
                           ),

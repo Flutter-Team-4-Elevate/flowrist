@@ -26,7 +26,7 @@ class LogoutDialog extends StatelessWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       insetPadding: EdgeInsets.symmetric(horizontal: screenSize.width * 0.1),
       child: Padding(
         padding: EdgeInsets.fromLTRB(
@@ -43,6 +43,7 @@ class LogoutDialog extends StatelessWidget {
               style: AppStyles.bold20Inter.copyWith(
                 fontSize: 18,
                 letterSpacing: 0.5,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(height: screenSize.height * 0.015),
@@ -50,7 +51,7 @@ class LogoutDialog extends StatelessWidget {
               l10n.confirmLogout,
               textAlign: TextAlign.center,
               style: AppStyles.regular14Inter.copyWith(
-                color: AppColors.blackBase,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(height: screenSize.height * 0.03),
@@ -67,7 +68,7 @@ class LogoutDialog extends StatelessWidget {
                     child: Text(
                       l10n.cancel,
                       style: AppStyles.regular14Inter.copyWith(
-                        color: AppColors.blackBase,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),

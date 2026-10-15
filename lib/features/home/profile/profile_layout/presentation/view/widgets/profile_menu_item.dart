@@ -1,4 +1,3 @@
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -25,15 +24,29 @@ class ProfileMenuItem extends StatelessWidget {
           ? EdgeInsets.symmetric(horizontal: horizontalPadding!)
           : null,
       leading: icon != null
-          ? Icon(icon, color: AppColors.grey, size: 20)
+          ? Icon(
+              icon,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: .7),
+              size: 20,
+            )
           : null,
       title: Text(
         title,
-        style: AppStyles.regular14Inter.copyWith(color: AppColors.blackBase),
+        style: AppStyles.regular14Inter.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       trailing:
           trailing ??
-          const Icon(Icons.chevron_right, color: AppColors.grey, size: 20),
+          Icon(
+            Icons.chevron_right,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: .7),
+            size: 20,
+          ),
       onTap: onTap,
     );
   }

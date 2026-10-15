@@ -84,7 +84,12 @@ class _AddAddressViewState extends State<AddAddressView>
             icon: const Icon(Icons.arrow_back_ios_new_outlined),
           ),
           titleSpacing: 0,
-          title: Text(localizations.address, style: AppStyles.bold20Inter),
+          title: Text(
+            localizations.address,
+            style: AppStyles.bold20Inter.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ),
         body: BlocBuilder<AddAddressViewModel, AddAddressState>(
           buildWhen: (previous, current) {

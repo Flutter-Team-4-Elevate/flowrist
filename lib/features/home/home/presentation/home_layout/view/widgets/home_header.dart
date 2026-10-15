@@ -1,5 +1,4 @@
 import 'package:flowrist/config/l10n/app_localizations.dart';
-import 'package:flowrist/core/constants/app_colors.dart';
 import 'package:flowrist/core/constants/app_images.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
@@ -42,24 +41,26 @@ class HomeHeader extends StatelessWidget {
                         context.push(AppRoutes.search);
                       },
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search,
-                          color: AppColors.white70,
+                          color: Theme.of(context).colorScheme.outline,
                           size: 24,
                         ),
                         hintText: localizations.search,
-                        hintStyle: AppStyles.regular14Roboto,
+                        hintStyle: AppStyles.regular14Roboto.copyWith(
+                          color: Theme.of(context).colorScheme.outline,
+                        ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: AppColors.white70,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(
-                            color: AppColors.white70,
+                          borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.outline,
                             width: 1,
                           ),
                         ),

@@ -146,7 +146,6 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       bottomNavigationBar: ProductBottomBar(product: widget.product),
       body: CustomScrollView(
         slivers: [
@@ -171,7 +170,9 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                   const SizedBox(height: 16),
                   Text(
                     widget.product.name,
-                    style: AppStyles.medium16InterBlack,
+                    style: AppStyles.medium16InterBlack.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ProductDescriptionSection(
@@ -182,7 +183,9 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                     Text(
                       '${l10n.productAvailableStock}: ${widget.product.availableStock} ${l10n.items}',
                       style: AppStyles.regular13W500.copyWith(
-                        color: AppColors.grey30,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: .7),
                       ),
                     ),
                   ],

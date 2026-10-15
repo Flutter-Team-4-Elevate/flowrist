@@ -29,7 +29,6 @@ class _ActiveSessionsViewState extends State<ActiveSessionsView> {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: AppColors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(l10n.revokeSessionTitle, style: AppStyles.medium18Inter),
         content: Text(
@@ -68,11 +67,15 @@ class _ActiveSessionsViewState extends State<ActiveSessionsView> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: AppColors.whiteBase,
       appBar: AppBar(
-        title: Text(l10n.activeSessions, style: AppStyles.medium20),
+        title: Text(
+          l10n.activeSessions,
+          style: AppStyles.medium20.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: AppColors.whiteBase,
+
         elevation: 0,
       ),
       body: BlocConsumer<SessionsCubit, SessionsState>(

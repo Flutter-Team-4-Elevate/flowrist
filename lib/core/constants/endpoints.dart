@@ -1,7 +1,16 @@
 abstract final class Endpoints {
-  // static const baseUrl = 'http://10.0.2.2:5000/';
-  static const baseUrl = 'http://192.168.8.36:5000/';
+  static const baseUrl = 'http://10.0.2.2:5000/';
   static const register = 'api/identity/auth/register';
+  static const login = 'api/identity/auth/login';
+  static const refreshToken = 'api/identity/auth/refresh-token';
+  static const sessions = 'api/identity/auth/sessions';
+  static const updateFcmToken = 'api/identity/devices/fcm-token';
+  static const updateNotificationStatus =
+      'api/identity/devices/{deviceId}/notifications';
+  static String deleteSession(String sessionId) =>
+      'api/identity/auth/sessions/$sessionId';
+  static const String orderTracking = 'api/orders/{orderId}/tracking';
+  static const String confirmDelivery = 'api/orders/{orderId}/confirm-delivery';
   static const occasions = 'api/catalog/occasions';
   static const categories = 'api/catalog/categories';
   static const products = 'api/catalog/products';
@@ -21,4 +30,20 @@ abstract final class Endpoints {
       'api/address-cart/locations/governorates/{governorateId}/cities';
   static const String saveAddress = 'api/address-cart/users/me/addresses';
   static const String searchProducts = 'api/catalog/products/search';
+  static const String dateFormatDelivery = 'dd MMM yyyy, hh:mm a';
+  static const String cash = 'cash';
+  static const String creditCard = 'creditCard';
+  static const String card = 'Card';
+  static const String cod = 'Cod';
+  static const String stripe = 'Stripe';
+  static const String idempotencyKey = "Idempotency-Key";
+  static const String cartId = 'CartId';
+  static const String orders = 'api/orders';
+  static const String logout = 'api/identity/auth/logout';
+  static const String getProfile = 'api/identity/users/me';
+  static const String updateProfile = 'api/identity/users/profile';
+  static const String changePassword = 'api/identity/users/change-password';
+  static const String deviceId = 'deviceId';
+  static const String notificationsEnabled = 'notifications_enabled';
+  static const String orderId = 'orderId';
 }

@@ -96,7 +96,11 @@ class DeliveryAddress extends StatelessWidget {
                 width: double.infinity,
                 child: TextButton.icon(
                   onPressed: () => context.push(AppRoutes.addAddress),
-                  style: TextButton.styleFrom(side: BorderSide()),
+                  style: TextButton.styleFrom(
+                    side: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
                   icon: Icon(Icons.add, size: 24, color: AppColors.purpleBase),
                   label: Text(
                     localizations.addNew,

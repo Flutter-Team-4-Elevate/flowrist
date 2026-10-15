@@ -38,6 +38,23 @@ class _HomeNavigationViewState extends State<HomeNavigationView> {
     );
   }
 
+  Future<void> _refreshHome() async {
+    if (!mounted) return;
+
+    // Refresh Home API
+    context.read<HomeCubit>().doEvent(GetHomeLayout());
+
+    // Refresh cart if logged in
+    final sessionService = getIt<SessionService>();
+
+    final isGuest = await sessionService.isGuest();
+    final token = await sessionService.getToken();
+
+    if (!isGuest && token.isNotEmpty && mounted) {
+      await context.read<CartCubit>().doEvent(GetCartEvent());
+    }
+  }
+
   BottomNavigationBar _buildBottomNavigationBar({
     required BuildContext context,
     required AppLocalizations localization,

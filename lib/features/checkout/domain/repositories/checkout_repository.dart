@@ -12,4 +12,5 @@ abstract class CheckoutRepository {
     required String addressId,
     required String cartId,
   });
+  Future<void> saveEstimatedDeliveryAt(DateTime estimatedDeliveryAt);
 }
