@@ -41,7 +41,9 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
     AddAddressRequestEntity request,
   ) async {
     try {
-      await _remoteDataSource.saveAddress(request.toModel());
+      await _remoteDataSource.saveAddress(
+        AddAddressRequestModel.fromEntity(request),
+      );
       return SuccessResponse(null);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException<void>(e);
@@ -54,26 +56,13 @@ class AddAddressRepositoryImpl implements AddAddressRepository {
     AddAddressRequestEntity request,
   ) async {
     try {
-      await _remoteDataSource.updateAddress(addressId, request.toModel());
+      await _remoteDataSource.updateAddress(
+        addressId,
+        AddAddressRequestModel.fromEntity(request),
+      );
       return SuccessResponse(null);
     } on Exception catch (e) {
       return ApiErrorHandler.handleException<void>(e);
     }
-  }
-}
-
-extension AddAddressRequestEntityX on AddAddressRequestEntity {
-  AddAddressRequestModel toModel() {
-    return AddAddressRequestModel(
-      recipientName: recipientName,
-      recipientPhone: recipientPhone,
-      addressLine: addressLine,
-      governorateId: governorateId,
-      cityId: cityId,
-      area: area,
-      lat: lat,
-      lng: lng,
-      label: label,
-    );
   }
 }
