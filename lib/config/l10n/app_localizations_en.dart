@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -711,4 +712,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noDataTryAgain => 'No data, please try again';
+
+  @override
+  String get deleteAddress => 'Delete Address';
+
+  @override
+  String get deleteAddressConfirmation =>
+      'Are you sure you want to delete this address?';
+
+  @override
+  String get delete => 'Delete';
 }

@@ -1,4 +1,4 @@
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'governorate_model.g.dart';

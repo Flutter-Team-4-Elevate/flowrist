@@ -5,18 +5,17 @@ import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/widgets/app_button.dart';
 import 'package:flowrist/core/ui/widgets/app_dropdown.dart';
 import 'package:flowrist/core/ui/widgets/app_text_field.dart';
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/presentation/view/widgets/address_map_widget.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../data/models/add_address_request_model.dart';
-import '../../../domain/entities/coordinates_entity.dart';
 
 class AddAddressFormView extends StatefulWidget {
   final bool showSoftPermissionBanner;
@@ -62,6 +61,7 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
 
     return BlocListener<AddAddressViewModel, AddAddressState>(
+      listenWhen: (prev, curr) => prev.userLocation != curr.userLocation,
       listener: (context, state) {
         if (state.userLocation != null &&
             !state.userLocation!.isLoading &&
@@ -488,13 +488,13 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
                     return;
                   }
 
-                  final request = AddAddressRequestModel(
+                  final request = AddAddressRequestEntity(
                     recipientName: _nameController.text,
                     recipientPhone: _phoneController.text,
                     addressLine: _addressController.text,
                     governorateId: state.selectedGovernorate!.id!,
                     cityId: state.selectedCity!.id!,
-
+                    // TODO: wait for the backend team's response regarding what to send in this field of the request
                     area:
                         state.selectedCity!.nameEn ??
                         state.selectedCity!.nameAr ??
@@ -507,6 +507,7 @@ class _AddAddressFormViewState extends State<AddAddressFormView> {
                         state.selectedLocation?.longitude ??
                         widget.addressToEdit?.lng ??
                         0.0,
+                    // TODO: Khalil: if the field is something mandatory in the API request then add a TextFormField for the user to enter the label they want you can also add an auto-fill behavior to it, for example you get the label somehow from the address line
                     label: widget.addressToEdit?.label ?? "home",
                   );
 

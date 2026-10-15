@@ -6,6 +6,8 @@ import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_styles.dart';
 import 'package:flowrist/core/ui/theme/theme_cubit.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_event.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_view_model.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_events.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_state.dart';
@@ -17,8 +19,6 @@ import 'package:flowrist/features/home/profile/profile_layout/presentation/view/
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_header_section.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_menu_item.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/widgets/profile_section.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flowrist/shared/notifications/presentation/cubit/notification_cubit.dart';
 import 'package:flowrist/shared/notifications/presentation/cubit/notification_state.dart';
 import 'package:flutter/material.dart';

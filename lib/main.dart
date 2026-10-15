@@ -7,13 +7,13 @@ import 'package:flowrist/core/constants/app_router.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
 import 'package:flowrist/core/ui/theme/app_theme.dart';
 import 'package:flowrist/core/ui/theme/theme_cubit.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_event.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_view_model.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_state.dart';
-import 'package:flowrist/firebase_options.dart';
 import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_cubit.dart';
+import 'package:flowrist/firebase_options.dart';
 import 'package:flowrist/flowrist_bloc_observer.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -21,11 +21,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
   await _loadEnvironmentVariables();
-
   configureDependencies();
   Bloc.observer = FlowristBlocObserver();
 

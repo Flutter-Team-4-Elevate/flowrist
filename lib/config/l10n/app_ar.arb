@@ -205,7 +205,7 @@
   "confirmNewPassword": "تأكيد كلمة المرور",
   "invalidPassword": "كلمة المرور غير صحيحة",
   "passwordChangedSuccess": "تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول مجدداً.",
-   "waitingForDriver": "في انتظار المندوب",
+  "waitingForDriver": "في انتظار المندوب",
   "waitingForDriverDescription": "تم تسجيل طلبك بنجاح. نحن في انتظار قبول أحد مندوبي التوصيل لطلبك.",
   "estimatedArrival": "موعد الوصول المتوقع",
   "deliveryHeroDescription": "مندوب توصيل طلبك اليوم",
@@ -224,6 +224,8 @@
   "delivered": "تم التوصيل",
   "unknownDeliveryTime": "غير متاح",
   "confirming": "جارٍ التأكيد...",
-  "noDataTryAgain": "لا توجد بيانات، يرجى المحاولة مرة أخرى"
-
+  "noDataTryAgain": "لا توجد بيانات، يرجى المحاولة مرة أخرى",
+  "deleteAddress": "حذف العنوان",
+  "deleteAddressConfirmation": "هل أنت متأكد من أنك تريد حذف هذا العنوان؟",
+  "delete": "حذف"
 }

@@ -1,5 +1,5 @@
 import 'package:flowrist/config/base_response/base_response.dart';
-import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
 import 'package:flowrist/features/addresses/domain/repositories/add_address_repository.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -21,7 +21,7 @@ void main() {
   });
 
   const tAddressId = 'addr_123';
-  final tRequest = AddAddressRequestModel(
+  const tRequest = AddAddressRequestEntity(
     recipientName: 'Ahmed',
     recipientPhone: '01010679792',
     addressLine: '123 Test St',

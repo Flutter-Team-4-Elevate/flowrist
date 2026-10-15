@@ -27,7 +27,7 @@ abstract class AddAddressApiClient {
 
   @PUT(Endpoints.updateAddress)
   Future<void> updateAddress(
-    @Path('addressId') String addressId,
+    @Path(Endpoints.addressId) String addressId,
     @Body() AddAddressRequestModel request,
   );
 }

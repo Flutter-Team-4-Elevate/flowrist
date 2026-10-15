@@ -224,5 +224,9 @@
   "delivered": "Delivered",
   "unknownDeliveryTime": "Not available",
   "confirming": "Confirming...",
-  "noDataTryAgain": "No data, please try again"
+  "noDataTryAgain": "No data, please try again",
+  "savedAddress": "Saved address",
+  "deleteAddress": "Delete Address",
+  "deleteAddressConfirmation": "Are you sure you want to delete this address?",
+  "delete": "Delete"
 }

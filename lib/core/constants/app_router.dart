@@ -1,11 +1,10 @@
 import 'package:flowrist/config/di/di.dart';
+import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_invalidation_notifier.dart';
 import 'package:flowrist/config/session/session_service.dart';
-import 'package:flowrist/config/l10n/app_localizations.dart';
 import 'package:flowrist/core/constants/app_constants.dart';
 import 'package:flowrist/core/ui/widgets/app_web_view_screen.dart';
-import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
 import 'package:flowrist/features/addresses/presentation/view/add_address_view.dart';
 import 'package:flowrist/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import 'package:flowrist/features/auth/presentation/login/cubit/login_cubit.dart';
@@ -28,6 +27,7 @@ import 'package:flowrist/features/home/profile/my_orders/presentation/view/my_or
 import 'package:flowrist/features/home/profile/my_orders/presentation/view/order_details_view.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/cubit/profile_cubit.dart';
 import 'package:flowrist/features/home/profile/profile_layout/presentation/view/profile_tab_view.dart';
+import 'package:flowrist/features/home/profile/profile_layout/presentation/view/reset_password_view.dart';
 import 'package:flowrist/features/home/profile/session_management/presentation/cubit/sessions_cubit.dart';
 import 'package:flowrist/features/home/profile/session_management/presentation/view/active_sessions_view.dart';
 import 'package:flowrist/features/home/search_and_filtering/search/presentation/view/search_view.dart';
@@ -42,12 +42,13 @@ import 'package:flowrist/features/tracking_order/presentation/view/widgets/track
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../features/addresses/domain/entities/address_entity.dart';
 import '../../features/addresses/presentation/saved_addresses/view/saved_addresses_view.dart';
 import '../../features/addresses/presentation/saved_addresses/view_model/saved_addresses_view_model.dart';
 import '../../features/addresses/presentation/view_model/add_address_view_model.dart';
 import '../../features/auth/presentation/forget_password/view/forget_password_view.dart';
 import '../../features/home/shared/product_details/presentation/view/products_details_screen.dart';
-import '../../shared/addresses/domain/entities/address_entity.dart';
 
 abstract final class AppRoutes {
   static const splash = '/';
@@ -77,6 +78,7 @@ abstract final class AppRoutes {
   static const bestSeller = '/best-seller';
   static const occasions = '/occasions';
   static const addAddress = '/add-address';
+  static const savedAddresses = '/saved-addresses';
   static const activeSessions = '/active-sessions';
   static const myOrders = '/my-orders';
   static const orderDetails = '/order-details/:${AppConstants.orderIdParam}';
@@ -85,7 +87,6 @@ abstract final class AppRoutes {
     return '/order-details/$orderId';
   }
 
-  static const savedAddresses = '/saved-addresses';
   static const webView = '/web-view';
   static const resetPassword = '/reset-password';
 }
@@ -417,6 +418,20 @@ abstract final class AppRouter {
           return BlocProvider<AddAddressViewModel>(
             create: (context) => getIt<AddAddressViewModel>(),
             child: AddAddressView(addressToEdit: addressToEdit),
+          );
+        },
+      ),
+
+      // --------------------------------------------------
+      // Saved Addresses Screen
+      // --------------------------------------------------
+      GoRoute(
+        path: AppRoutes.savedAddresses,
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (context, state) {
+          return BlocProvider<SavedAddressesViewModel>(
+            create: (context) => getIt<SavedAddressesViewModel>(),
+            child: const SavedAddressesView(),
           );
         },
       ),

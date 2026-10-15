@@ -3,8 +3,11 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/core/config/app_config.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
-import 'package:flowrist/features/addresses/data/models/add_address_request_model.dart';
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/city_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/service_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/check_location_permission_use_case.dart';
@@ -21,9 +24,6 @@ import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_view_model.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
-import 'package:flowrist/shared/domain/entities/city_entity.dart';
-import 'package:flowrist/shared/domain/entities/governorate_entity.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -122,7 +122,7 @@ void main() {
     nameEn: 'Maadi',
   );
 
-  final tRequest = AddAddressRequestModel(
+  const tRequest = AddAddressRequestEntity(
     recipientName: 'John Doe',
     recipientPhone: '0123456789',
     addressLine: '123 Main St',
@@ -968,7 +968,7 @@ void main() {
 
   group('UpdateAddressEvent Event', () {
     const tAddressId = 'addr_123';
-    final tUpdateReq = AddAddressRequestModel(
+    const tUpdateReq = AddAddressRequestEntity(
       recipientName: 'Ahmed',
       recipientPhone: '01010679792',
       addressLine: '123 Main St',
@@ -1049,11 +1049,12 @@ void main() {
     );
 
     blocTest<AddAddressViewModel, AddAddressState>(
-      'updates selectedLocation and userLocation from AddressEntity',
+      'updates selectedLocation, userLocation, and addressToEdit from AddressEntity',
       build: () => buildViewModel(),
       act: (cubit) => cubit.doEvent(InitializeForEditEvent(tAddressEntity)),
       expect: () => [
         isA<AddAddressState>()
+            .having((s) => s.addressToEdit, 'addressToEdit', tAddressEntity)
             .having(
               (s) => s.selectedLocation?.latitude,
               'selectedLocation.latitude',
@@ -1069,6 +1070,26 @@ void main() {
               'userLocation.data',
               '123 Main St',
             ),
+      ],
+    );
+
+    blocTest<AddAddressViewModel, AddAddressState>(
+      'matches governorate and city when initialized for edit with existing governorates and cities in state',
+      seed: () => AddAddressState.initial().copyWith(
+        governoratesState: BaseState.success([tGovernorate]),
+        citiesState: BaseState.success([tCity]),
+      ),
+      build: () => buildViewModel(),
+      act: (cubit) => cubit.doEvent(InitializeForEditEvent(tAddressEntity)),
+      expect: () => [
+        isA<AddAddressState>()
+            .having((s) => s.addressToEdit, 'addressToEdit', tAddressEntity)
+            .having(
+              (s) => s.selectedGovernorate,
+              'selectedGovernorate',
+              tGovernorate,
+            )
+            .having((s) => s.selectedCity, 'selectedCity', tCity),
       ],
     );
   });

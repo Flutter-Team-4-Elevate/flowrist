@@ -2,7 +2,9 @@ import 'package:flowrist/config/base_response/base_response.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
 import 'package:flowrist/core/config/app_config.dart';
 import 'package:flowrist/core/constants/app_strings.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/coordinates_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/governorate_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/permission_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/entities/service_status_entity.dart';
 import 'package:flowrist/features/addresses/domain/use_cases/check_location_permission_use_case.dart';
@@ -18,14 +20,12 @@ import 'package:flowrist/features/addresses/domain/use_cases/save_address_use_ca
 import 'package:flowrist/features/addresses/domain/use_cases/update_address_use_case.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_event.dart';
 import 'package:flowrist/features/addresses/presentation/view_model/add_address_state.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
-import '../../../../shared/domain/entities/city_entity.dart';
-import '../../../../shared/domain/entities/governorate_entity.dart';
-import '../../data/models/add_address_request_model.dart';
+import '../../domain/entities/add_address_request_entity.dart';
+import '../../domain/entities/city_entity.dart';
 
 @injectable
 class AddAddressViewModel extends Cubit<AddAddressState> {
@@ -104,7 +104,7 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
     }
   }
 
-  void _updateAddress(String addressId, AddAddressRequestModel request) async {
+  void _updateAddress(String addressId, AddAddressRequestEntity request) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _updateAddressUseCase(addressId, request);
     switch (response) {
@@ -121,18 +121,35 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
   }
 
   void _initializeForEdit(AddressEntity address) {
+    GovernorateEntity? selectedGov = state.selectedGovernorate;
+    CityEntity? selectedCity = state.selectedCity;
+
+    if (state.governoratesState.data != null &&
+        state.governoratesState.data!.isNotEmpty) {
+      selectedGov ??= _findMatchingGovernorate(
+        state.governoratesState.data!,
+        address,
+      );
+    }
+    if (state.citiesState.data != null && state.citiesState.data!.isNotEmpty) {
+      selectedCity ??= _findMatchingCity(state.citiesState.data!, address);
+    }
+
     emit(
       state.copyWith(
+        addressToEdit: address,
         selectedLocation: CoordinatesEntity(
           latitude: address.lat,
           longitude: address.lng,
         ),
         userLocation: BaseState.success(address.addressLine),
+        selectedGovernorate: selectedGov,
+        selectedCity: selectedCity,
       ),
     );
   }
 
-  void _saveAddress(AddAddressRequestModel request) async {
+  void _saveAddress(AddAddressRequestEntity request) async {
     emit(state.copyWith(saveAddressState: BaseState.loading()));
     final response = await _saveAddressUseCase(request);
     switch (response) {
@@ -161,13 +178,21 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
         return;
       }
 
+      final governorates = response.data!;
+      final selectedGov =
+          state.selectedGovernorate ??
+          _findMatchingGovernorate(governorates, state.addressToEdit) ??
+          governorates.first;
+
       emit(
         state.copyWith(
-          governoratesState: BaseState.success(response.data!),
-          selectedGovernorate: response.data![0],
+          governoratesState: BaseState.success(governorates),
+          selectedGovernorate: selectedGov,
         ),
       );
-      _loadCities(response.data![0].id!);
+      if (selectedGov.id != null) {
+        _loadCities(selectedGov.id!);
+      }
     } else if (response is ErrorResponse<List<GovernorateEntity>>) {
       emit(
         state.copyWith(
@@ -190,15 +215,51 @@ class AddAddressViewModel extends Cubit<AddAddressState> {
         return;
       }
 
+      final cities = response.data!;
+      final selectedCity =
+          state.selectedCity ??
+          _findMatchingCity(cities, state.addressToEdit) ??
+          cities.first;
+
       emit(
         state.copyWith(
-          citiesState: BaseState.success(response.data!),
-          selectedCity: response.data![0],
+          citiesState: BaseState.success(cities),
+          selectedCity: selectedCity,
         ),
       );
     } else if (response is ErrorResponse<List<CityEntity>>) {
       emit(state.copyWith(citiesState: BaseState.error(response.errorMessage)));
     }
+  }
+
+  GovernorateEntity? _findMatchingGovernorate(
+    List<GovernorateEntity> governorates,
+    AddressEntity? address,
+  ) {
+    if (address == null) return null;
+    final cityLower = address.city.trim().toLowerCase();
+    for (final gov in governorates) {
+      if ((gov.nameEn?.toLowerCase() == cityLower) ||
+          (gov.nameAr?.toLowerCase() == cityLower)) {
+        return gov;
+      }
+    }
+    return governorates.isNotEmpty ? governorates.first : null;
+  }
+
+  CityEntity? _findMatchingCity(
+    List<CityEntity> cities,
+    AddressEntity? address,
+  ) {
+    if (address == null) return null;
+    final areaLower = address.area.trim().toLowerCase();
+    for (final city in cities) {
+      if ((city.nameEn?.toLowerCase() == areaLower) ||
+          (city.nameAr?.toLowerCase() == areaLower)) {
+        return city;
+      }
+    }
+    return cities.isNotEmpty ? cities.first : null;
   }
 
   void _selectGovernorate(GovernorateEntity governorate) {

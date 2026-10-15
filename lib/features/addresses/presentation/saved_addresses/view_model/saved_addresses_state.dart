@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flowrist/config/base_state/base_state.dart';
-import 'package:flowrist/shared/addresses/domain/entities/address_entity.dart';
+import 'package:flowrist/features/addresses/domain/entities/address_entity.dart';
 
 class SavedAddressesState extends Equatable {
   final BaseState<List<AddressEntity>> addressesState;

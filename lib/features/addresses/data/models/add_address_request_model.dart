@@ -1,3 +1,4 @@
+import 'package:flowrist/features/addresses/domain/entities/add_address_request_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'add_address_request_model.g.dart';
@@ -30,4 +31,18 @@ class AddAddressRequestModel {
       _$AddAddressRequestModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$AddAddressRequestModelToJson(this);
+
+  factory AddAddressRequestModel.fromEntity(AddAddressRequestEntity request) {
+    return AddAddressRequestModel(
+      recipientName: request.recipientName,
+      recipientPhone: request.recipientPhone,
+      addressLine: request.addressLine,
+      governorateId: request.governorateId,
+      cityId: request.cityId,
+      area: request.area,
+      lat: request.lat,
+      lng: request.lng,
+      label: request.label,
+    );
+  }
 }

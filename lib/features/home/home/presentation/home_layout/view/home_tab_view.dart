@@ -2,6 +2,8 @@ import 'package:flowrist/config/di/di.dart';
 import 'package:flowrist/config/notifications/notification_service.dart';
 import 'package:flowrist/config/session/session_service.dart';
 import 'package:flowrist/core/constants/app_images.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_event.dart';
+import 'package:flowrist/features/addresses/presentation/addresses/view_model/addresses_view_model.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_cubit.dart';
 import 'package:flowrist/features/home/cart/presentation/cubit/cart_event.dart';
 import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_cubit.dart';
@@ -10,8 +12,6 @@ import 'package:flowrist/features/home/home/presentation/home_layout/cubit/home_
 import 'package:flowrist/features/home/home/presentation/home_layout/view/widgets/home_header.dart';
 import 'package:flowrist/features/home/home/presentation/home_layout/view/widgets/home_section.dart';
 import 'package:flowrist/features/home/home/presentation/home_layout/view/widgets/home_shimmer.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_event.dart';
-import 'package:flowrist/shared/addresses/presentation/view_model/addresses_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
